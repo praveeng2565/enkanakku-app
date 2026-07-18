@@ -1,6 +1,6 @@
 {
-    "name": "enkannaku_app",
-    "short_name": "enkannaku_app",
+    "name": "enkanakku_app",
+    "short_name": "enkanakku_app",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
