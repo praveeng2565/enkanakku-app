@@ -1,4 +1,4 @@
-# Enkannaku — Project Scope
+# Enkanakku — Project Scope
 
 > A single app for personal financial life-admin — expenses, loans, warranties, insurance, and reminders — that also handles shared expense splitting with friends and roommates, without needing two separate apps.
 
@@ -6,7 +6,7 @@
 
 ## The problem
 
-Most people juggle 4–5 tools to manage their financial life: a notes app for warranty dates, a bank app for loan EMIs, WhatsApp math for splitting rent and trip costs with friends, and a mental note (often forgotten) for when the insurance premium is due. Enkannaku consolidates the personal and the shared side of "money admin" into one app, built around **reminders** as the connective thread — nothing should be missed because it lived in the wrong app.
+Most people juggle 4–5 tools to manage their financial life: a notes app for warranty dates, a bank app for loan EMIs, WhatsApp math for splitting rent and trip costs with friends, and a mental note (often forgotten) for when the insurance premium is due. Enkanakku consolidates the personal and the shared side of "money admin" into one app, built around **reminders** as the connective thread — nothing should be missed because it lived in the wrong app.
 
 ---
 

@@ -11,8 +11,8 @@ Goal by Sunday night: Firebase project live, GitHub repo public with clean struc
    - **Must-have for V1 demo:** personal expenses + mandatory expenses + monthly planning, loan/EMI tracker, warranty tracker, insurance tracker, room-based friend split, reminders, export, dynamic UI via Remote Config.
    - **Explicitly deferred:** password vault (separate project), AI bill scanning (Phase 10), iOS build.
    Writing the "deferred" list down matters as much as the must-have list — it's what stops scope creep three weeks from now.
-3. Pick the app name. Based on our earlier brainstorm, go with **Enkannaku** unless something else has stuck with you more. Don't overthink this — it's a portfolio project, not a trademark filing.
-4. Decide the package/bundle ID now so it's consistent everywhere: `com.<yourname>.Enkannaku` (e.g. `com.praveen.Enkannaku`). You'll need this exact string in Firebase and in `flutter create`.
+3. Pick the app name. Based on our earlier brainstorm, go with **Enkanakku** unless something else has stuck with you more. Don't overthink this — it's a portfolio project, not a trademark filing.
+4. Decide the package/bundle ID now so it's consistent everywhere: `com.<yourname>.Enkanakku` (e.g. `com.praveen.Enkanakku`). You'll need this exact string in Firebase and in `flutter create`.
 
 **Done when:** `PROJECT_SCOPE.md` exists with both lists, name and package ID decided.
 
@@ -20,7 +20,7 @@ Goal by Sunday night: Firebase project live, GitHub repo public with clean struc
 
 ## Tuesday (1–1.5h) — Firebase project setup
 
-1. Go to [console.firebase.google.com](https://console.firebase.google.com) → **Add project** → name it `Enkannaku-app` (or your chosen name). Google Analytics: leave it enabled — it's free and gives you a small "I instrumented analytics" talking point later.
+1. Go to [console.firebase.google.com](https://console.firebase.google.com) → **Add project** → name it `Enkanakku-app` (or your chosen name). Google Analytics: leave it enabled — it's free and gives you a small "I instrumented analytics" talking point later.
 2. Once created, go to **Build → Authentication → Get started**. Enable these sign-in providers now:
    - **Google** (just toggle on, no extra config needed for now)
    - **Email/Password** (optional backup)
@@ -38,11 +38,11 @@ Goal by Sunday night: Firebase project live, GitHub repo public with clean struc
 
 ## Wednesday (1–1.5h) — Repo, Flutter skeleton, folder architecture
 
-1. Create a **public** GitHub repo named `Enkannaku-app` (public matters — this is your portfolio piece).
+1. Create a **public** GitHub repo named `Enkanakku-app` (public matters — this is your portfolio piece).
 2. Locally, create the Flutter project (skip iOS since you don't have a Mac yet — you can add the platform later without any rework):
    ```
-   flutter create --platforms=android,web --org com.praveen Enkannaku_app
-   cd Enkannaku_app
+   flutter create --platforms=android,web --org com.praveen Enkanakku_app
+   cd Enkanakku_app
    ```
 3. Initialize git and connect to GitHub:
    ```
@@ -50,7 +50,7 @@ Goal by Sunday night: Firebase project live, GitHub repo public with clean struc
    git add .
    git commit -m "Initial Flutter project skeleton"
    git branch -M main
-   git remote add origin https://github.com/<you>/Enkannaku-app.git
+   git remote add origin https://github.com/<you>/Enkanakku-app.git
    git push -u origin main
    ```
 4. Build out the folder architecture from the plan (empty folders don't get tracked by git, so drop a `.gitkeep` or a stub file in each):
@@ -80,7 +80,7 @@ Goal by Sunday night: Firebase project live, GitHub repo public with clean struc
 
 ## Thursday (1–1.5h) — Wireframes
 
-1. Create a free Figma account if you don't have one, new file: `Enkannaku Wireframes`.
+1. Create a free Figma account if you don't have one, new file: `Enkanakku Wireframes`.
 2. Use a mobile frame (375×812). Sketch these three screens in low fidelity — boxes and labels, no polish:
    - **Home dashboard:** this-month-spend card, upcoming-dues list (loan/insurance/warranty reminders), quick "+ Add" floating button, nav to Expenses / Loans / Rooms.
    - **Expense entry:** amount field, category picker, date, note, "Mandatory expense" toggle.
@@ -158,7 +158,7 @@ Goal by Sunday night: Firebase project live, GitHub repo public with clean struc
      await Firebase.initializeApp(
        options: DefaultFirebaseOptions.currentPlatform,
      );
-     runApp(const EnkannakuApp());
+     runApp(const EnkanakkuApp());
    }
    ```
 5. Create `lib/core/auth/auth_service.dart` with a `signInWithGoogle()` method wrapping `GoogleSignIn` + `FirebaseAuth.instance.signInWithCredential(...)`.
