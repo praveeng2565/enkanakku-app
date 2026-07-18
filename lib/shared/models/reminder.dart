@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Reminder {
   final String id;
   final DateTime startDateTime;
