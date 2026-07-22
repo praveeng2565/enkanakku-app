@@ -1,24 +1,27 @@
+import 'package:enkanakku_app/utils/app_constants.dart';
+
 import 'notification_model.dart';
 
 class UserProfile {
   final String id;
-  final String name;
-  final String email;
-  final String mobileno;
-  final String photoUrl;
-  final List<String> roomList;
-  final List<NotificationModel> notificationList;
-  final List<String> dataSharing;
-  const UserProfile({
+  String name;
+  String email;
+  String mobileno;
+  String photoUrl;
+  List<String> roomList;
+  List<NotificationModel> notificationList;
+  List<String> dataSharing;
+  UserProfile({
     required this.id,
-    required this.name,
-    required this.email,
-    required this.mobileno,
-    required this.photoUrl,
-    required this.roomList,
-    required this.notificationList,
-    required this.dataSharing,
+    this.name = AppConstants.emptyString,
+    this.email = AppConstants.emptyString,
+    this.mobileno = AppConstants.emptyString,
+    this.photoUrl = AppConstants.emptyString,
+    this.roomList = const [],
+    this.notificationList = const [],
+    this.dataSharing = const [],
   });
+
   Map<String, dynamic> toMap() => {
     'id': id,
     'name': name,
@@ -29,6 +32,7 @@ class UserProfile {
     'notificationList': notificationList.map((e) => e.toMap()).toList(),
     'dataSharing': dataSharing,
   };
+
   factory UserProfile.fromMap(Map<String, dynamic> m) => UserProfile(
     id: m['id'] as String,
     name: m['name'] as String,
@@ -41,7 +45,9 @@ class UserProfile {
         .toList(),
     dataSharing: List<String>.from(m['dataSharing'] ?? []),
   );
+
   Map<String, dynamic> toJson() => toMap();
+
   factory UserProfile.fromJson(Map<String, dynamic> j) =>
       UserProfile.fromMap(j);
 }

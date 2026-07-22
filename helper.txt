@@ -1,0 +1,7 @@
+Store: C:\Users\prave\.android\debug.keystore
+Alias: AndroidDebugKey
+MD5: EE:27:DA:40:0E:2E:D8:56:30:6F:EF:9A:76:AD:4E:66
+SHA1: 1C:A0:7D:49:81:14:E1:14:26:30:D3:AD:9C:7A:F0:98:F9:EE:91:E0
+SHA-256: 05:FE:AC:F1:94:D8:40:DF:BC:5C:AF:9E:AD:2D:D3:BD:38:16:85:38:00:2D:8C:44:75:22:01:B7:CF:EC:2A:A4
+Valid until: Saturday, 5 July, 2053
+
