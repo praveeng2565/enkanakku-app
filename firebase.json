@@ -1,0 +1,22 @@
+{
+    "flutter": {
+        "platforms": {
+            "android": {
+                "default": {
+                    "projectId": "enkanakku-app",
+                    "appId": "1:753010084681:android:e83cc1eebf6ec9eeff2898",
+                    "fileOutput": "android/app/google-services.json"
+                }
+            },
+            "dart": {
+                "lib/firebase_options.dart": {
+                    "projectId": "enkanakku-app",
+                    "configurations": {
+                        "android": "1:753010084681:android:e83cc1eebf6ec9eeff2898",
+                        "web": "1:753010084681:web:057e713deac04b23ff2898"
+                    }
+                }
+            }
+        }
+    }
+}

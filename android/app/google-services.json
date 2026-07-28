@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "753010084681-lbr0k6thi0s2ho1jc49970bhqfnbo1dj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.praveen.enkanakku_app",
+            "certificate_hash": "1ca07d498114e1142630d3ad9c7af098f9ee91e0"
+          }
+        },
+        {
           "client_id": "753010084681-s8b8cpsu283saoig1750piop47k1716n.apps.googleusercontent.com",
           "client_type": 3
         }

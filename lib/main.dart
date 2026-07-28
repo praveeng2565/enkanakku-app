@@ -8,12 +8,13 @@ import 'package:provider/provider.dart';
 
 import 'features/home_page.dart';
 import 'features/login/login_page.dart';
+import 'firebase_options.dart';
 import 'repositories/user_view_model.dart';
 import 'services/login_auth.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   const fatalError = true;
   // Non-async exceptions
   FlutterError.onError = (errorDetails) {

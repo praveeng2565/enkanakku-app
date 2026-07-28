@@ -1,4 +1,4 @@
-import 'app_constants.dart';
+import '../core/app_constants.dart';
 
 String getNewID() {
   final date = DateTime.now();
