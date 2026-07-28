@@ -13,12 +13,12 @@ class AuthService {
   // Stream<User> get user => _auth.authStateChanges();
 
   // wrappinhg the firebase calls
-  Future logout() {
+  Future<void> logout() {
     return FirebaseAuth.instance.signOut();
   }
 
   // wrappinhg the firebase calls
-  Future createUser({
+  Future<void> createUser({
     required String firstName,
     required String lastName,
     required String email,

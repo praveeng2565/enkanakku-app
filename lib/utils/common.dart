@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 import '../core/constants.dart';
 
 String getNewID() {
@@ -9,4 +11,24 @@ String getNewID() {
       date.hour.toString() +
       date.minute.toString() +
       date.second.toString();
+}
+
+void showProgressCircle(BuildContext context) {
+  showDialog(
+    barrierDismissible: false,
+    context: context,
+    builder: (context) {
+      return Center(
+        child: CircularProgressIndicator(
+          backgroundColor: Colors.grey[200],
+          color: Colors.blue,
+          strokeWidth: 4.0,
+        ),
+      );
+    },
+  );
+}
+
+void removeProgressCircle(BuildContext context) {
+  Navigator.of(context, rootNavigator: true).pop('dialog');
 }
