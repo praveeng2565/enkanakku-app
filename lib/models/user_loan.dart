@@ -1,12 +1,4 @@
 class UserLoan {
-  final String id;
-  final String type;
-  final double principal;
-  final double emiAmount;
-  final DateTime dueDate;
-  final int tenureMonths;
-  final DateTime startDate;
-  final String billImageUrl;
   const UserLoan({
     required this.id,
     required this.type,
@@ -17,16 +9,6 @@ class UserLoan {
     required this.startDate,
     required this.billImageUrl,
   });
-  Map<String, dynamic> toMap() => {
-    'id': id,
-    'type': type,
-    'principal': principal,
-    'emiAmount': emiAmount,
-    'dueDate': dueDate.toIso8601String(),
-    'tenureMonths': tenureMonths,
-    'startDate': startDate.toIso8601String(),
-    'billImageUrl': billImageUrl,
-  };
   factory UserLoan.fromMap(Map<String, dynamic> m) => UserLoan(
     id: m['id'] as String,
     type: m['type'] as String,
@@ -37,6 +19,24 @@ class UserLoan {
     startDate: DateTime.parse(m['startDate']),
     billImageUrl: m['billImageUrl'] as String,
   );
-  Map<String, dynamic> toJson() => toMap();
   factory UserLoan.fromJson(Map<String, dynamic> j) => UserLoan.fromMap(j);
+  final String id;
+  final String type;
+  final double principal;
+  final double emiAmount;
+  final DateTime dueDate;
+  final int tenureMonths;
+  final DateTime startDate;
+  final String billImageUrl;
+  Map<String, dynamic> toMap() => {
+    'id': id,
+    'type': type,
+    'principal': principal,
+    'emiAmount': emiAmount,
+    'dueDate': dueDate.toIso8601String(),
+    'tenureMonths': tenureMonths,
+    'startDate': startDate.toIso8601String(),
+    'billImageUrl': billImageUrl,
+  };
+  Map<String, dynamic> toJson() => toMap();
 }

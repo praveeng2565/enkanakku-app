@@ -1,7 +1,9 @@
-import 'package:enkanakku_app/models/user_profile.dart';
-import 'package:enkanakku_app/utils/common.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:async';
+
+import 'package:firebase_auth/firebase_auth.dart';
+
+import '../models/user_profile.dart';
+import '../utils/common.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -22,13 +24,13 @@ class AuthService {
     required String email,
     required String password,
   }) async {
-    var u = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+    final u = await FirebaseAuth.instance.createUserWithEmailAndPassword(
       email: email,
       password: password,
     );
 
-    UserProfile info = UserProfile(id: getNewID());
-    info.name = "$firstName $lastName";
+    final UserProfile info = UserProfile(id: getNewID());
+    info.name = '$firstName $lastName';
     return await u.user?.updateProfile(displayName: info.name);
   }
 

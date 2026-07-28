@@ -1,9 +1,8 @@
-import 'package:enkanakku_app/features/home_page.dart';
-import 'package:enkanakku_app/services/login_auth.dart';
-import 'package:enkanakku_app/utils/app_constants.dart';
-import 'package:enkanakku_app/widgets/snackbar.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+
+import '../../services/login_auth.dart';
+import '../../widgets/snackbar.dart';
+import '../home_page.dart';
 
 // ignore: constant_identifier_names
 enum FormType { LOGIN, REGISTER }
@@ -21,7 +20,7 @@ class _LoginPageState extends State<LoginPage> {
 
   // state variables
   late String _email, _password, _firstName, _lastName;
-  String _pageTitle = "Account Login";
+  String _pageTitle = 'Account Login';
   FormType _formType = FormType.LOGIN;
   bool _loading = false;
 
@@ -41,7 +40,7 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  void submit(BuildContext context) async {
+  Future<void> submit(BuildContext context) async {
     if (validate()) {
       try {
         setState(() {
@@ -68,18 +67,18 @@ class _LoginPageState extends State<LoginPage> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            settings: RouteSettings(name: "HomePage"),
-            builder: (BuildContext context) => HomePage(),
+            settings: const RouteSettings(name: 'HomePage'),
+            builder: (BuildContext context) => const HomePage(),
           ),
         );
       } catch (e) {
         MessageSnack().showErrorMessage(
           e,
           _scaffoldKey,
-          () => {
+          () {
             setState(() {
               _loading = false;
-            }),
+            });
           },
         );
       } finally {}
@@ -111,13 +110,13 @@ class _LoginPageState extends State<LoginPage> {
         child: Form(
           key: formKey,
           child: Container(
-            padding: EdgeInsets.all(20),
+            padding: const EdgeInsets.all(20),
             child: Column(
               children:
                   buildInputs(_formType) +
                   [
                     Padding(
-                      padding: EdgeInsets.only(left: 20, right: 20, top: 30),
+                      padding: const EdgeInsets.only(left: 20, right: 20, top: 30),
                       child: Column(children: buildButtons(context)),
                     ),
                   ],
@@ -129,14 +128,14 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   List<Widget> buildInputs(FormType formType) {
-    var base = <Widget>[
+    final base = <Widget>[
       TextFormField(
-        decoration: InputDecoration(labelText: 'Email'),
+        decoration: const InputDecoration(labelText: 'Email'),
         onSaved: (value) => _email = value!,
       ),
       TextFormField(
         //validator: PasswordValidator.validate,
-        decoration: InputDecoration(labelText: 'Password'),
+        decoration: const InputDecoration(labelText: 'Password'),
         obscureText: true,
         onSaved: (value) => _password = value!,
       ),
@@ -146,11 +145,11 @@ class _LoginPageState extends State<LoginPage> {
       return base +
           <Widget>[
             TextFormField(
-              decoration: InputDecoration(labelText: 'First Name'),
+              decoration: const InputDecoration(labelText: 'First Name'),
               onSaved: (value) => _firstName = value!,
             ),
             TextFormField(
-              decoration: InputDecoration(labelText: 'LastName'),
+              decoration: const InputDecoration(labelText: 'LastName'),
               onSaved: (value) => _lastName = value!,
             ),
           ];
@@ -163,14 +162,13 @@ class _LoginPageState extends State<LoginPage> {
     if (_formType == FormType.LOGIN) {
       return [
         ElevatedButton(
-          key: new Key('login'),
-          child: Align(alignment: Alignment.center, child: Text('Login')),
+          key: const Key('login'),
+          child: const Align(child: Text('Login')),
           onPressed: () => submit(context),
         ),
         ElevatedButton(
-          key: new Key('goto-register'),
-          child: Align(
-            alignment: Alignment.center,
+          key: const Key('goto-register'),
+          child: const Align(
             child: Text('Register Account'),
           ),
           onPressed: () {
@@ -181,16 +179,15 @@ class _LoginPageState extends State<LoginPage> {
     } else {
       return [
         ElevatedButton(
-          key: new Key('create-account'),
-          child: Align(
-            alignment: Alignment.center,
+          key: const Key('create-account'),
+          child: const Align(
             child: Text('Create Account'),
           ),
           onPressed: () => submit(context),
         ),
         ElevatedButton(
-          key: new Key('go-back'),
-          child: Align(alignment: Alignment.center, child: Text('Back')),
+          key: const Key('go-back'),
+          child: const Align(child: Text('Back')),
           onPressed: () {
             switchFormState('login');
           },

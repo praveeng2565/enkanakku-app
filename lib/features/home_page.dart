@@ -1,8 +1,8 @@
-import 'package:enkanakku_app/features/login/login_page.dart';
-import 'package:enkanakku_app/services/login_auth.dart';
-import 'package:enkanakku_app/utils/app_constants.dart';
-
 import 'package:flutter/material.dart';
+
+import '../services/login_auth.dart';
+import '../utils/app_constants.dart';
+import 'login/login_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -19,11 +19,11 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    print("drawing Home Page");
+    print('drawing Home Page');
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppConstants.appName),
-        actions: <Widget>[LogoutButton()],
+        title: const Text(AppConstants.appName),
+        actions: const <Widget>[LogoutButton()],
       ),
       // body: StreamProvider<List<Item>>.value(
       //   // when this stream changes, the children will get
@@ -31,7 +31,7 @@ class _HomePageState extends State<HomePage> {
       //   stream: DataService().getItemsSnapshot(),
       //   child: ItemsList(),
       // ),
-      body: Center(child: Text("Welcome to Enkanakku App")),
+      body: const Center(child: Text('Welcome to Enkanakku App')),
       // drawer: Drawer(
       //   child: FutureBuilder<FirebaseUser>(
       //     future: AuthService().getUser,
@@ -68,8 +68,8 @@ class LogoutButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return new IconButton(
-      icon: new Icon(Icons.exit_to_app),
+    return IconButton(
+      icon: const Icon(Icons.exit_to_app),
       onPressed: () async {
         await AuthService().logout();
 
@@ -78,8 +78,8 @@ class LogoutButton extends StatelessWidget {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            settings: RouteSettings(name: "LoginPage"),
-            builder: (BuildContext context) => LoginPage(),
+            settings: const RouteSettings(name: 'LoginPage'),
+            builder: (BuildContext context) => const LoginPage(),
           ),
         );
       },

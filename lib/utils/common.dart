@@ -1,4 +1,4 @@
-import 'package:enkanakku_app/utils/app_constants.dart';
+import 'app_constants.dart';
 
 String getNewID() {
   final date = DateTime.now();

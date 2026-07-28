@@ -1,15 +1,15 @@
 import 'dart:ui';
 
-import 'package:enkanakku_app/features/home_page.dart';
-import 'package:enkanakku_app/features/login/login_page.dart';
-import 'package:enkanakku_app/repositories/user_view_model.dart';
-import 'package:enkanakku_app/services/login_auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import 'features/home_page.dart';
+import 'features/login/login_page.dart';
+import 'repositories/user_view_model.dart';
+import 'services/login_auth.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -48,30 +48,46 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("drawing Main Page");
+    print('drawing Main Page');
 
     return MultiProvider(
       providers: [ChangeNotifierProvider(create: (_) => UserViewModel())],
       child: MaterialApp(
-        title: 'Flutter Demo',
-        theme: ThemeData(primarySwatch: Colors.teal),
-        initialRoute: "/",
+        theme: ThemeData(
+          // Define the default brightness and colors.
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: Colors.purple,
+            // TRY THIS: Change to "Brightness.light"
+            //           and see that all colors change
+            //           to better contrast a light background.
+            brightness: Brightness.dark,
+          ),
+
+          // Define the default `TextTheme`. Use this to specify the default
+          // text styling for headlines, titles, bodies of text, and more.
+          textTheme: const TextTheme(
+            displayLarge: TextStyle(fontSize: 72, fontWeight: FontWeight.bold),
+            // TRY THIS: Change one of the GoogleFonts
+            //           to "lato", "poppins", or "lora".
+            //           The title uses "titleLarge"
+            //           and the middle text uses "bodyMedium".
+            // titleLarge: GoogleFonts.oswald(
+            //   fontSize: 30,
+            //   fontStyle: FontStyle.italic,
+            // ),
+            // bodyMedium: GoogleFonts.merriweather(),
+            // displaySmall: GoogleFonts.pacifico(),
+          ),
+        ),
+        initialRoute: '/',
         home: FutureBuilder<User?>(
           future: AuthService().getUser,
           builder: (context, AsyncSnapshot<User?> snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
-              print(
-                "drawing main: target screen" +
-                    snapshot.connectionState.toString(),
-              );
               final bool loggedIn = snapshot.hasData;
-              return loggedIn ? HomePage() : LoginPage();
+              return loggedIn ? const HomePage() : const LoginPage();
             } else {
-              print(
-                "drawing main: loading circle" +
-                    snapshot.connectionState.toString(),
-              );
-              return CircularProgressIndicator();
+              return const CircularProgressIndicator();
             }
           },
         ),

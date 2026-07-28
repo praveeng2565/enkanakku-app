@@ -1,12 +1,4 @@
 class RoomExpense {
-  final String id;
-  final double amount;
-  final String paidBy;
-  final String category;
-  final DateTime date;
-  final String remarks;
-  final double perheadSplit;
-  final DateTime lastmodifieddateTime;
   const RoomExpense({
     required this.id,
     required this.amount,
@@ -17,16 +9,6 @@ class RoomExpense {
     required this.perheadSplit,
     required this.lastmodifieddateTime,
   });
-  Map<String, dynamic> toMap() => {
-    'id': id,
-    'amount': amount,
-    'paidBy': paidBy,
-    'category': category,
-    'date': date.toIso8601String(),
-    'remarks': remarks,
-    'perheadSplit': perheadSplit,
-    'lastmodifieddateTime': lastmodifieddateTime.toIso8601String(),
-  };
   factory RoomExpense.fromMap(Map<String, dynamic> m) => RoomExpense(
     id: m['id'] as String,
     amount: (m['amount'] as num).toDouble(),
@@ -37,7 +19,25 @@ class RoomExpense {
     perheadSplit: (m['perheadSplit'] as num).toDouble(),
     lastmodifieddateTime: DateTime.parse(m['lastmodifieddateTime']),
   );
-  Map<String, dynamic> toJson() => toMap();
   factory RoomExpense.fromJson(Map<String, dynamic> j) =>
       RoomExpense.fromMap(j);
+  final String id;
+  final double amount;
+  final String paidBy;
+  final String category;
+  final DateTime date;
+  final String remarks;
+  final double perheadSplit;
+  final DateTime lastmodifieddateTime;
+  Map<String, dynamic> toMap() => {
+    'id': id,
+    'amount': amount,
+    'paidBy': paidBy,
+    'category': category,
+    'date': date.toIso8601String(),
+    'remarks': remarks,
+    'perheadSplit': perheadSplit,
+    'lastmodifieddateTime': lastmodifieddateTime.toIso8601String(),
+  };
+  Map<String, dynamic> toJson() => toMap();
 }
