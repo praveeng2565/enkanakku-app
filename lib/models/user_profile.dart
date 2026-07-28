@@ -1,4 +1,4 @@
-import '../core/app_constants.dart';
+import '../core/constants.dart';
 
 import 'notification_model.dart';
 

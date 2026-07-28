@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../services/login_auth.dart';
-import '../../widgets/snackbar.dart';
+import '../../services/snackbar_service.dart';
+import '../../theme/theme_view_model.dart';
 import '../home_page.dart';
 
 // ignore: constant_identifier_names
@@ -72,15 +74,7 @@ class _LoginPageState extends State<LoginPage> {
           ),
         );
       } catch (e) {
-        MessageSnack().showErrorMessage(
-          e,
-          _scaffoldKey,
-          () {
-            setState(() {
-              _loading = false;
-            });
-          },
-        );
+        SnackbarService.showErrorMessage(e.toString());
       } finally {}
     }
   }
@@ -105,7 +99,19 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      appBar: AppBar(title: Text(_pageTitle)),
+      appBar: AppBar(
+        title: Text(_pageTitle),
+        actions: [
+          IconButton(
+            icon: context.watch<ThemeViewModel>().isDarkMode
+                ? const Icon(Icons.light_mode)
+                : const Icon(Icons.mode_night),
+            onPressed: () {
+              context.read<ThemeViewModel>().toggleTheme();
+            },
+          ),
+        ],
+      ),
       body: Center(
         child: Form(
           key: formKey,
@@ -116,7 +122,11 @@ class _LoginPageState extends State<LoginPage> {
                   buildInputs(_formType) +
                   [
                     Padding(
-                      padding: const EdgeInsets.only(left: 20, right: 20, top: 30),
+                      padding: const EdgeInsets.only(
+                        left: 20,
+                        right: 20,
+                        top: 30,
+                      ),
                       child: Column(children: buildButtons(context)),
                     ),
                   ],
@@ -168,9 +178,7 @@ class _LoginPageState extends State<LoginPage> {
         ),
         ElevatedButton(
           key: const Key('goto-register'),
-          child: const Align(
-            child: Text('Register Account'),
-          ),
+          child: const Align(child: Text('Register Account')),
           onPressed: () {
             switchFormState('register');
           },
@@ -180,9 +188,7 @@ class _LoginPageState extends State<LoginPage> {
       return [
         ElevatedButton(
           key: const Key('create-account'),
-          child: const Align(
-            child: Text('Create Account'),
-          ),
+          child: const Align(child: Text('Create Account')),
           onPressed: () => submit(context),
         ),
         ElevatedButton(
