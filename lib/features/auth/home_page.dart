@@ -1,97 +1,105 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 
-import '../utils/base_page.dart';
+import '../../models/user_expense.dart';
+import '../../repositories/expense_repository.dart';
+import '../../services/login_auth.dart';
+import '../../utils/base_page.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return BasePage(
       title: 'Dashboard',
       showNotifications: true,
       showDrawer: true,
-      child: SafeArea(
-        child: Column(
-          children: [
-            // _buildTopBar(),
-            // const SizedBox(height: 20),
-            _buildMonthSelector(),
-            const SizedBox(height: 24),
-            _buildProgressRing(),
-            const SizedBox(height: 24),
-            _buildSummaryCard(),
-            const SizedBox(height: 24),
-            _buildRecentSpendingsHeader(),
-            const SizedBox(height: 12),
-            Expanded(
-              child: ListView(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                children: const [
-                  _SpendingTile(
-                    icon: Icons.restaurant,
-                    iconColor: Color(0xFF3D8BFD),
-                    title: 'Lunch',
-                    subtitle: '1 hour ago',
-                    amount: '₹500',
-                  ),
-                  SizedBox(height: 14),
-                  _SpendingTile(
-                    icon: Icons.shopping_basket,
-                    iconColor: Color(0xFF2ABF7E),
-                    title: 'Shopping',
-                    subtitle: '2 hour ago',
-                    amount: '₹1,000',
-                  ),
-                  SizedBox(height: 14),
-                  _SpendingTile(
-                    icon: Icons.local_movies,
-                    iconColor: Color(0xFFF2A93B),
-                    title: 'Movie tickets',
-                    subtitle: '4 hour ago',
-                    amount: '₹300',
-                  ),
-                  SizedBox(height: 80),
-                ],
+      showLogout: true,
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.pushNamed(
+            context.mounted
+                ? context
+                : throw Exception('Context is not mounted'),
+            '/AddExpense',
+          );
+        },
+        backgroundColor: const Color(0xFF1E3A8A),
+        shape: const CircleBorder(),
+        child: const Icon(Icons.add, size: 30, color: Colors.white),
+      ),
+      bottomNavigationBar: _buildBottomBar(),
+      child: Column(
+        children: [
+          _buildMonthSelector(),
+          const SizedBox(height: 24),
+          _buildProgressRing(),
+          const SizedBox(height: 24),
+          _buildSummaryCard(),
+          const SizedBox(height: 24),
+          _buildRecentSpendingsHeader(),
+          const SizedBox(height: 12),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: StreamBuilder(
+              stream: ExpenseRepository().watchExpensesForMonth(
+                AuthService().currentUid,
               ),
+              builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                if (snapshot.hasData) {
+                  final e = snapshot.data as List<UserExpense>;
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: e.length,
+                    itemBuilder: (context, int index) {
+                      return _SpendingTile(
+                        icon: Icons.restaurant,
+                        iconColor: const Color(0xFF3D8BFD),
+                        title: e[index].category,
+                        subtitle: e[index].date.toString(),
+                        amount: '₹${e[index].amount}',
+                      );
+                    },
+                  );
+                }
+                return const Text('No Data Found');
+              },
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildTopBar() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          const Icon(Icons.menu, size: 26),
-          const Text(
-            'Dashboard',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
-          ),
-          Stack(
-            clipBehavior: Clip.none,
-            children: [
-              const Icon(Icons.notifications_none, size: 26),
-              Positioned(
-                right: -1,
-                top: -1,
-                child: Container(
-                  width: 9,
-                  height: 9,
-                  decoration: const BoxDecoration(
-                    color: Colors.red,
-                    shape: BoxShape.circle,
-                  ),
-                ),
+  Widget _buildBottomBar() {
+    return BottomAppBar(
+      color: Colors.white,
+      shape: const CircularNotchedRectangle(),
+      notchMargin: 8,
+      child: SizedBox(
+        height: 62,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Container(
+              width: 42,
+              height: 42,
+              decoration: const BoxDecoration(
+                color: Color(0xFF1E3A8A),
+                shape: BoxShape.circle,
               ),
-            ],
-          ),
-        ],
+              child: const Icon(Icons.home, color: Colors.white, size: 20),
+            ),
+            const Icon(Icons.bar_chart, size: 24, color: Colors.black45),
+            const Icon(Icons.access_time, size: 24, color: Colors.black45),
+          ],
+        ),
       ),
     );
   }
@@ -206,7 +214,6 @@ class HomePage extends StatelessWidget {
 }
 
 class _SummaryColumn extends StatelessWidget {
-
   const _SummaryColumn({required this.label, required this.value});
   final String label;
   final String value;
@@ -218,7 +225,10 @@ class _SummaryColumn extends StatelessWidget {
         Text(
           label,
           textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 11, color: Colors.black.withValues(alpha: 0.5)),
+          style: TextStyle(
+            fontSize: 11,
+            color: Colors.black.withValues(alpha: 0.5),
+          ),
         ),
         const SizedBox(height: 6),
         Text(
@@ -240,7 +250,6 @@ class _VerticalDivider extends StatelessWidget {
 }
 
 class _SpendingTile extends StatelessWidget {
-
   const _SpendingTile({
     required this.icon,
     required this.iconColor,
@@ -256,45 +265,48 @@ class _SpendingTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Container(
-          width: 44,
-          height: 44,
-          decoration: BoxDecoration(
-            color: iconColor.withValues(alpha: 0.12),
-            shape: BoxShape.circle,
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 14),
+      child: Row(
+        children: [
+          Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: iconColor.withValues(alpha: 0.12),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, color: iconColor, size: 20),
           ),
-          child: Icon(icon, color: iconColor, size: 20),
-        ),
-        const SizedBox(width: 14),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                subtitle,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.black.withValues(alpha: 0.45),
+                const SizedBox(height: 2),
+                Text(
+                  subtitle,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.black.withValues(alpha: 0.45),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-        Text(
-          amount,
-          style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
-        ),
-      ],
+          Text(
+            amount,
+            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -303,7 +315,8 @@ class _SpendingTile extends StatelessWidget {
 /// stroke cap and a small circular knob marking the progress end,
 /// matching the mockup's ring style (not achievable with the default
 /// CircularProgressIndicator alone).
-class _RingPainter extends CustomPainter { // 0.0 - 1.0
+class _RingPainter extends CustomPainter {
+  // 0.0 - 1.0
 
   _RingPainter({required this.progress});
   final double progress;

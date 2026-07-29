@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../services/login_auth.dart';
-import '../home_page.dart';
+import 'home_page.dart';
 import 'login_page.dart';
 
 class LaunchPage extends StatefulWidget {

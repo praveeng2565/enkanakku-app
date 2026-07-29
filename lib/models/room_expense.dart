@@ -7,7 +7,7 @@ class RoomExpense {
     required this.date,
     required this.remarks,
     required this.perheadSplit,
-    required this.lastmodifieddateTime,
+    required this.lastModifiedDateTime,
   });
   factory RoomExpense.fromMap(Map<String, dynamic> m) => RoomExpense(
     id: m['id'] as String,
@@ -17,7 +17,7 @@ class RoomExpense {
     date: DateTime.parse(m['date']),
     remarks: m['remarks'] as String,
     perheadSplit: (m['perheadSplit'] as num).toDouble(),
-    lastmodifieddateTime: DateTime.parse(m['lastmodifieddateTime']),
+    lastModifiedDateTime: DateTime.parse(m['lastModifiedDateTime']),
   );
   factory RoomExpense.fromJson(Map<String, dynamic> j) =>
       RoomExpense.fromMap(j);
@@ -28,7 +28,7 @@ class RoomExpense {
   final DateTime date;
   final String remarks;
   final double perheadSplit;
-  final DateTime lastmodifieddateTime;
+  final DateTime lastModifiedDateTime;
   Map<String, dynamic> toMap() => {
     'id': id,
     'amount': amount,
@@ -37,7 +37,6 @@ class RoomExpense {
     'date': date.toIso8601String(),
     'remarks': remarks,
     'perheadSplit': perheadSplit,
-    'lastmodifieddateTime': lastmodifieddateTime.toIso8601String(),
+    'lastModifiedDateTime': DateTime.now().toIso8601String(),
   };
-  Map<String, dynamic> toJson() => toMap();
 }

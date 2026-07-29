@@ -5,7 +5,7 @@ import '../../services/login_auth.dart';
 import '../../services/snackbar_service.dart';
 import '../../theme/theme_view_model.dart';
 import '../../utils/common.dart';
-import '../home_page.dart';
+import 'home_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});

@@ -10,6 +10,8 @@ class AuthService {
 
   Future<User?> get getUser => Future.value(_auth.currentUser);
 
+  String get currentUid => _auth.currentUser?.uid ?? '';
+
   // Stream<User> get user => _auth.authStateChanges();
 
   // wrappinhg the firebase calls

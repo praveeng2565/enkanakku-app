@@ -15,3 +15,16 @@ class AppException implements Exception {
     return '$prefix$message';
   }
 }
+
+class ConcurrentEditException implements Exception {
+  ConcurrentEditException([
+    this.message =
+        'This expense was updated by someone else. Please refresh and try again.',
+  ]);
+  final String message;
+}
+
+class ExpenseNotFoundException implements Exception {
+  ExpenseNotFoundException([this.message = 'This expense no longer exists.']);
+  final String message;
+}

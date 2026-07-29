@@ -1,39 +1,33 @@
+import '../core/constants.dart';
+
 class UserExpense {
-  const UserExpense({
+  UserExpense({
     required this.id,
-    required this.amount,
-    required this.category,
-    required this.date,
-    required this.note,
-    required this.isMandatory,
-    required this.isRecurring,
+    this.amount,
+    this.category = AppConstants.emptyString,
+    this.date,
+    this.note = AppConstants.emptyString,
   });
   factory UserExpense.fromMap(Map<String, dynamic> m) => UserExpense(
     id: m['id'] as String,
-    amount: (m['amount'] as num).toDouble(),
+    amount: (m['amount'] as num?)?.toDouble(),
     category: m['category'] as String,
-    date: DateTime.parse(m['date']),
+    date: m['date'] != null ? DateTime.parse(m['date']) : null,
     note: m['note'] as String,
-    isMandatory: m['isMandatory'] as bool,
-    isRecurring: m['isRecurring'] as bool,
   );
   factory UserExpense.fromJson(Map<String, dynamic> j) =>
       UserExpense.fromMap(j);
   final String id;
-  final double amount;
-  final String category;
-  final DateTime date;
-  final String note;
-  final bool isMandatory;
-  final bool isRecurring;
+  double? amount;
+  String category;
+  DateTime? date;
+  String note;
   Map<String, dynamic> toMap() => {
     'id': id,
     'amount': amount,
     'category': category,
-    'date': date.toIso8601String(),
+    'date': date?.toIso8601String(),
     'note': note,
-    'isMandatory': isMandatory,
-    'isRecurring': isRecurring,
   };
   Map<String, dynamic> toJson() => toMap();
 }

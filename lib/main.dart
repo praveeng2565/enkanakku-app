@@ -5,9 +5,10 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'features/login/launch_page.dart';
+import 'features/auth/launch_page.dart';
+import 'features/auth/user_view_model.dart';
+import 'features/expenses/add_expense.dart';
 import 'firebase_options.dart';
-import 'repositories/user_view_model.dart';
 import 'services/snackbar_service.dart';
 import 'theme/app_theme.dart';
 import 'theme/theme_view_model.dart';
@@ -49,8 +50,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => UserViewModel()),
         ChangeNotifierProvider(create: (_) => ThemeViewModel()),
+        ChangeNotifierProvider(create: (_) => UserViewModel()),
       ],
       child: Consumer<ThemeViewModel>(
         builder: (context, themeVM, child) {
@@ -61,7 +62,10 @@ class MyApp extends StatelessWidget {
             themeMode: themeVM.themeMode,
             initialRoute: '/',
             scaffoldMessengerKey: SnackbarService.messengerKey,
-            routes: {'/': (context) => const LaunchPage()},
+            routes: {
+              '/': (context) => const LaunchPage(),
+              '/AddExpense': (context) => const AddExpense(),
+            },
           );
         },
       ),

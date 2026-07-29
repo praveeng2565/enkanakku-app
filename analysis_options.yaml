@@ -187,7 +187,7 @@ linter:
     - unnecessary_const
     - unnecessary_constructor_name
     # - unnecessary_final # conflicts with prefer_final_locals
-    - unnecessary_getters_setters
+    # - unnecessary_getters_setters
     # - unnecessary_lambdas # has false positives: https://github.com/dart-lang/linter/issues/498
     - unnecessary_late
     - unnecessary_new
