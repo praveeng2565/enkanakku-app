@@ -55,14 +55,14 @@ jobs:
       - name: Rename APK
         run: |
           mv build/app/outputs/flutter-apk/app-release.apk \
-             build/app/outputs/flutter-apk/kanakku-${{ steps.version.outputs.VERSION }}.apk
+             build/app/outputs/flutter-apk/Enkanakku-${{ steps.version.outputs.VERSION }}.apk
 
       - name: Create GitHub Release with APK attached
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
-          name: Kanakku v${{ steps.version.outputs.VERSION }}
-          files: build/app/outputs/flutter-apk/kanakku-${{ steps.version.outputs.VERSION }}.apk
+          name: Enkanakku v${{ steps.version.outputs.VERSION }}
+          files: build/app/outputs/flutter-apk/Enkanakku-${{ steps.version.outputs.VERSION }}.apk
           generate_release_notes: true
 
       - name: Set up Node (for Firestore update script)
@@ -75,7 +75,7 @@ jobs:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
           APP_VERSION: ${{ steps.version.outputs.VERSION }}
           BUILD_NUMBER: ${{ github.run_number }}
-          APK_URL: https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/kanakku-${{ steps.version.outputs.VERSION }}.apk
+          APK_URL: https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/Enkanakku-${{ steps.version.outputs.VERSION }}.apk
         run: |
           npm install firebase-admin
           node .github/scripts/update_version_doc.js
