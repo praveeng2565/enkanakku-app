@@ -56,12 +56,12 @@ class MyApp extends StatelessWidget {
       child: Consumer<ThemeViewModel>(
         builder: (context, themeVM, child) {
           return MaterialApp(
+            scaffoldMessengerKey: SnackbarService.messengerKey,
             debugShowCheckedModeBanner: false,
             theme: lightTheme,
             darkTheme: darkTheme,
             themeMode: themeVM.themeMode,
             initialRoute: '/',
-            scaffoldMessengerKey: SnackbarService.messengerKey,
             routes: {
               '/': (context) => const LaunchPage(),
               '/AddExpense': (context) => const AddExpense(),

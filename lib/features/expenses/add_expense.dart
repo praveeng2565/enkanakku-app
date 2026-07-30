@@ -164,7 +164,7 @@ class _AddExpenseState extends State<AddExpense> {
     ExpenseRepository().addExpense(AuthService().currentUid, _userExpense);
     removeProgressCircle(context);
     Navigator.of(context).pop();
-    SnackbarService.showInfoMessage('Expense added successfullt !!!');
+    SnackbarService.showInfoMessage('Expense added successfully !!!');
   }
 
   InputDecoration _fieldDecoration({required String hint, Widget? prefixIcon}) {

@@ -47,8 +47,8 @@ class Palette {
   static const Color drawerHeaderColor3 = Color(0xFF5CB2B2);
   static const Color drawerHeaderColor4 = Color(0xFF2A9494);
 
-  static const Color OrangePrimary = Color(0xFFF38123);
-  static const Color OrangeSecondary = Color(0xFFe46b51);
+  static const Color orangePrimary = Color(0xFFF38123);
+  static const Color orangeSecondary = Color(0xFFe46b51);
 
   static const Color mediumBrown = Color(0xFFDB5C43);
   static const Color darkBrown = Color(0xFFc34025);

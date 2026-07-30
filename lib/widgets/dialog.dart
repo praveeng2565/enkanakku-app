@@ -25,7 +25,10 @@ Future<void> showAlertDialogv2({
         padding: const EdgeInsets.all(10.0),
         child: Text(
           filledBtnText,
-          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w700,
+          ),
         ),
       ),
     ),
@@ -40,7 +43,10 @@ Future<void> showAlertDialogv2({
       ),
       child: Padding(
         padding: const EdgeInsets.all(10.0),
-        child: Text(outlineBtnText, style: const TextStyle(color: Colors.black)),
+        child: Text(
+          outlineBtnText,
+          style: const TextStyle(color: Colors.black),
+        ),
       ),
     ),
   );

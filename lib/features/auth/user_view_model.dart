@@ -8,6 +8,8 @@ import '../../models/user_remainder.dart';
 import '../../models/user_warranty.dart';
 
 class UserViewModel with ChangeNotifier {
+  bool appVersionValidated = true;
+  String appVersionErrorMsg = '';
   UserProfile? _userData;
 
   UserProfile? get user => _userData;

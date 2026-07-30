@@ -45,31 +45,43 @@ class _HomePageState extends State<HomePage> {
           const SizedBox(height: 24),
           _buildRecentSpendingsHeader(),
           const SizedBox(height: 12),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: StreamBuilder(
-              stream: ExpenseRepository().watchExpensesForMonth(
-                AuthService().currentUid,
-              ),
-              builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-                if (snapshot.hasData) {
-                  final e = snapshot.data as List<UserExpense>;
-                  return ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: e.length,
-                    itemBuilder: (context, int index) {
-                      return _SpendingTile(
-                        icon: Icons.restaurant,
-                        iconColor: const Color(0xFF3D8BFD),
-                        title: e[index].category,
-                        subtitle: e[index].date.toString(),
-                        amount: '₹${e[index].amount}',
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: StreamBuilder(
+                stream: ExpenseRepository().watchExpensesForMonth(
+                  AuthService().currentUid,
+                ),
+                builder:
+                    (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const CircularProgressIndicator.adaptive();
+                      }
+                      if (snapshot.hasData) {
+                        final e = snapshot.data as List<UserExpense>;
+                        if (e.isNotEmpty) {
+                          return ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: e.length,
+                            itemBuilder: (context, int index) {
+                              return _SpendingTile(
+                                icon: Icons.restaurant,
+                                iconColor: const Color(0xFF3D8BFD),
+                                title: e[index].category,
+                                subtitle: e[index].date.toString(),
+                                amount: '₹${e[index].amount}',
+                              );
+                            },
+                          );
+                        }
+                      }
+                      return const Center(
+                        child: Text(
+                          'No data found. Add new expense using "+" icon',
+                        ),
                       );
                     },
-                  );
-                }
-                return const Text('No Data Found');
-              },
+              ),
             ),
           ),
         ],

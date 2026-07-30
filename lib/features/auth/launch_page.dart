@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../services/login_auth.dart';
+import '../../services/update_service.dart';
 import 'home_page.dart';
 import 'login_page.dart';
+import 'update_dialog_page.dart';
+import 'user_view_model.dart';
 
 class LaunchPage extends StatefulWidget {
   const LaunchPage({super.key});
@@ -40,8 +44,9 @@ class _LaunchPageState extends State<LaunchPage> with TickerProviderStateMixin {
       ..forward()
       ..addStatusListener((AnimationStatus status) {
         if (status == AnimationStatus.completed) {
-          Future.delayed(const Duration(milliseconds: 300), () {
-            if (context.mounted) {
+          Future.delayed(const Duration(milliseconds: 300), () async {
+            final status = await _onLoginSuccess(context);
+            if (status && context.mounted) {
               Navigator.pushReplacement(
                 context.mounted
                     ? context
@@ -110,5 +115,16 @@ class _LaunchPageState extends State<LaunchPage> with TickerProviderStateMixin {
         ],
       ),
     );
+  }
+
+  Future<bool> _onLoginSuccess(BuildContext context) async {
+    final userViewModel = Provider.of<UserViewModel>(context, listen: false);
+    final updateInfo = await UpdateService().checkForUpdate();
+    userViewModel.appVersionErrorMsg = '';
+    if (updateInfo != null && context.mounted) {
+      userViewModel.appVersionValidated = false;
+      await showUpdateDialog(context, updateInfo);
+    }
+    return userViewModel.appVersionValidated;
   }
 }
