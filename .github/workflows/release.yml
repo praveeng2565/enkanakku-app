@@ -2,8 +2,13 @@ name: Build and Release APK
 
 on:
   push:
+    branches: [ "main" ]
     tags:
       - 'v*.*.*'   # triggers on tags like v1.0.0, v1.2.3
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build-and-release:
@@ -22,7 +27,7 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.29.0'   # match your local Flutter version
+          flutter-version: '3.44.6'   # match your local Flutter version
           channel: 'stable'
 
       - name: Install dependencies

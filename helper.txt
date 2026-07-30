@@ -5,3 +5,8 @@ SHA1: 1C:A0:7D:49:81:14:E1:14:26:30:D3:AD:9C:7A:F0:98:F9:EE:91:E0
 SHA-256: 05:FE:AC:F1:94:D8:40:DF:BC:5C:AF:9E:AD:2D:D3:BD:38:16:85:38:00:2D:8C:44:75:22:01:B7:CF:EC:2A:A4
 Valid until: Saturday, 5 July, 2053
 
+keytool -genkey -v -keystore upload-keystore.jks -keyalg RSA -keysize 2048 -validity 10000 -alias upload
+
+base64 -w 0 upload-keystore.jks > keystore_base64.txt
+
+git tag v1.0.0 && git push origin v1.0.0
