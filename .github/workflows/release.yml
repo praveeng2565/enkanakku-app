@@ -1,0 +1,76 @@
+name: Build and Release APK
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'   # triggers on tags like v1.0.0, v1.2.3
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.29.0'   # match your local Flutter version
+          channel: 'stable'
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Decode keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > android/app/upload-keystore.jks
+
+      - name: Extract version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Build release APK
+        env:
+          KEYSTORE_PATH: upload-keystore.jks
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          flutter build apk --release \
+            --build-name=${{ steps.version.outputs.VERSION }} \
+            --build-number=${{ github.run_number }}
+
+      - name: Rename APK
+        run: |
+          mv build/app/outputs/flutter-apk/app-release.apk \
+             build/app/outputs/flutter-apk/kanakku-${{ steps.version.outputs.VERSION }}.apk
+
+      - name: Create GitHub Release with APK attached
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Kanakku v${{ steps.version.outputs.VERSION }}
+          files: build/app/outputs/flutter-apk/kanakku-${{ steps.version.outputs.VERSION }}.apk
+          generate_release_notes: true
+
+      - name: Set up Node (for Firestore update script)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Update version doc in Firestore
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          APP_VERSION: ${{ steps.version.outputs.VERSION }}
+          BUILD_NUMBER: ${{ github.run_number }}
+          APK_URL: https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/kanakku-${{ steps.version.outputs.VERSION }}.apk
+        run: |
+          npm install firebase-admin
+          node .github/scripts/update_version_doc.js
