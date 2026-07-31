@@ -1,10 +1,14 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../../models/user_expense.dart';
 import '../../repositories/expense_repository.dart';
 import '../../services/login_auth.dart';
+import '../../theme/color.dart';
 import '../../utils/base_page.dart';
+import '../../utils/drop_down_items.dart';
+import '../../widgets/custom_drop_down_field.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -30,7 +34,7 @@ class _HomePageState extends State<HomePage> {
             '/AddExpense',
           );
         },
-        backgroundColor: const Color(0xFF1E3A8A),
+        backgroundColor: Palette.primaryColor,
         shape: const CircleBorder(),
         child: const Icon(Icons.add, size: 30, color: Colors.white),
       ),
@@ -65,11 +69,11 @@ class _HomePageState extends State<HomePage> {
                             itemCount: e.length,
                             itemBuilder: (context, int index) {
                               return _SpendingTile(
-                                icon: Icons.restaurant,
+                                icon: Icons.shopping_cart_checkout_sharp,
                                 iconColor: const Color(0xFF3D8BFD),
                                 title: e[index].category,
-                                subtitle: e[index].date.toString(),
-                                amount: '₹${e[index].amount}',
+                                subtitle: e[index].date,
+                                amount: e[index].amount,
                               );
                             },
                           );
@@ -104,7 +108,7 @@ class _HomePageState extends State<HomePage> {
               width: 42,
               height: 42,
               decoration: const BoxDecoration(
-                color: Color(0xFF1E3A8A),
+                color: Palette.primaryColor,
                 shape: BoxShape.circle,
               ),
               child: const Icon(Icons.home, color: Colors.white, size: 20),
@@ -126,9 +130,9 @@ class _HomePageState extends State<HomePage> {
           icon: const Icon(Icons.arrow_back, size: 20),
         ),
         const SizedBox(width: 8),
-        const Text(
-          'February 2026',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+        Text(
+          DateFormat('MMMM yyyy').format(DateTime.now()),
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
         ),
         const SizedBox(width: 8),
         IconButton(
@@ -154,7 +158,7 @@ class _HomePageState extends State<HomePage> {
                 style: TextStyle(
                   fontSize: 26,
                   fontWeight: FontWeight.w800,
-                  color: Color(0xFF1E3A8A),
+                  color: Palette.primaryColor,
                 ),
               ),
               SizedBox(height: 2),
@@ -273,8 +277,8 @@ class _SpendingTile extends StatelessWidget {
   final IconData icon;
   final Color iconColor;
   final String title;
-  final String subtitle;
-  final String amount;
+  final DateTime? subtitle;
+  final double? amount;
 
   @override
   Widget build(BuildContext context) {
@@ -297,7 +301,11 @@ class _SpendingTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  title,
+                  getExpenseCategories()
+                      .firstWhere(
+                        (DropDownItems element) => element.value == title,
+                      )
+                      .label,
                   style: const TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
@@ -305,7 +313,7 @@ class _SpendingTile extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  subtitle,
+                  DateFormat('dd MMM yyyy').format(subtitle!),
                   style: TextStyle(
                     fontSize: 12,
                     color: Colors.black.withValues(alpha: 0.45),
@@ -315,7 +323,7 @@ class _SpendingTile extends StatelessWidget {
             ),
           ),
           Text(
-            amount,
+            '₹${amount!.toStringAsFixed(1)}',
             style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
           ),
         ],
@@ -324,10 +332,6 @@ class _SpendingTile extends StatelessWidget {
   }
 }
 
-/// Custom-painted ring: grey track + blue progress arc with a rounded
-/// stroke cap and a small circular knob marking the progress end,
-/// matching the mockup's ring style (not achievable with the default
-/// CircularProgressIndicator alone).
 class _RingPainter extends CustomPainter {
   // 0.0 - 1.0
 
@@ -346,7 +350,7 @@ class _RingPainter extends CustomPainter {
       ..strokeCap = StrokeCap.round;
 
     final progressPaint = Paint()
-      ..color = const Color(0xFF1E3A8A)
+      ..color = Palette.primaryColor
       ..style = PaintingStyle.stroke
       ..strokeWidth = 14
       ..strokeCap = StrokeCap.round;
@@ -372,7 +376,7 @@ class _RingPainter extends CustomPainter {
     );
     final knobPaint = Paint()..color = Colors.white;
     final knobBorderPaint = Paint()
-      ..color = const Color(0xFF1E3A8A)
+      ..color = Palette.primaryColor
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2.5;
 

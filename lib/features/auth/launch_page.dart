@@ -24,13 +24,7 @@ class _LaunchPageState extends State<LaunchPage> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    AuthService().getUser.then((user) {
-      if (user != null) {
-        hasUser = true;
-      } else {
-        hasUser = false;
-      }
-    });
+    hasUser = AuthService().getUser != null;
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1200),

@@ -33,6 +33,6 @@ void removeProgressCircle(BuildContext context) {
   Navigator.of(context, rootNavigator: true).pop('dialog');
 }
 
-String formatDate(DateTime date) {
-  return '${date.day}/${date.month}/${date.year}';
+void hideKeyboard() {
+  FocusManager.instance.primaryFocus?.unfocus();
 }

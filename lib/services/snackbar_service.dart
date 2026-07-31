@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../theme/color.dart';
+
 class SnackbarService {
   SnackbarService._();
 
@@ -33,7 +35,7 @@ class SnackbarService {
           content: Text(message),
           duration: const Duration(seconds: 3),
           showCloseIcon: true,
-          backgroundColor: isError ? Colors.redAccent : Colors.grey,
+          backgroundColor: isError ? Colors.redAccent : Palette.color7,
           behavior: SnackBarBehavior.floating,
         ),
       );

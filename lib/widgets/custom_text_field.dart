@@ -8,6 +8,8 @@ class CustomTextField extends StatefulWidget {
     this.hintText,
     this.prefixIcon,
     this.keyboardType,
+    this.minLines,
+    this.maxLines,
     required this.onChanged,
   });
 
@@ -15,6 +17,8 @@ class CustomTextField extends StatefulWidget {
   final String? hintText;
   final Widget? prefixIcon;
   final String? initialValue;
+  final int? minLines;
+  final int? maxLines;
   final TextInputType? keyboardType;
   final Function(String) onChanged;
 
@@ -51,6 +55,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
           controller: _controller,
           onChanged: widget.onChanged,
           keyboardType: widget.keyboardType,
+          minLines: widget.minLines,
+          maxLines: widget.maxLines,
           decoration: InputDecoration(
             hintText: widget.hintText,
             hintStyle: const TextStyle(color: Colors.black38, fontSize: 14),

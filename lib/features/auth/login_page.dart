@@ -147,7 +147,7 @@ class _LoginPageState extends State<LoginPage> {
                     foregroundColor: Colors.white,
                   ),
                   onPressed: () async {
-                    FocusManager.instance.primaryFocus?.unfocus();
+                    hideKeyboard();
                     await validateLogin(context);
                   },
                   child: Text(isLoginPage ? 'Login' : 'Sign Up'),

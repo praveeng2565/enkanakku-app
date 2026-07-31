@@ -8,7 +8,7 @@ import '../utils/common.dart';
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  Future<User?> get getUser => Future.value(_auth.currentUser);
+  User? get getUser => _auth.currentUser;
 
   String get currentUid => _auth.currentUser?.uid ?? '';
 

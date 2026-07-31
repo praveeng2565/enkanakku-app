@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 
 import '../features/auth/login_page.dart';
 import '../services/login_auth.dart';
+import '../services/snackbar_service.dart';
+import '../theme/color.dart';
 import '../theme/theme_view_model.dart';
 import 'common.dart';
 
@@ -45,7 +47,7 @@ class _BasePageState extends State<BasePage> {
             IconButton(
               icon: const Icon(Icons.notifications),
               onPressed: () {
-                // Handle notifications action
+                SnackbarService.showInfoMessage('No Notifications');
               },
             ),
           if (widget.showLogout)
@@ -70,20 +72,59 @@ class _BasePageState extends State<BasePage> {
               child: ListView(
                 padding: EdgeInsets.zero,
                 children: [
-                  const DrawerHeader(
-                    decoration: BoxDecoration(color: Colors.blue),
-                    child: Text('Hello...'),
+                  UserAccountsDrawerHeader(
+                    accountName: Text(
+                      'Hello, ${AuthService().getUser?.displayName ?? ''}',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
+                    ),
+                    accountEmail: Text(
+                      '${getGreeting()}! Welcome back.',
+                      style: const TextStyle(color: Colors.white70),
+                    ),
+                    currentAccountPicture: const CircleAvatar(
+                      backgroundColor: Colors.white,
+                      child: Icon(
+                        Icons.person,
+                        size: 40,
+                        color: Palette.primaryColor,
+                      ),
+                    ),
+                    decoration: const BoxDecoration(
+                      color: Palette.primaryColor,
+                    ),
                   ),
                   ListTile(
-                    title: const Text('Theme Toggle'),
+                    leading: const Icon(Icons.home),
+                    title: const Text('Home'),
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.light_mode),
+                    title: const Text('Switch Theme'),
                     onTap: () {
                       context.read<ThemeViewModel>().toggleTheme();
                     },
                   ),
+                  const Divider(),
                   ListTile(
-                    title: const Text('Item 2'),
-                    onTap: () {
-                      // Handle item 2 tap
+                    leading: const Icon(Icons.logout),
+                    title: const Text('Logout'),
+                    onTap: () async {
+                      Navigator.pop(context);
+                      showProgressCircle(context);
+                      await AuthService().logout();
+                      removeProgressCircle(context);
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (BuildContext context) => const LoginPage(),
+                        ),
+                      );
                     },
                   ),
                 ],
@@ -95,5 +136,16 @@ class _BasePageState extends State<BasePage> {
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       bottomNavigationBar: widget.bottomNavigationBar,
     );
+  }
+
+  String getGreeting() {
+    final hour = DateTime.now().hour;
+    if (hour < 12) {
+      return 'Good morning';
+    }
+    if (hour < 17) {
+      return 'Good afternoon';
+    }
+    return 'Good evening';
   }
 }
