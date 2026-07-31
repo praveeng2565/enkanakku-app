@@ -51,7 +51,7 @@ jobs:
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
-          flutter build apk --release --flavor prod -t lib/main_prod.dart \
+          flutter build apk --release --flavor prod -t lib/main.dart \
             --build-name=${{ steps.version.outputs.VERSION }} \
             --build-number=${{ github.run_number }}
 
