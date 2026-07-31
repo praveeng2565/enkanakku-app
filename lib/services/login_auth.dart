@@ -20,9 +20,8 @@ class AuthService {
   }
 
   // wrappinhg the firebase calls
-  Future<void> createUser({
-    required String firstName,
-    required String lastName,
+  Future<bool> createUser({
+    required String name,
     required String email,
     required String password,
   }) async {
@@ -32,18 +31,20 @@ class AuthService {
     );
 
     final UserProfile info = UserProfile(id: getNewID());
-    info.name = '$firstName $lastName';
-    return await u.user?.updateProfile(displayName: info.name);
+    info.name = name;
+    await u.user?.updateProfile(displayName: info.name);
+    return true;
   }
 
   // wrappinhg the firebase calls
-  Future<UserCredential> loginUser({
+  Future<bool> loginUser({
     required String email,
     required String password,
-  }) {
-    return FirebaseAuth.instance.signInWithEmailAndPassword(
+  }) async {
+    await FirebaseAuth.instance.signInWithEmailAndPassword(
       email: email,
       password: password,
     );
+    return true;
   }
 }

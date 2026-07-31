@@ -5,6 +5,7 @@ import '../../services/login_auth.dart';
 import '../../services/snackbar_service.dart';
 import '../../theme/theme_view_model.dart';
 import '../../utils/common.dart';
+import '../../utils/enum.dart';
 import 'home_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -15,22 +16,27 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  late final TextEditingController _loginEmail;
-  late final TextEditingController _loginPassword;
-
-  bool loginObscure = true;
+  late final TextEditingController _name;
+  late final TextEditingController _email;
+  late final TextEditingController _password;
+  late bool loginObscure;
+  late PageType pageType;
 
   @override
   void initState() {
     super.initState();
-    _loginEmail = TextEditingController(text: 'lifeledgerappdev@gmail.com');
-    _loginPassword = TextEditingController(text: 'Qwerty@2025()');
+    loginObscure = true;
+    pageType = PageType.login;
+    _name = TextEditingController(text: 'Praveen Keerthana');
+    _email = TextEditingController(text: 'lifeledgerappdev@gmail.com');
+    _password = TextEditingController(text: 'TestPassword@2026()');
   }
 
   @override
   void dispose() {
-    _loginEmail.dispose();
-    _loginPassword.dispose();
+    _name.dispose();
+    _email.dispose();
+    _password.dispose();
     super.dispose();
   }
 
@@ -69,6 +75,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget loginUI(BuildContext context) {
+    final isLoginPage = pageType == PageType.login;
     return Align(
       alignment: Alignment.bottomCenter,
       child: Container(
@@ -81,20 +88,31 @@ class _LoginPageState extends State<LoginPage> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              const Text(
-                'Login',
-                style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+              Text(
+                isLoginPage ? 'Login' : 'Sign Up',
+                style: const TextStyle(
+                  fontSize: 26,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-              const SizedBox(height: 24),
+              if (!isLoginPage) const SizedBox(height: 24),
+              if (!isLoginPage)
+                authTextField(
+                  controller: _name,
+                  label: 'Name',
+                  hint: 'Enter your full name',
+                  icon: Icons.person,
+                ),
+              SizedBox(height: isLoginPage ? 24 : 18),
               authTextField(
-                controller: _loginEmail,
+                controller: _email,
                 label: 'Email',
                 hint: 'Enter your email',
                 icon: Icons.email_outlined,
               ),
               const SizedBox(height: 18),
               authTextField(
-                controller: _loginPassword,
+                controller: _password,
                 label: 'Password',
                 hint: 'Enter your password',
                 icon: Icons.lock_outline,
@@ -112,14 +130,15 @@ class _LoginPageState extends State<LoginPage> {
                   },
                 ),
               ),
-
-              Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  onPressed: () {},
-                  child: const Text('Forgot Password?'),
+              if (isLoginPage)
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: () {},
+                    child: const Text('Forgot Password?'),
+                  ),
                 ),
-              ),
+              if (!isLoginPage) const SizedBox(height: 18),
               SizedBox(
                 width: 180,
                 child: ElevatedButton(
@@ -128,9 +147,10 @@ class _LoginPageState extends State<LoginPage> {
                     foregroundColor: Colors.white,
                   ),
                   onPressed: () async {
+                    FocusManager.instance.primaryFocus?.unfocus();
                     await validateLogin(context);
                   },
-                  child: const Text('Login'),
+                  child: Text(isLoginPage ? 'Login' : 'Sign Up'),
                 ),
               ),
               const SizedBox(height: 16),
@@ -139,7 +159,31 @@ class _LoginPageState extends State<LoginPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  ElevatedButton.icon(
+                  Align(
+                    child: TextButton(
+                      onPressed: () {
+                        pageType = isLoginPage
+                            ? PageType.signUp
+                            : PageType.login;
+                        setState(() {});
+                      },
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            isLoginPage
+                                ? 'Dont have an account? '
+                                : 'Already have an account? ',
+                          ),
+                          Text(
+                            isLoginPage ? 'Sign Up' : 'LogIn',
+                            style: const TextStyle(color: Colors.blue),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  /* ElevatedButton.icon(
                     onPressed: () {},
                     icon: const Icon(Icons.g_mobiledata),
                     label: const Text('Google'),
@@ -148,7 +192,7 @@ class _LoginPageState extends State<LoginPage> {
                     onPressed: () {},
                     icon: const Icon(Icons.facebook),
                     label: const Text('Facebook'),
-                  ),
+                  ), */
                 ],
               ),
             ],
@@ -159,30 +203,45 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> validateLogin(BuildContext context) async {
-    if (_loginEmail.text.isEmpty) {
+    final isLoginPage = pageType == PageType.login;
+    if (!isLoginPage && _name.text.isEmpty) {
+      SnackbarService.showErrorMessage('Name cannot be empty');
+      return;
+    }
+    if (_email.text.isEmpty) {
       SnackbarService.showErrorMessage('Email cannot be empty');
       return;
     }
-    if (_loginPassword.text.isEmpty) {
+    if (_password.text.isEmpty) {
       SnackbarService.showErrorMessage('Password cannot be empty');
       return;
     }
     showProgressCircle(context);
-    if (_loginEmail.text.isNotEmpty && _loginPassword.text.isNotEmpty) {
-      await AuthService()
-          .loginUser(email: _loginEmail.text, password: _loginPassword.text)
+    late bool status;
+    if (isLoginPage) {
+      status = await AuthService()
+          .loginUser(email: _email.text, password: _password.text)
           .catchError((error) {
             removeProgressCircle(context);
-            SnackbarService.showErrorMessage(error.toString());
+            SnackbarService.showErrorMessage(error);
+            return false;
           });
     } else {
       // Create New User user using firebase API
-      // await AuthService().createUser(
-      //   email: _email,
-      //   firstName: _firstName,
-      //   lastName: _lastName,
-      //   password: _password,
-      // );
+      status = await AuthService()
+          .createUser(
+            name: _name.text,
+            email: _email.text,
+            password: _password.text,
+          )
+          .catchError((error) {
+            removeProgressCircle(context);
+            SnackbarService.showErrorMessage(error);
+            return false;
+          });
+    }
+    if (!status) {
+      return;
     }
     removeProgressCircle(context);
     Navigator.pushReplacement(

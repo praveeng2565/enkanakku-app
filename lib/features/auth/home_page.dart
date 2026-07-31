@@ -55,7 +55,7 @@ class _HomePageState extends State<HomePage> {
                 builder:
                     (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const CircularProgressIndicator.adaptive();
+                        return const Center(child: CircularProgressIndicator());
                       }
                       if (snapshot.hasData) {
                         final e = snapshot.data as List<UserExpense>;
@@ -77,7 +77,8 @@ class _HomePageState extends State<HomePage> {
                       }
                       return const Center(
                         child: Text(
-                          'No data found. Add new expense using "+" icon',
+                          'No data found.\nAdd new expense using "+" icon',
+                          textAlign: TextAlign.center,
                         ),
                       );
                     },
