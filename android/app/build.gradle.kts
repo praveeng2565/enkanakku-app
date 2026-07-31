@@ -1,6 +1,6 @@
 plugins {
     id("com.android.application")
-
+    id("org.jetbrains.kotlin.android")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
 
@@ -27,6 +27,10 @@ android {
     namespace = "com.praveen.enkanakku_app"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
+
+    buildFeatures {
+        resValues = true
+    }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -55,6 +59,30 @@ android {
             keyPassword = System.getenv("KEY_PASSWORD")
         }
     }
+    flavorDimensions += "env"
+
+    productFlavors {
+        create("dev") {
+            dimension = "env"
+            applicationIdSuffix = ".dev"
+            resValue(
+                "string",
+                "app_name",
+                "En Kanakku-Dev"
+            )
+        }
+
+        create("prod") {
+            dimension = "env"
+            resValue(
+                "string",
+                "app_name",
+                "En Kanakku"
+            )
+            signingConfig = signingConfigs.getByName("release")
+        }
+    }
+
     buildTypes {
         getByName("release") {
             signingConfig = signingConfigs.getByName("release")

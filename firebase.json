@@ -5,11 +5,18 @@
                 "default": {
                     "projectId": "enkanakku-app",
                     "appId": "1:753010084681:android:e83cc1eebf6ec9eeff2898",
-                    "fileOutput": "android/app/google-services.json"
+                    "fileOutput": "android/app/src/prod/google-services.json"
                 }
             },
             "dart": {
-                "lib/firebase_options.dart": {
+                "lib/firebase_options_dev.dart": {
+                    "projectId": "enkanakku-app-dev",
+                    "configurations": {
+                        "android": "1:947449486608:android:f4f40f8234e49c1c211995",
+                        "web": "1:947449486608:web:cc065b505e29c7ed211995"
+                    }
+                },
+                "lib/firebase_options_prod.dart": {
                     "projectId": "enkanakku-app",
                     "configurations": {
                         "android": "1:753010084681:android:e83cc1eebf6ec9eeff2898",

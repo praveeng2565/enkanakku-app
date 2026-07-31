@@ -5,22 +5,26 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "enkanakku_app",
+            "name": "Dev-EnKanakku",
             "request": "launch",
             "type": "dart",
-            "flutterMode": "debug"
+            "flutterMode": "debug",
+            "program": "lib/main_dev.dart",
+            "args": [
+                "--flavor",
+                "dev"
+            ]
         },
         {
-            "name": "enkanakku_app (profile mode)",
+            "name": "Prod-EnKanakku",
             "request": "launch",
             "type": "dart",
-            "flutterMode": "profile"
-        },
-        {
-            "name": "enkanakku_app (release mode)",
-            "request": "launch",
-            "type": "dart",
-            "flutterMode": "release"
+            "program": "lib/main_prod.dart",
+            "flutterMode": "release",
+            "args": [
+                "--flavor",
+                "prod"
+            ]
         }
     ]
 }

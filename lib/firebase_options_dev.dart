@@ -8,7 +8,7 @@ import 'package:flutter/foundation.dart'
 ///
 /// Example:
 /// ```dart
-/// import 'firebase_options.dart';
+/// import 'firebase_options_dev.dart';
 /// // ...
 /// await Firebase.initializeApp(
 ///   options: DefaultFirebaseOptions.currentPlatform,
@@ -50,20 +50,20 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyDKy-xKNarXBjXFyfzpi3y6VQS7b2U9gY4',
-    appId: '1:753010084681:web:057e713deac04b23ff2898',
-    messagingSenderId: '753010084681',
-    projectId: 'enkanakku-app',
-    authDomain: 'enkanakku-app.firebaseapp.com',
-    storageBucket: 'enkanakku-app.firebasestorage.app',
-    measurementId: 'G-YVH0RFCWHP',
+    apiKey: 'AIzaSyDWdyujQ05ohZaSOFkZFip7uEj37KGa6vA',
+    appId: '1:947449486608:web:cc065b505e29c7ed211995',
+    messagingSenderId: '947449486608',
+    projectId: 'enkanakku-app-dev',
+    authDomain: 'enkanakku-app-dev.firebaseapp.com',
+    storageBucket: 'enkanakku-app-dev.firebasestorage.app',
+    measurementId: 'G-1TFRD3P75W',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyANbKWj3AJ2Sxbk3AYjhg8fQoID5q-huw0',
-    appId: '1:753010084681:android:e83cc1eebf6ec9eeff2898',
-    messagingSenderId: '753010084681',
-    projectId: 'enkanakku-app',
-    storageBucket: 'enkanakku-app.firebasestorage.app',
+    apiKey: 'AIzaSyCue5mqBFgeK8eVqU8b--XOmy5ykDP0PGA',
+    appId: '1:947449486608:android:f4f40f8234e49c1c211995',
+    messagingSenderId: '947449486608',
+    projectId: 'enkanakku-app-dev',
+    storageBucket: 'enkanakku-app-dev.firebasestorage.app',
   );
 }

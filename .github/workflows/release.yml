@@ -51,13 +51,13 @@ jobs:
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
-          flutter build apk --release \
+          flutter build apk --release --flavor prod -t lib/main_prod.dart \
             --build-name=${{ steps.version.outputs.VERSION }} \
             --build-number=${{ github.run_number }}
 
       - name: Rename APK
         run: |
-          mv build/app/outputs/flutter-apk/app-release.apk \
+          mv build/app/outputs/flutter-apk/app-prod-release.apk \
              build/app/outputs/flutter-apk/Enkanakku-${{ steps.version.outputs.VERSION }}.apk
 
       - name: Create GitHub Release with APK attached

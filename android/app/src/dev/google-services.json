@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "947449486608",
+    "project_id": "enkanakku-app-dev",
+    "storage_bucket": "enkanakku-app-dev.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:947449486608:android:f4f40f8234e49c1c211995",
+        "android_client_info": {
+          "package_name": "com.praveen.enkanakku_app.dev"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "947449486608-k1p1c6fe90n0qqvv7h1gf3mmcq0ektnv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCue5mqBFgeK8eVqU8b--XOmy5ykDP0PGA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "947449486608-k1p1c6fe90n0qqvv7h1gf3mmcq0ektnv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
