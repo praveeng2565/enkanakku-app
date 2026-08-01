@@ -10,6 +10,7 @@ import '../../models/user_warranty.dart';
 class UserViewModel with ChangeNotifier {
   bool appVersionValidated = true;
   String appVersionErrorMsg = '';
+  String appVersion = '';
   UserProfile? _userData;
 
   UserProfile? get user => _userData;

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 
 import '../../services/login_auth.dart';
@@ -113,6 +114,9 @@ class _LaunchPageState extends State<LaunchPage> with TickerProviderStateMixin {
     if (updateInfo != null && context.mounted) {
       userViewModel.appVersionValidated = false;
       await showUpdateDialog(context, updateInfo);
+    } else {
+      final packageInfo = await PackageInfo.fromPlatform();
+      userViewModel.appVersion = packageInfo.version;
     }
     return userViewModel.appVersionValidated;
   }

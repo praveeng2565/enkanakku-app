@@ -36,7 +36,7 @@ class UpdateService {
   /// Returns null if the app is already up to date.
   Future<UpdateInfo?> checkForUpdate() async {
     final packageInfo = await PackageInfo.fromPlatform();
-    final currentVersion = packageInfo.version; // e.g. "1.2.0"
+    final currentVersion = packageInfo.version;
 
     final doc = await _firestore.collection('app_config').doc('version').get();
     if (!doc.exists) {

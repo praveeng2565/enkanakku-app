@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../services/login_auth.dart';
-import '../theme/app_theme.dart';
-import '../theme/color.dart';
 import 'common.dart';
 
 class BasePage extends StatefulWidget {
@@ -11,7 +9,7 @@ class BasePage extends StatefulWidget {
     required this.title,
     required this.child,
     this.showNotifications = false,
-    this.showDrawer = false,
+    this.drawer,
     this.showLogout = false,
     this.floatingActionButton,
     this.bottomNavigationBar,
@@ -20,7 +18,7 @@ class BasePage extends StatefulWidget {
   final String title;
   final Widget child;
   final bool showNotifications;
-  final bool showDrawer;
+  final Widget? drawer;
   final bool showLogout;
   final FloatingActionButton? floatingActionButton;
   final Widget? bottomNavigationBar;
@@ -59,91 +57,11 @@ class _BasePageState extends State<BasePage> {
             ),
         ],
       ),
-      drawer: widget.showDrawer
-          ? Drawer(
-              child: ListView(
-                padding: EdgeInsets.zero,
-                children: [
-                  UserAccountsDrawerHeader(
-                    accountName: Text(
-                      'Hello, ${AuthService().getUser?.displayName ?? ''}',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
-                    ),
-                    accountEmail: Text(
-                      '${getGreeting()}! Welcome back.',
-                      style: const TextStyle(color: Colors.white70),
-                    ),
-                    currentAccountPicture: const Padding(
-                      padding: EdgeInsets.all(3.0),
-                      child: CircleAvatar(
-                        backgroundColor: Colors.white,
-                        child: Icon(
-                          Icons.person,
-                          size: 40,
-                          color: Palette.primaryColor,
-                        ),
-                      ),
-                    ),
-                    decoration: const BoxDecoration(
-                      color: Palette.primaryColor,
-                    ),
-                    onDetailsPressed: () {
-                      Navigator.pushNamed(context, '/profile');
-                    },
-                  ),
-                  ListTile(
-                    leading: const Icon(Icons.home),
-                    title: const Text('Home'),
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                  ),
-                  ListTile(
-                    leading: const Icon(Icons.palette_outlined),
-                    title: const Text('Switch Theme'),
-                    onTap: () => showThemePicker(context),
-                  ),
-                  ListTile(
-                    leading: const Icon(Icons.settings),
-                    title: const Text('Settings'),
-                    onTap: () {
-                      Navigator.pushNamed(context, '/settings');
-                    },
-                  ),
-                  const Divider(),
-                  ListTile(
-                    leading: const Icon(Icons.logout),
-                    title: const Text('Logout'),
-                    onTap: () async {
-                      Navigator.pop(context);
-                      showProgressCircle(context);
-                      await AuthService().logout();
-                      removeProgressCircle(context);
-                      Navigator.pushReplacementNamed(context, '/Login');
-                    },
-                  ),
-                ],
-              ),
-            )
-          : null,
+      drawer: widget.drawer,
       body: SafeArea(child: widget.child),
       floatingActionButton: widget.floatingActionButton,
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       bottomNavigationBar: widget.bottomNavigationBar,
     );
-  }
-
-  String getGreeting() {
-    final hour = DateTime.now().hour;
-    if (hour < 12) {
-      return 'Good morning';
-    }
-    if (hour < 17) {
-      return 'Good afternoon';
-    }
-    return 'Good evening';
   }
 }
