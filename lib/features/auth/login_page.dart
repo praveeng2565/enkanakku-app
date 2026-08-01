@@ -6,7 +6,6 @@ import '../../services/snackbar_service.dart';
 import '../../theme/theme_view_model.dart';
 import '../../utils/common.dart';
 import '../../utils/enum.dart';
-import '../dashboard/home_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -248,13 +247,7 @@ class _LoginPageState extends State<LoginPage> {
       return;
     }
     removeProgressCircle(context);
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        settings: const RouteSettings(name: 'HomePage'),
-        builder: (BuildContext context) => const HomePage(),
-      ),
-    );
+    Navigator.pushReplacementNamed(context, '/Home');
   }
 }
 

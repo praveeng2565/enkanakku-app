@@ -1,35 +1,32 @@
 import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../../repositories/expense_repository.dart';
 import '../../theme/color.dart';
-import '../../utils/base_page.dart';
 import '../../utils/common.dart';
 import '../../utils/drop_down_items.dart';
 import '../../widgets/custom_drop_down_field.dart';
 import '../../widgets/custom_icon_button.dart';
-import 'dashboard_view_model.dart';
+import 'home_view_model.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class DashboardPage extends StatefulWidget {
+  const DashboardPage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<DashboardPage> createState() => _DashboardPageState();
 }
 
-class _HomePageState extends State<HomePage> {
-  late DashboardViewModel dashboardViewModel;
+class _DashboardPageState extends State<DashboardPage> {
+  late HomeViewModel dashboardViewModel;
   bool hasData = true;
   @override
   void initState() {
     super.initState();
     hasData = false;
-    dashboardViewModel = Provider.of<DashboardViewModel>(
-      context,
-      listen: false,
-    );
+    dashboardViewModel = Provider.of<HomeViewModel>(context, listen: false);
     dashboardViewModel
       ..currentDate = DateTime.now()
       ..dashMonthYear = DateTime.now()
@@ -50,70 +47,63 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return BasePage(
-      title: 'Dashboard',
-      showNotifications: true,
-      showDrawer: true,
-      showLogout: true,
-      bottomNavigationBar: _buildBottomBar(),
-      child: Consumer<DashboardViewModel>(
-        builder: (BuildContext context, DashboardViewModel dashVm, Widget? child) {
-          return hasData
-              ? pageBody()
-              : FutureBuilder(
-                  future: loadData(false),
-                  builder: (context, asyncSnapshot) {
-                    if (asyncSnapshot.hasData && hasData) {
-                      return pageBody();
-                    }
+    return Consumer<HomeViewModel>(
+      builder: (BuildContext context, HomeViewModel dashVm, Widget? child) {
+        return hasData
+            ? pageBody()
+            : FutureBuilder(
+                future: loadData(false),
+                builder: (context, asyncSnapshot) {
+                  if (asyncSnapshot.hasData && hasData) {
+                    return pageBody();
+                  }
 
-                    if (asyncSnapshot.hasError) {
-                      return Center(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 32),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.error_outline_rounded,
-                                size: 64,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
+                  if (asyncSnapshot.hasError) {
+                    return Center(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 32),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.error_outline_rounded,
+                              size: 64,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
 
-                              const SizedBox(height: 24),
+                            const SizedBox(height: 24),
 
-                              Text(
-                                'Something went wrong',
-                                style: Theme.of(context).textTheme.headlineSmall
-                                    ?.copyWith(fontWeight: FontWeight.bold),
-                              ),
+                            Text(
+                              'Something went wrong',
+                              style: Theme.of(context).textTheme.headlineSmall
+                                  ?.copyWith(fontWeight: FontWeight.bold),
+                            ),
 
-                              const SizedBox(height: 12),
+                            const SizedBox(height: 12),
 
-                              Text(
-                                "We're unable to load your data at the moment.\nPlease refresh or try again later.",
-                                textAlign: TextAlign.center,
-                                style: Theme.of(context).textTheme.bodyMedium,
-                              ),
+                            Text(
+                              "We're unable to load your data at the moment.\nPlease refresh or try again later.",
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
 
-                              const SizedBox(height: 32),
+                            const SizedBox(height: 32),
 
-                              FilledButton.icon(
-                                onPressed: loadData,
-                                icon: const Icon(Icons.refresh_rounded),
-                                label: const Text('Refresh'),
-                              ),
-                            ],
-                          ),
+                            FilledButton.icon(
+                              onPressed: loadData,
+                              icon: const Icon(Icons.refresh_rounded),
+                              label: const Text('Refresh'),
+                            ),
+                          ],
                         ),
-                      );
-                    }
+                      ),
+                    );
+                  }
 
-                    return const Center(child: CircularProgressIndicator());
-                  },
-                );
-        },
-      ),
+                  return const Center(child: CircularProgressIndicator());
+                },
+              );
+      },
     );
   }
 
@@ -220,33 +210,6 @@ class _HomePageState extends State<HomePage> {
                   );
                 },
               ),
-      ),
-    );
-  }
-
-  Widget _buildBottomBar() {
-    return BottomAppBar(
-      color: Colors.white,
-      shape: const CircularNotchedRectangle(),
-      notchMargin: 8,
-      child: SizedBox(
-        height: 62,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            Container(
-              width: 42,
-              height: 42,
-              decoration: const BoxDecoration(
-                color: Palette.primaryColor,
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(Icons.home, color: Colors.white, size: 20),
-            ),
-            const Icon(Icons.bar_chart, size: 24, color: Colors.black45),
-            const Icon(Icons.access_time, size: 24, color: Colors.black45),
-          ],
-        ),
       ),
     );
   }

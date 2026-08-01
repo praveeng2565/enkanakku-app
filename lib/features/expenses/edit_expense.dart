@@ -12,7 +12,7 @@ import '../../widgets/custom_dialog.dart';
 import '../../widgets/custom_drop_down_field.dart';
 import '../../widgets/custom_icon_button.dart';
 import '../../widgets/custom_text_field.dart';
-import '../dashboard/dashboard_view_model.dart';
+import '../home/home_view_model.dart';
 
 class EditExpense extends StatefulWidget {
   const EditExpense({
@@ -82,7 +82,7 @@ class _EditExpenseState extends State<EditExpense> {
                                 removeProgressCircle(context);
                               })
                               .then((void value) {
-                                Provider.of<DashboardViewModel>(
+                                Provider.of<HomeViewModel>(
                                     context,
                                     listen: false,
                                   )
@@ -227,7 +227,7 @@ class _EditExpenseState extends State<EditExpense> {
           removeProgressCircle(context);
         })
         .then((void value) {
-          Provider.of<DashboardViewModel>(context, listen: false)
+          Provider.of<HomeViewModel>(context, listen: false)
             ..expenses.removeAt(widget.index)
             ..expenses.add(_userExpense)
             ..calculateData();

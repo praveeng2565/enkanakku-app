@@ -4,10 +4,10 @@ import 'package:provider/provider.dart';
 import 'features/auth/launch_page.dart';
 import 'features/auth/login_page.dart';
 import 'features/auth/user_view_model.dart';
-import 'features/dashboard/dashboard_view_model.dart';
-import 'features/dashboard/home_page.dart';
 import 'features/expenses/add_expense.dart';
 import 'features/expenses/edit_expense.dart';
+import 'features/home/home_page.dart';
+import 'features/home/home_view_model.dart';
 import 'services/snackbar_service.dart';
 import 'theme/app_theme.dart';
 import 'theme/theme_view_model.dart';
@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeViewModel()),
         ChangeNotifierProvider(create: (_) => UserViewModel()),
-        ChangeNotifierProvider(create: (_) => DashboardViewModel()),
+        ChangeNotifierProvider(create: (_) => HomeViewModel()),
       ],
       child: Consumer<ThemeViewModel>(
         builder: (context, themeVM, child) {

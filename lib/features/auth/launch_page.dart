@@ -3,8 +3,6 @@ import 'package:provider/provider.dart';
 
 import '../../services/login_auth.dart';
 import '../../services/update_service.dart';
-import '../dashboard/home_page.dart';
-import 'login_page.dart';
 import 'update_app_dialog.dart';
 import 'user_view_model.dart';
 
@@ -41,14 +39,11 @@ class _LaunchPageState extends State<LaunchPage> with TickerProviderStateMixin {
           Future.delayed(const Duration(milliseconds: 300), () async {
             final status = await _onLoginSuccess(context);
             if (status && context.mounted) {
-              Navigator.pushReplacement(
+              Navigator.pushReplacementNamed(
                 context.mounted
                     ? context
                     : throw Exception('Context is not mounted'),
-                MaterialPageRoute(
-                  builder: (context) =>
-                      hasUser ? const HomePage() : const LoginPage(),
-                ),
+                hasUser ? '/Home' : '/Login',
               );
             }
           });

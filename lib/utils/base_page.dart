@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../features/auth/login_page.dart';
 import '../services/login_auth.dart';
 import '../theme/app_theme.dart';
 import '../theme/color.dart';
@@ -55,12 +54,7 @@ class _BasePageState extends State<BasePage> {
                 showProgressCircle(context);
                 await AuthService().logout();
                 removeProgressCircle(context);
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (BuildContext context) => const LoginPage(),
-                  ),
-                );
+                Navigator.pushReplacementNamed(context, '/Login');
               },
             ),
         ],
@@ -128,12 +122,7 @@ class _BasePageState extends State<BasePage> {
                       showProgressCircle(context);
                       await AuthService().logout();
                       removeProgressCircle(context);
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (BuildContext context) => const LoginPage(),
-                        ),
-                      );
+                      Navigator.pushReplacementNamed(context, '/Login');
                     },
                   ),
                 ],

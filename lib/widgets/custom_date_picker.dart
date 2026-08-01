@@ -79,7 +79,7 @@ class _CustomTextFieldState extends State<CustomDatePicker> {
   }
 
   Future<void> _pickDate() async {
-    if(widget.isDisabled) return;
+    if (widget.isDisabled) return;
     final currentDate = DateTime.now();
     final (DateTime, DateTime) date = _getDates();
     final picked = await showDatePicker(

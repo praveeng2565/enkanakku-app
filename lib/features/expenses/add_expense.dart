@@ -10,7 +10,7 @@ import '../../utils/drop_down_items.dart';
 import '../../widgets/custom_date_picker.dart';
 import '../../widgets/custom_drop_down_field.dart';
 import '../../widgets/custom_text_field.dart';
-import '../dashboard/dashboard_view_model.dart';
+import '../home/home_view_model.dart';
 
 class AddExpense extends StatefulWidget {
   const AddExpense({super.key});
@@ -165,7 +165,7 @@ class _AddExpenseState extends State<AddExpense> {
           removeProgressCircle(context);
         })
         .then((void value) {
-          Provider.of<DashboardViewModel>(context, listen: false)
+          Provider.of<HomeViewModel>(context, listen: false)
             ..expenses.add(_userExpense)
             ..calculateData();
           Navigator.of(context).pop();

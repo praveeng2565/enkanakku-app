@@ -60,9 +60,7 @@ Future<void> showAlertDialog({
                     padding: const EdgeInsets.only(left: 15.0),
                     child: Text(
                       subtitle,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w500,
-                      ),
+                      style: const TextStyle(fontWeight: FontWeight.w500),
                     ),
                   ),
                   const SizedBox(height: 20),
