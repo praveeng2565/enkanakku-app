@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../utils/enum.dart';
+
 class CustomDatePicker extends StatefulWidget {
   const CustomDatePicker({
     super.key,
@@ -8,12 +10,16 @@ class CustomDatePicker extends StatefulWidget {
     this.initialValue,
     this.hintText,
     this.prefixIcon,
+    this.type = DatePickerType.allowAllDates,
     required this.onChanged,
+    this.isDisabled = false,
   });
 
   final String label;
   final String? hintText;
+  final bool isDisabled;
   final Widget? prefixIcon;
+  final DatePickerType type;
   final DateTime? initialValue;
   final Function(DateTime) onChanged;
 
@@ -56,6 +62,7 @@ class _CustomTextFieldState extends State<CustomDatePicker> {
                 hintStyle: const TextStyle(color: Colors.black38, fontSize: 14),
                 suffixIcon: const Icon(Icons.calendar_month_outlined, size: 18),
                 filled: true,
+                enabled: !widget.isDisabled,
                 fillColor: Theme.of(context).inputDecorationTheme.fillColor,
                 contentPadding: const EdgeInsets.all(14),
                 border: OutlineInputBorder(
@@ -72,17 +79,39 @@ class _CustomTextFieldState extends State<CustomDatePicker> {
   }
 
   Future<void> _pickDate() async {
+    if(widget.isDisabled) return;
     final currentDate = DateTime.now();
+    final (DateTime, DateTime) date = _getDates();
     final picked = await showDatePicker(
       context: context,
       initialDate: DateTime.tryParse(_controller.text) ?? currentDate,
-      firstDate: DateTime(currentDate.year, currentDate.month),
-
-      lastDate: DateTime(currentDate.year, currentDate.month + 1, 0),
+      firstDate: date.$1,
+      lastDate: date.$2,
     );
     if (picked != null) {
       _controller.text = _formatDate(picked);
       widget.onChanged(picked);
+    }
+  }
+
+  (DateTime, DateTime) _getDates() {
+    final currentDate = DateTime.now();
+    switch (widget.type) {
+      case DatePickerType.allowAllDates:
+        return (
+          DateTime(currentDate.year - 50),
+          DateTime(currentDate.year + 50),
+        );
+      case DatePickerType.monthlyExpense:
+        return (
+          DateTime(currentDate.year, currentDate.month),
+          DateTime(currentDate.year, currentDate.month + 1, 0),
+        );
+      case DatePickerType.monthlyExpenseWithException:
+        return (
+          DateTime(currentDate.year, currentDate.month - 1),
+          DateTime(currentDate.year, currentDate.month + 1, 0),
+        );
     }
   }
 

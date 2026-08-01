@@ -8,26 +8,34 @@ import '../../utils/base_page.dart';
 import '../../utils/common.dart';
 import '../../utils/drop_down_items.dart';
 import '../../widgets/custom_date_picker.dart';
+import '../../widgets/custom_dialog.dart';
 import '../../widgets/custom_drop_down_field.dart';
+import '../../widgets/custom_icon_button.dart';
 import '../../widgets/custom_text_field.dart';
 import '../dashboard/dashboard_view_model.dart';
 
-class AddExpense extends StatefulWidget {
-  const AddExpense({super.key});
-
+class EditExpense extends StatefulWidget {
+  const EditExpense({
+    super.key,
+    required this.userExpense,
+    required this.index,
+  });
+  final UserExpense userExpense;
+  final int index;
   @override
-  State<AddExpense> createState() => _AddExpenseState();
+  State<EditExpense> createState() => _EditExpenseState();
 }
 
-class _AddExpenseState extends State<AddExpense> {
+class _EditExpenseState extends State<EditExpense> {
   late UserExpense _userExpense;
   late TextEditingController _amountController;
   late TextEditingController _noteController;
+  bool isEdit = false;
 
   @override
   void initState() {
     super.initState();
-    _userExpense = UserExpense(id: getNewID(), date: DateTime.now());
+    _userExpense = widget.userExpense.copyWith();
     _amountController = TextEditingController();
     _noteController = TextEditingController();
   }
@@ -42,12 +50,58 @@ class _AddExpenseState extends State<AddExpense> {
   @override
   Widget build(BuildContext context) {
     return BasePage(
-      title: 'Add Expense',
+      title: 'Expense Details',
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Row(
+              mainAxisAlignment: .end,
+              children: [
+                if (!isEdit)
+                  CustomIconButton(
+                    icon: Icons.edit,
+                    onTap: () => setState(() {
+                      isEdit = true;
+                    }),
+                  ),
+                if (!isEdit)
+                  CustomIconButton(
+                    icon: Icons.delete,
+                    onTap: () {
+                      showAlertDialog(
+                        context: context,
+                        subtitle: 'Are you sure want to delete?',
+                        onOkPressed: () async {
+                          Navigator.of(context).pop();
+                          showProgressCircle(context);
+                          await ExpenseRepository()
+                              .deleteExpense(_userExpense)
+                              .whenComplete(() {
+                                removeProgressCircle(context);
+                              })
+                              .then((void value) {
+                                Provider.of<DashboardViewModel>(
+                                    context,
+                                    listen: false,
+                                  )
+                                  ..expenses.removeAt(widget.index)
+                                  ..calculateData();
+                                Navigator.of(context).pop();
+                                SnackbarService.showInfoMessage(
+                                  'Deleted successfully !!!',
+                                );
+                              })
+                              .onError((Object error, StackTrace stackTrace) {
+                                SnackbarService.showErrorMessage(error);
+                              });
+                        },
+                      );
+                    },
+                  ),
+              ],
+            ),
             const SizedBox(height: 24),
             Expanded(
               child: SingleChildScrollView(
@@ -57,6 +111,8 @@ class _AddExpenseState extends State<AddExpense> {
                       label: 'Category',
                       hintText: 'Choose your category',
                       items: getExpenseCategories(),
+                      initialValue: _userExpense.category,
+                      isDisabled: !isEdit,
                       onChanged: (value) {
                         _userExpense.category = value!;
                       },
@@ -66,6 +122,7 @@ class _AddExpenseState extends State<AddExpense> {
                       label: 'Date',
                       hintText: 'Enter buy category time',
                       initialValue: _userExpense.date,
+                      isDisabled: true,
                       onChanged: (DateTime p0) {
                         _userExpense.date = p0;
                       },
@@ -74,6 +131,8 @@ class _AddExpenseState extends State<AddExpense> {
                     CustomTextField(
                       label: 'Amount',
                       hintText: 'Enter your amount',
+                      isDisabled: !isEdit,
+                      initialValue: formatAmount(_userExpense.amount),
                       keyboardType: const TextInputType.numberWithOptions(
                         decimal: true,
                       ),
@@ -93,6 +152,8 @@ class _AddExpenseState extends State<AddExpense> {
                       hintText: 'Enter your notes',
                       minLines: 2,
                       maxLines: 4,
+                      isDisabled: !isEdit,
+                      initialValue: _userExpense.note,
                       prefixIcon: const Icon(Icons.edit_note_rounded, size: 18),
                       onChanged: (value) {
                         _userExpense.note = value;
@@ -127,23 +188,24 @@ class _AddExpenseState extends State<AddExpense> {
                       ),
                     ),
                   ),
-                  ElevatedButton(
-                    onPressed: _validateAndSaveExpense,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF1E3A8A),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                  if (isEdit)
+                    ElevatedButton(
+                      onPressed: _validateAndUpdateExpense,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF1E3A8A),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: const Text(
+                        'Update Expense',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
-                    child: const Text(
-                      'Save Expense',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
                 ],
               ),
             ),
@@ -154,22 +216,23 @@ class _AddExpenseState extends State<AddExpense> {
     );
   }
 
-  Future<void> _validateAndSaveExpense() async {
+  Future<void> _validateAndUpdateExpense() async {
     hideKeyboard();
     final val = _validate();
     if (!val) return;
     showProgressCircle(context);
     await ExpenseRepository()
-        .addExpense(_userExpense)
+        .updateExpense(_userExpense, shouldValidateUpdatedDate: false)
         .whenComplete(() {
           removeProgressCircle(context);
         })
         .then((void value) {
           Provider.of<DashboardViewModel>(context, listen: false)
+            ..expenses.removeAt(widget.index)
             ..expenses.add(_userExpense)
             ..calculateData();
           Navigator.of(context).pop();
-          SnackbarService.showInfoMessage('Expense added successfully !!!');
+          SnackbarService.showInfoMessage('Expense updated successfully !!!');
         })
         .onError((Object error, StackTrace stackTrace) {
           SnackbarService.showErrorMessage(error);

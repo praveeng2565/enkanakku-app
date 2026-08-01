@@ -1,38 +1,51 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../core/exceptions.dart';
 import '../models/user_expense.dart';
+import '../services/login_auth.dart';
+import '../utils/common.dart';
 
-/// Handles all Firestore reads/writes for `users/{uid}/expenses`.
-/// Includes optimistic-locking on updates so two people editing the
-/// same expense at once don't silently overwrite each other (see the
-/// concurrency discussion from earlier — this is where that gets
-/// implemented, not in the ViewModel or the UI).
 class ExpenseRepository {
-  ExpenseRepository({FirebaseFirestore? firestore})
-    : _firestore = firestore ?? FirebaseFirestore.instance;
-  final FirebaseFirestore _firestore;
+  ExpenseRepository();
 
-  CollectionReference<Map<String, dynamic>> _expensesRef(String uid) =>
-      _firestore.collection('users').doc(uid).collection('expenses');
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  /// Add a new expense. Firestore assigns the doc ID.
-  Future<String> addExpense(String uid, UserExpense expense) async {
-    final docRef = await _expensesRef(uid).add(expense.toMap());
-    return docRef.id;
+  DocumentReference<Map<String, dynamic>> _userData() =>
+      _firestore.collection('users').doc(AuthService().currentUid);
+
+  DocumentReference<Map<String, dynamic>> _expensesYearRef(String yearID) =>
+      _userData().collection('expenses').doc(yearID);
+
+  CollectionReference<Map<String, dynamic>> _expensesMonthRef(
+    String yearID,
+    String monthID,
+  ) => _expensesYearRef(yearID).collection(monthID);
+
+  Future<void> addExpense(UserExpense expense) async {
+    final yearID = getYearID(expense.date);
+    final monthID = getMonthID(expense.date);
+
+    await _expensesMonthRef(
+      yearID,
+      monthID,
+    ).doc(expense.id).set(expense.toMap());
+  }
+
+  Future<List<UserExpense>> getExpensesForMonth(DateTime date) async {
+    final yearID = getYearID(date);
+    final monthID = getMonthID(date);
+
+    final snapshot = await _expensesMonthRef(yearID, monthID).get();
+    return snapshot.docs.map((doc) => UserExpense.fromMap(doc.data())).toList();
   }
 
   /// Live stream of a user's expenses for one month — this is what
   /// ExpenseViewModel watches; the list screen never queries Firestore
   /// directly.
-  Stream<List<UserExpense>> watchExpensesForMonth(
-    String uid,
-    // int year,
-    // int month,
-  ) {
+  /* Stream<List<UserExpense>> watchExpensesForMonth(String yearMonthID) {
     // final start = DateTime(year, month, 1);
     // final end = DateTime(year, month + 1, 1);
 
-    return _expensesRef(uid)
+    return _expensesRef(yearMonthID)
         // .where('date', isGreaterThanOrEqualTo: Timestamp.fromDate(start))
         // .where('date', isLessThan: Timestamp.fromDate(end))
         .orderBy('date', descending: true)
@@ -42,38 +55,44 @@ class ExpenseRepository {
               .map((doc) => UserExpense.fromMap(doc.data()))
               .toList(),
         );
-  }
+  } */
 
   /// Update an expense with a conflict check. Throws
   /// [ConcurrentEditException] if someone else modified it since this
   /// copy was loaded — the ViewModel catches this and the UI shows
   /// "This was updated by someone else, please refresh."
   Future<void> updateExpense(
-    String uid,
-    UserExpense expense,
-    DateTime expectedUpdatedAt,
-  ) async {
-    final docRef = _expensesRef(uid).doc(expense.id);
+    UserExpense expense, {
+    bool shouldValidateUpdatedDate = true,
+  }) async {
+    final yearID = getYearID(expense.date);
+    final monthID = getMonthID(expense.date);
+    final docRef = _expensesMonthRef(yearID, monthID).doc(expense.id);
+    if (shouldValidateUpdatedDate) {
+      await _firestore.runTransaction((transaction) async {
+        final snapshot = await transaction.get(docRef);
 
-    await _firestore.runTransaction((transaction) async {
-      final snapshot = await transaction.get(docRef);
+        if (!snapshot.exists) {
+          throw ExpenseNotFoundException();
+        }
 
-      if (!snapshot.exists) {
-        throw ExpenseNotFoundException();
-      }
+        final currentUpdatedAt = (snapshot.data()!['updatedAt'] as Timestamp)
+            .toDate();
 
-      final currentUpdatedAt = (snapshot.data()!['updatedAt'] as Timestamp)
-          .toDate();
+        if (currentUpdatedAt.isAfter(DateTime.now())) {
+          throw ConcurrentEditException();
+        }
 
-      if (currentUpdatedAt.isAfter(expectedUpdatedAt)) {
-        throw ConcurrentEditException();
-      }
-
-      transaction.update(docRef, expense.toMap());
-    });
+        transaction.update(docRef, expense.toMap());
+      });
+    } else {
+      docRef.update(expense.toMap());
+    }
   }
 
-  Future<void> deleteExpense(String uid, String expenseId) async {
-    await _expensesRef(uid).doc(expenseId).delete();
+  Future<void> deleteExpense(UserExpense expense) async {
+    final yearID = getYearID(expense.date);
+    final monthID = getMonthID(expense.date);
+    await _expensesMonthRef(yearID, monthID).doc(expense.id).delete();
   }
 }

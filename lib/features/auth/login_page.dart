@@ -6,7 +6,7 @@ import '../../services/snackbar_service.dart';
 import '../../theme/theme_view_model.dart';
 import '../../utils/common.dart';
 import '../../utils/enum.dart';
-import 'home_page.dart';
+import '../dashboard/home_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -59,11 +59,15 @@ class _LoginPageState extends State<LoginPage> {
             Align(
               alignment: Alignment.topRight,
               child: IconButton(
-                icon: context.watch<ThemeViewModel>().isDarkMode
+                icon: context.watch<ThemeViewModel>().isDark
                     ? const Icon(Icons.light_mode, color: Colors.yellow)
                     : const Icon(Icons.mode_night, color: Colors.yellow),
                 onPressed: () {
-                  context.read<ThemeViewModel>().toggleTheme();
+                  context.read<ThemeViewModel>().changeTheme(
+                    context.read<ThemeViewModel>().isDark
+                        ? ThemeMode.light
+                        : ThemeMode.dark,
+                  );
                 },
               ),
             ),

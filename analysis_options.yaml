@@ -29,7 +29,7 @@ linter:
     # the Dart Lint rules page to make maintenance easier
     # https://github.com/dart-lang/linter/blob/master/example/all.yaml
     - always_declare_return_types
-    - always_put_control_body_on_new_line
+    # - always_put_control_body_on_new_line
     - always_specify_types
     # - always_use_package_imports # we do this commonly
     - annotate_overrides

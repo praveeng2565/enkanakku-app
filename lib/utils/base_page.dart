@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import '../features/auth/login_page.dart';
 import '../services/login_auth.dart';
-import '../services/snackbar_service.dart';
+import '../theme/app_theme.dart';
 import '../theme/color.dart';
-import '../theme/theme_view_model.dart';
 import 'common.dart';
 
 class BasePage extends StatefulWidget {
@@ -47,7 +45,7 @@ class _BasePageState extends State<BasePage> {
             IconButton(
               icon: const Icon(Icons.notifications),
               onPressed: () {
-                SnackbarService.showInfoMessage('No Notifications');
+                Navigator.pushNamed(context, '/notification');
               },
             ),
           if (widget.showLogout)
@@ -84,17 +82,23 @@ class _BasePageState extends State<BasePage> {
                       '${getGreeting()}! Welcome back.',
                       style: const TextStyle(color: Colors.white70),
                     ),
-                    currentAccountPicture: const CircleAvatar(
-                      backgroundColor: Colors.white,
-                      child: Icon(
-                        Icons.person,
-                        size: 40,
-                        color: Palette.primaryColor,
+                    currentAccountPicture: const Padding(
+                      padding: EdgeInsets.all(3.0),
+                      child: CircleAvatar(
+                        backgroundColor: Colors.white,
+                        child: Icon(
+                          Icons.person,
+                          size: 40,
+                          color: Palette.primaryColor,
+                        ),
                       ),
                     ),
                     decoration: const BoxDecoration(
                       color: Palette.primaryColor,
                     ),
+                    onDetailsPressed: () {
+                      Navigator.pushNamed(context, '/profile');
+                    },
                   ),
                   ListTile(
                     leading: const Icon(Icons.home),
@@ -104,10 +108,15 @@ class _BasePageState extends State<BasePage> {
                     },
                   ),
                   ListTile(
-                    leading: const Icon(Icons.light_mode),
+                    leading: const Icon(Icons.palette_outlined),
                     title: const Text('Switch Theme'),
+                    onTap: () => showThemePicker(context),
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.settings),
+                    title: const Text('Settings'),
                     onTap: () {
-                      context.read<ThemeViewModel>().toggleTheme();
+                      Navigator.pushNamed(context, '/settings');
                     },
                   ),
                   const Divider(),

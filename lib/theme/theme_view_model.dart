@@ -4,35 +4,47 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class ThemeViewModel extends ChangeNotifier {
   ThemeViewModel() {
-    _loadSavedTheme();
+    loadTheme();
   }
-  static const _prefsKey = 'theme_mode';
+
+  static const String _themeKey = 'app_theme';
 
   ThemeMode _themeMode = ThemeMode.system;
+
   ThemeMode get themeMode => _themeMode;
 
-  bool get isDarkMode => _themeMode == ThemeMode.dark;
-
-  Future<void> _loadSavedTheme() async {
+  Future<void> loadTheme() async {
     final prefs = await SharedPreferences.getInstance();
-    final saved = prefs.getString(_prefsKey);
-    if (saved == 'dark') {
-      _themeMode = ThemeMode.dark;
-    } else if (saved == 'light') {
-      _themeMode = ThemeMode.light;
+
+    final theme = prefs.getString(_themeKey);
+
+    switch (theme) {
+      case 'light':
+        _themeMode = ThemeMode.light;
+        break;
+
+      case 'dark':
+        _themeMode = ThemeMode.dark;
+        break;
+
+      case 'system':
+      default:
+        _themeMode = ThemeMode.system;
     }
+  }
+
+  Future<void> changeTheme(ThemeMode mode) async {
+    _themeMode = mode;
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_themeKey, mode.name);
+
     notifyListeners();
   }
 
-  Future<void> toggleTheme() async {
-    _themeMode = _themeMode == ThemeMode.dark
-        ? ThemeMode.light
-        : ThemeMode.dark;
-    notifyListeners();
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(
-      _prefsKey,
-      _themeMode == ThemeMode.dark ? 'dark' : 'light',
-    );
-  }
+  bool get isSystem => _themeMode == ThemeMode.system;
+
+  bool get isLight => _themeMode == ThemeMode.light;
+
+  bool get isDark => _themeMode == ThemeMode.dark;
 }

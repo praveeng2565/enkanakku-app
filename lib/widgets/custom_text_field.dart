@@ -10,6 +10,7 @@ class CustomTextField extends StatefulWidget {
     this.keyboardType,
     this.minLines,
     this.maxLines,
+    this.isDisabled = false,
     required this.onChanged,
   });
 
@@ -19,6 +20,7 @@ class CustomTextField extends StatefulWidget {
   final String? initialValue;
   final int? minLines;
   final int? maxLines;
+  final bool isDisabled;
   final TextInputType? keyboardType;
   final Function(String) onChanged;
 
@@ -59,9 +61,10 @@ class _CustomTextFieldState extends State<CustomTextField> {
           maxLines: widget.maxLines,
           decoration: InputDecoration(
             hintText: widget.hintText,
-            hintStyle: const TextStyle(color: Colors.black38, fontSize: 14),
+            // hintStyle: const TextStyle(color: Colors.black38, fontSize: 14),
             prefixIcon: widget.prefixIcon,
             filled: true,
+            enabled: !widget.isDisabled,
             fillColor: Theme.of(context).inputDecorationTheme.fillColor,
             contentPadding: const EdgeInsets.all(14),
             border: OutlineInputBorder(

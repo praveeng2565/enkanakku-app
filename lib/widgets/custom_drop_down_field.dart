@@ -6,6 +6,7 @@ class CustomDropDownField extends StatefulWidget {
     required this.label,
     this.initialValue,
     this.hintText,
+    this.isDisabled = false,
     required this.items,
     required this.onChanged,
   });
@@ -13,6 +14,7 @@ class CustomDropDownField extends StatefulWidget {
   final String label;
   final String? hintText;
   final String? initialValue;
+  final bool isDisabled;
   final List<DropDownItems> items;
   final Function(String?) onChanged;
 
@@ -43,7 +45,7 @@ class _CustomDropDownFieldState extends State<CustomDropDownField> {
         const SizedBox(height: 8),
         DropdownButtonFormField<String>(
           initialValue: widget.initialValue,
-          onChanged: widget.onChanged,
+          onChanged: widget.isDisabled ? null : widget.onChanged,
           items: widget.items
               .map(
                 (c) => DropdownMenuItem(
@@ -71,7 +73,16 @@ class _CustomDropDownFieldState extends State<CustomDropDownField> {
 }
 
 class DropDownItems {
-  const DropDownItems({required this.value, required this.label});
+  const DropDownItems({
+    required this.value,
+    required this.label,
+    this.show = true,
+    this.iconData = Icons.shopping_cart_checkout_sharp,
+    this.iconColor = const Color(0xFF3D8BFD),
+  });
   final String value;
   final String label;
+  final bool show;
+  final IconData iconData;
+  final Color iconColor;
 }

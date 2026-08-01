@@ -9,8 +9,11 @@ Future<void> showUpdateDialog(BuildContext context, UpdateInfo info) async {
   await showDialog(
     context: context,
     barrierDismissible: false,
-    builder: (context) =>
-        _UpdateDialogContent(info: info, updateService: updateService),
+    builder: (context) => PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (bool didPop, dynamic result) {},
+      child: _UpdateDialogContent(info: info, updateService: updateService),
+    ),
   );
 }
 

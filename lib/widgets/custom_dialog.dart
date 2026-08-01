@@ -1,56 +1,18 @@
 import 'package:flutter/material.dart';
 
 import '../theme/color.dart';
+import 'custom_button.dart';
 
-Future<void> showAlertDialogv2({
+Future<void> showAlertDialog({
   required BuildContext context,
-  required String title,
-  required String body,
+  String title = 'Alert',
+  required String subtitle,
   String filledBtnText = 'Continue',
   String outlineBtnText = 'Cancel',
-  bool cancelBtnReq = true,
-  bool okBtnReq = true,
-  Function()? onOkPressed,
-  Function()? onCancelPressed,
-  Color iconColor = Colors.green,
+  bool showOutlineBtn = true,
+  VoidCallback? onOkPressed,
+  VoidCallback? onCancelPressed,
 }) async {
-  final Widget filledButton = InkWell(
-    onTap: onOkPressed,
-    child: Container(
-      decoration: BoxDecoration(
-        color: Palette.greenPrimary,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Text(
-          filledBtnText,
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-      ),
-    ),
-  );
-
-  final Widget outlineButton = InkWell(
-    onTap: onCancelPressed,
-    child: Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: Palette.greenPrimary),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Text(
-          outlineBtnText,
-          style: const TextStyle(color: Colors.black),
-        ),
-      ),
-    ),
-  );
-
   await showDialog(
     context: context,
     barrierDismissible: false,
@@ -59,6 +21,10 @@ Future<void> showAlertDialogv2({
         canPop: false,
         onPopInvokedWithResult: (bool didPop, dynamic result) {},
         child: Dialog(
+          clipBehavior: Clip.antiAlias,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(28),
+          ),
           child: Material(
             child: Padding(
               padding: const EdgeInsets.all(15.0),
@@ -71,11 +37,15 @@ Future<void> showAlertDialogv2({
                     children: [
                       Row(
                         children: [
-                          Icon(Icons.info_outline, color: iconColor),
+                          const Icon(
+                            Icons.info_outline,
+                            color: Palette.primaryColor,
+                          ),
                           const SizedBox(width: 5),
                           Text(
                             title,
                             style: const TextStyle(
+                              fontSize: 16,
                               color: Colors.black,
                               fontWeight: FontWeight.bold,
                             ),
@@ -89,10 +59,9 @@ Future<void> showAlertDialogv2({
                   Padding(
                     padding: const EdgeInsets.only(left: 15.0),
                     child: Text(
-                      body,
+                      subtitle,
                       style: const TextStyle(
-                        color: Colors.grey,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ),
@@ -100,8 +69,19 @@ Future<void> showAlertDialogv2({
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      if (okBtnReq) filledButton,
-                      if (cancelBtnReq) outlineButton,
+                      CustomButton(
+                        inputText: filledBtnText,
+                        onTap: onOkPressed,
+                      ),
+                      if (showOutlineBtn)
+                        CustomButton(
+                          inputText: outlineBtnText,
+                          isFilled: false,
+                          onTap: () {
+                            Navigator.pop(context);
+                            onCancelPressed?.call();
+                          },
+                        ),
                     ],
                   ),
                 ],

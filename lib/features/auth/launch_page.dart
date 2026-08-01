@@ -3,9 +3,9 @@ import 'package:provider/provider.dart';
 
 import '../../services/login_auth.dart';
 import '../../services/update_service.dart';
-import 'home_page.dart';
+import '../dashboard/home_page.dart';
 import 'login_page.dart';
-import 'update_dialog_page.dart';
+import 'update_app_dialog.dart';
 import 'user_view_model.dart';
 
 class LaunchPage extends StatefulWidget {
