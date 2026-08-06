@@ -71,7 +71,10 @@ class ComingSoon extends StatelessWidget {
               const SizedBox(height: 40),
               FilledButton.icon(
                 onPressed: () {
-                  Navigator.pushReplacementNamed(context, '/Home');
+                  Navigator.popUntil(
+                    context,
+                    (route) => route.settings.name == '/Home',
+                  );
                 },
                 icon: const Icon(Icons.home_rounded),
                 label: const Text('Back to Home'),

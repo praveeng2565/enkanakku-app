@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import '../models/user_profile.dart';
+import '../repositories/user_repository.dart';
 import '../utils/common.dart';
 
 class AuthService {
@@ -29,10 +30,17 @@ class AuthService {
       email: email,
       password: password,
     );
-
-    final UserProfile info = UserProfile(id: getNewID());
+    final User? user = u.user;
+    final UserProfile info = UserProfile(
+      id: user?.uid ?? getNewID(),
+      email: user?.email ?? '',
+      name: user?.displayName ?? '',
+      mobileno: user?.phoneNumber ?? '',
+      photoUrl: user?.photoURL ?? '',
+    );
     info.name = name;
     await u.user?.updateProfile(displayName: info.name);
+    await UserRepository().createOrUpdateUser(info);
     return true;
   }
 
@@ -45,6 +53,15 @@ class AuthService {
       email: email,
       password: password,
     );
+    final User? user = AuthService().getUser;
+    final UserProfile info = UserProfile(
+      id: user?.uid ?? getNewID(),
+      email: user?.email ?? '',
+      name: user?.displayName ?? '',
+      mobileno: user?.phoneNumber ?? '',
+      photoUrl: user?.photoURL ?? '',
+    );
+    await UserRepository().createOrUpdateUser(info);
     return true;
   }
 }

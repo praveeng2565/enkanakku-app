@@ -9,11 +9,11 @@ class ExpenseRepository {
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  DocumentReference<Map<String, dynamic>> _userData() =>
+  DocumentReference<Map<String, dynamic>> get _userData =>
       _firestore.collection('users').doc(AuthService().currentUid);
 
   DocumentReference<Map<String, dynamic>> _expensesYearRef(String yearID) =>
-      _userData().collection('expenses').doc(yearID);
+      _userData.collection('expenses').doc(yearID);
 
   CollectionReference<Map<String, dynamic>> _expensesMonthRef(
     String yearID,

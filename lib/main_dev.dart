@@ -3,7 +3,9 @@ import 'dart:ui';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import 'core/constants.dart';
 import 'firebase_options_dev.dart';
 import 'my_app.dart';
 
@@ -34,5 +36,7 @@ void main() async {
     }
     return true;
   };
-  runApp(const MyApp());
+  final prefs = await SharedPreferences.getInstance();
+  final theme = prefs.getString(AppConstants.themeKey);
+  runApp(MyApp(initialTheme: theme));
 }

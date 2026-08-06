@@ -7,4 +7,5 @@ class AppConstants {
   static const String appEmail = 'enkanakku@example.com';
   static const String emptyString = '';
   static const String hash = '#';
+  static const String themeKey = 'app_theme';
 }

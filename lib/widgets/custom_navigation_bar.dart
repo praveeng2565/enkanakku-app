@@ -36,8 +36,8 @@ class FloatingNavigationBar extends StatelessWidget {
           child: Row(
             children: [
               _item(context, 0, Icons.home_rounded, 'Home'),
-              _item(context, 1, Icons.bar_chart_rounded, 'Analytics'),
-              _item(context, 2, Icons.apartment_rounded, 'Rooms'),
+              _item(context, 1, Icons.people, 'Friends'),
+              _item(context, 2, Icons.groups, 'Groups'),
               _item(context, 3, Icons.person_rounded, 'Profile'),
             ],
           ),

@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 
 import '../../utils/coming_soon.dart';
 
-class RoomsPage extends StatefulWidget {
-  const RoomsPage({super.key});
+class GroupPage extends StatefulWidget {
+  const GroupPage({super.key});
 
   @override
-  State<RoomsPage> createState() => _RoomsPageState();
+  State<GroupPage> createState() => _GroupPageState();
 }
 
-class _RoomsPageState extends State<RoomsPage> {
+class _GroupPageState extends State<GroupPage> {
   @override
   Widget build(BuildContext context) {
     return const ComingSoon();

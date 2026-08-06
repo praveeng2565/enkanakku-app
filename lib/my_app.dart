@@ -14,13 +14,17 @@ import 'theme/theme_view_model.dart';
 import 'utils/coming_soon.dart';
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({super.key, this.initialTheme});
+
+  final String? initialTheme;
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => ThemeViewModel()),
+        ChangeNotifierProvider(
+          create: (_) => ThemeViewModel(initialTheme ?? 'light'),
+        ),
         ChangeNotifierProvider(create: (_) => UserViewModel()),
         ChangeNotifierProvider(create: (_) => HomeViewModel()),
       ],
@@ -36,23 +40,40 @@ class MyApp extends StatelessWidget {
             onGenerateRoute: (settings) {
               switch (settings.name) {
                 case '/':
-                  return MaterialPageRoute(builder: (_) => const LaunchPage());
+                  return MaterialPageRoute(
+                    settings: const RouteSettings(name: '/'),
+                    builder: (_) => const LaunchPage(),
+                  );
                 case '/Login':
-                  return MaterialPageRoute(builder: (_) => const LoginPage());
+                  return MaterialPageRoute(
+                    settings: const RouteSettings(name: '/Login'),
+                    builder: (_) => const LoginPage(),
+                  );
                 case '/Home':
-                  return MaterialPageRoute(builder: (_) => const HomePage());
+                  return MaterialPageRoute(
+                    settings: const RouteSettings(name: '/Home'),
+                    builder: (_) => const HomePage(),
+                  );
                 case '/AddExpense':
-                  return MaterialPageRoute(builder: (_) => const AddExpense());
+                  return MaterialPageRoute(
+                    settings: const RouteSettings(name: '/AddExpense'),
+
+                    builder: (_) => const AddExpense(),
+                  );
                 case '/EditExpense':
                   final args = settings.arguments! as Map<String, dynamic>;
                   return MaterialPageRoute(
+                    settings: const RouteSettings(name: '/EditExpense'),
                     builder: (_) => EditExpense(
                       userExpense: args['userExpense'],
                       index: args['index'],
                     ),
                   );
                 default:
-                  return MaterialPageRoute(builder: (_) => const ComingSoon());
+                  return MaterialPageRoute(
+                    settings: const RouteSettings(name: '/ComingSoon'),
+                    builder: (_) => const ComingSoon(),
+                  );
               }
             },
           );

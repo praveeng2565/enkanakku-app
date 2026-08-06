@@ -2,42 +2,25 @@ import 'package:flutter/material.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ThemeViewModel extends ChangeNotifier {
-  ThemeViewModel() {
-    loadTheme();
-  }
+import '../core/constants.dart';
 
-  static const String _themeKey = 'app_theme';
+class ThemeViewModel extends ChangeNotifier {
+  ThemeViewModel(String? savedTheme)
+    : _themeMode = switch (savedTheme) {
+        'light' => ThemeMode.light,
+        'dark' => ThemeMode.dark,
+        _ => ThemeMode.system,
+      };
 
   ThemeMode _themeMode = ThemeMode.system;
 
   ThemeMode get themeMode => _themeMode;
 
-  Future<void> loadTheme() async {
-    final prefs = await SharedPreferences.getInstance();
-
-    final theme = prefs.getString(_themeKey);
-
-    switch (theme) {
-      case 'light':
-        _themeMode = ThemeMode.light;
-        break;
-
-      case 'dark':
-        _themeMode = ThemeMode.dark;
-        break;
-
-      case 'system':
-      default:
-        _themeMode = ThemeMode.system;
-    }
-  }
-
   Future<void> changeTheme(ThemeMode mode) async {
     _themeMode = mode;
 
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_themeKey, mode.name);
+    await prefs.setString(AppConstants.themeKey, mode.name);
 
     notifyListeners();
   }

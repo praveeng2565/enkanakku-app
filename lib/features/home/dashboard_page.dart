@@ -5,11 +5,15 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../../repositories/expense_repository.dart';
+import '../../services/login_auth.dart';
+import '../../theme/app_theme.dart';
 import '../../theme/color.dart';
+import '../../utils/base_page.dart';
 import '../../utils/common.dart';
 import '../../utils/drop_down_items.dart';
 import '../../widgets/custom_drop_down_field.dart';
 import '../../widgets/custom_icon_button.dart';
+import '../auth/user_view_model.dart';
 import 'home_view_model.dart';
 
 class DashboardPage extends StatefulWidget {
@@ -47,63 +51,154 @@ class _DashboardPageState extends State<DashboardPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<HomeViewModel>(
-      builder: (BuildContext context, HomeViewModel dashVm, Widget? child) {
-        return hasData
-            ? pageBody()
-            : FutureBuilder(
-                future: loadData(false),
-                builder: (context, asyncSnapshot) {
-                  if (asyncSnapshot.hasData && hasData) {
-                    return pageBody();
-                  }
+    return BasePage(
+      title: 'Dashboard',
+      showNotifications: true,
+      showLogout: true,
+      drawer: Drawer(
+        child: Column(
+          children: [
+            UserAccountsDrawerHeader(
+              accountName: Text(
+                'Hello, ${AuthService().getUser?.displayName ?? ''}',
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+              ),
+              accountEmail: Text(
+                '${getGreeting()}! Welcome back.',
+                style: const TextStyle(color: Colors.white70),
+              ),
+              currentAccountPicture: const Padding(
+                padding: EdgeInsets.all(3.0),
+                child: CircleAvatar(
+                  backgroundColor: Colors.white,
+                  child: Icon(
+                    Icons.person,
+                    size: 40,
+                    color: Palette.primaryColor,
+                  ),
+                ),
+              ),
+              decoration: const BoxDecoration(color: Palette.primaryColor),
+              onDetailsPressed: () {
+                Navigator.pop(context);
+                Provider.of<HomeViewModel>(
+                  context,
+                  listen: false,
+                ).changePage(3);
+              },
+            ),
+            Expanded(
+              child: ListView(
+                padding: EdgeInsets.zero,
+                children: [
+                  ListTile(
+                    leading: const Icon(Icons.home),
+                    title: const Text('Home'),
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.palette_outlined),
+                    title: const Text('Switch Theme'),
+                    onTap: () => showThemePicker(context),
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.settings),
+                    title: const Text('Settings'),
+                    onTap: () {
+                      Navigator.pushNamed(context, '/settings');
+                    },
+                  ),
+                ],
+              ),
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.logout),
+              title: const Text('Logout'),
+              onTap: () async {
+                Navigator.pop(context);
+                showProgressCircle(context);
+                await AuthService().logout();
+                removeProgressCircle(context);
+                Navigator.pushReplacementNamed(context, '/Login');
+              },
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: Text(
+                'version ${context.read<UserViewModel>().appVersion}',
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
 
-                  if (asyncSnapshot.hasError) {
-                    return Center(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 32),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.error_outline_rounded,
-                              size: 64,
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
+      child: Consumer<HomeViewModel>(
+        builder: (BuildContext context, HomeViewModel dashVm, Widget? child) {
+          return hasData
+              ? pageBody()
+              : FutureBuilder(
+                  future: loadData(false),
+                  builder: (context, asyncSnapshot) {
+                    if (asyncSnapshot.hasData && hasData) {
+                      return pageBody();
+                    }
 
-                            const SizedBox(height: 24),
+                    if (asyncSnapshot.hasError) {
+                      return Center(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 32),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.error_outline_rounded,
+                                size: 64,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
 
-                            Text(
-                              'Something went wrong',
-                              style: Theme.of(context).textTheme.headlineSmall
-                                  ?.copyWith(fontWeight: FontWeight.bold),
-                            ),
+                              const SizedBox(height: 24),
 
-                            const SizedBox(height: 12),
+                              Text(
+                                'Something went wrong',
+                                style: Theme.of(context).textTheme.headlineSmall
+                                    ?.copyWith(fontWeight: FontWeight.bold),
+                              ),
 
-                            Text(
-                              "We're unable to load your data at the moment.\nPlease refresh or try again later.",
-                              textAlign: TextAlign.center,
-                              style: Theme.of(context).textTheme.bodyMedium,
-                            ),
+                              const SizedBox(height: 12),
 
-                            const SizedBox(height: 32),
+                              Text(
+                                "We're unable to load your data at the moment.\nPlease refresh or try again later.",
+                                textAlign: TextAlign.center,
+                                style: Theme.of(context).textTheme.bodyMedium,
+                              ),
 
-                            FilledButton.icon(
-                              onPressed: loadData,
-                              icon: const Icon(Icons.refresh_rounded),
-                              label: const Text('Refresh'),
-                            ),
-                          ],
+                              const SizedBox(height: 32),
+
+                              FilledButton.icon(
+                                onPressed: loadData,
+                                icon: const Icon(Icons.refresh_rounded),
+                                label: const Text('Refresh'),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    );
-                  }
+                      );
+                    }
 
-                  return const Center(child: CircularProgressIndicator());
-                },
-              );
-      },
+                    return const Center(child: CircularProgressIndicator());
+                  },
+                );
+        },
+      ),
     );
   }
 
@@ -121,6 +216,17 @@ class _DashboardPageState extends State<DashboardPage> {
         _buildExpenseList(),
       ],
     );
+  }
+
+  String getGreeting() {
+    final hour = DateTime.now().hour;
+    if (hour < 12) {
+      return 'Good morning';
+    }
+    if (hour < 17) {
+      return 'Good afternoon';
+    }
+    return 'Good evening';
   }
 
   /* Expanded _buildExpenseList() {
