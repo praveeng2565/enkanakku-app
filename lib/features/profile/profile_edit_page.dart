@@ -1,8 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import '../../models/user_profile.dart';
+import '../../services/snackbar_service.dart';
 import '../../utils/base_page.dart';
+import '../../utils/common.dart';
 import '../../widgets/custom_text_field.dart';
 import 'profile_view_model.dart';
 
@@ -33,48 +34,38 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   }
 
   Future<void> _pickImage() async {
-    final picked = await ImagePicker().pickImage(
-      source: ImageSource.gallery,
-      imageQuality: 80,
+    // final picked = await ImagePicker().pickImage(
+    //   source: ImageSource.gallery,
+    //   maxWidth: 512,
+    //   maxHeight: 512,
+    //   imageQuality: 80,
+    // );
+    // if (picked != null) {
+    //   isEdited = true;
+    //   setState(() => _pickedImage = File(picked.path));
+    // }
+    SnackbarService.showInfoMessage(
+      'Oops! Image uploads are temporarily unavailable.',
     );
-    if (picked != null) {
-      setState(() => _pickedImage = File(picked.path));
-    }
   }
 
   Future<void> _save() async {
-    // final vm = context.read<ProfileViewModel>();
-    // final currentProfile = vm.profile;
-    // if (currentProfile == null) return;
+    showProgressCircle(context);
+    String photoUrl = profile.photoUrl;
+    if (_pickedImage != null) {
+      final uploadedUrl = await widget.vm.uploadProfilePhoto(_pickedImage!);
+      if (uploadedUrl != null) photoUrl = uploadedUrl;
+    }
+    profile.photoUrl = photoUrl;
+    final success = await widget.vm.updateProfile(profile);
+    removeProgressCircle(context);
 
-    // String photoUrl = currentProfile.photoUrl;
-    // if (_pickedImage != null) {
-    //   final uploadedUrl = await vm.uploadProfilePhoto( _pickedImage!);
-    //   if (uploadedUrl != null) photoUrl = uploadedUrl;
-    // }
-
-    // final updated = UserProfile(
-    //   id: currentProfile.id,
-    //   name: _nameController.text.trim(),
-    //   email: currentProfile.email,
-    //   mobileno: _mobileController.text.trim(),
-    //   photoUrl: photoUrl,
-    //   roomList: currentProfile.roomList,
-    //   notificationList: currentProfile.notificationList,
-    //   dataSharing: currentProfile.dataSharing,
-    // );
-
-    // final success = await vm.updateProfile(updated);
-
-    // if (mounted) {
-    //   if (success) {
-    //     Navigator.pop(context);
-    //   } else {
-    //     ScaffoldMessenger.of(context).showSnackBar(
-    //       const SnackBar(content: Text('Failed to save profile. Try again.')),
-    //     );
-    //   }
-    // }
+    if (success) {
+      Navigator.pop(context);
+      SnackbarService.showInfoMessage('Profile Updated');
+    } else {
+      SnackbarService.showInfoMessage('Failed to save profile. Try again.');
+    }
   }
 
   @override
@@ -96,12 +87,12 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                           backgroundColor: const Color(0xFFEFF1F5),
                           backgroundImage: _pickedImage != null
                               ? FileImage(_pickedImage!) as ImageProvider
-                              : (profile != null && profile.photoUrl.isNotEmpty
+                              : (profile.photoUrl.isNotEmpty
                                     ? NetworkImage(profile.photoUrl)
                                     : null),
                           child:
                               (_pickedImage == null &&
-                                  (profile == null || profile.photoUrl.isEmpty))
+                                  (profile.photoUrl.isEmpty))
                               ? const Icon(
                                   Icons.person,
                                   size: 44,
@@ -207,7 +198,9 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                 ),
                 if (isEdited)
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      _save();
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF1E3A8A),
                       shape: RoundedRectangleBorder(

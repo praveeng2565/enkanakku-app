@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 // import 'package:firebase_storage/firebase_storage.dart';
 import '../../models/user_profile.dart';
@@ -35,13 +37,11 @@ class ProfileViewModel extends ChangeNotifier {
 
   /// Uploads a new profile photo and returns its download URL.
   /// Wire the picked File in from image_picker in the edit screen.
-  // Future<String?> uploadProfilePhoto( File imageFile) async {
-  //   try {
-  //     // final ref = FirebaseStorage.instance.ref('profile_photos/$uid.jpg');
-  //     // await ref.putFile(imageFile);
-  //     // return await ref.getDownloadURL();
-  //   } catch (e) {
-  //     return null;
-  //   }
-  // }
+  Future<String?> uploadProfilePhoto(File imageFile) async {
+    try {
+      return await _userRepository.uploadProfileImage(file: imageFile);
+    } catch (e) {
+      return null;
+    }
+  }
 }

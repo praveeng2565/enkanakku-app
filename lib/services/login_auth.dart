@@ -6,10 +6,8 @@ import '../models/user_profile.dart';
 import '../repositories/user_session.dart';
 import '../repositories/users_repository.dart';
 import '../utils/common.dart';
-import 'user_service.dart';
 
 class AuthService {
-  // AuthService._();
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   User? get getUser => _auth.currentUser;

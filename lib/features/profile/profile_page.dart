@@ -74,11 +74,13 @@ class _ProfileState extends State<Profile> {
                             subtitle: profile.mobileno.isEmpty
                                 ? 'Not added'
                                 : profile.mobileno,
+                            showChevron: false,
                           ),
                           _SettingsTile(
                             icon: Icons.email_outlined,
                             title: 'Email',
                             subtitle: profile.email,
+                            showChevron: false,
                           ),
                         ],
                       ),
