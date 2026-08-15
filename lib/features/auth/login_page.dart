@@ -256,7 +256,7 @@ class _LoginPageState extends State<LoginPage> {
             name: _name.text,
             email: _email.text,
             password: _password.text,
-            mobile:_mobile.text,
+            mobile: _mobile.text,
           )
           .catchError((error) {
             removeProgressCircle(context);

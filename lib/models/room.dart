@@ -1,12 +1,12 @@
 class Room {
-   Room({
+  Room({
     required this.id,
-     this.name='',
-     required this.createdBy ,
-     this.billingDay=1,
-     this.note = '',
-     this.allowAddingPreviousDatesExpenses=true,
-     this.maxPreviousDatesCount=0,
+    this.name = '',
+    required this.createdBy,
+    this.billingDay = 1,
+    this.note = '',
+    this.allowAddingPreviousDatesExpenses = true,
+    this.maxPreviousDatesCount = 0,
   });
   factory Room.fromMap(Map<String, dynamic> m) => Room(
     id: m['id'] as String,
@@ -20,12 +20,12 @@ class Room {
   );
   factory Room.fromJson(Map<String, dynamic> j) => Room.fromMap(j);
   final String id;
-   String name;
+  String name;
   final String createdBy;
-   int billingDay;
-   String note;
-   bool allowAddingPreviousDatesExpenses;
-   int maxPreviousDatesCount;
+  int billingDay;
+  String note;
+  bool allowAddingPreviousDatesExpenses;
+  int maxPreviousDatesCount;
   Map<String, dynamic> toMap() => {
     'id': id,
     'name': name,

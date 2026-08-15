@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../theme/color.dart';
-
 class FloatingNavigationBar extends StatelessWidget {
   const FloatingNavigationBar({
     super.key,
@@ -17,72 +15,107 @@ class FloatingNavigationBar extends StatelessWidget {
     final theme = Theme.of(context);
 
     return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 0, 20, 18),
-        child: Container(
-          height: 72,
-          decoration: BoxDecoration(
-            color: theme.colorScheme.surface,
-            borderRadius: BorderRadius.circular(28),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: .08),
-                blurRadius: 30,
-                spreadRadius: 2,
-                offset: const Offset(0, 12),
-              ),
-            ],
-          ),
-          child: Row(
-            children: [
-              _item(context, 0, Icons.home_rounded, 'Home'),
-              _item(context, 1, Icons.people, 'Friends'),
-              _item(context, 2, Icons.groups, 'Groups'),
-              _item(context, 3, Icons.person_rounded, 'Profile'),
-            ],
-          ),
+      top: false,
+      child: Container(
+        margin: const EdgeInsets.fromLTRB(10, 0, 10, 15),
+        padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 6),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surface,
+          borderRadius: BorderRadius.circular(25),
+          boxShadow: [
+            BoxShadow(
+              blurRadius: 20,
+              offset: const Offset(0, 5),
+              color: Colors.black.withValues(alpha: 0.08),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            _BottomItem(
+              icon: Icons.home_outlined,
+              label: 'Home',
+              selected: currentIndex == 0,
+              onTap: () => onTap(0),
+            ),
+            _BottomItem(
+              icon: Icons.people_outline_rounded,
+              label: 'Friends',
+              selected: currentIndex == 1,
+              onTap: () => onTap(1),
+            ),
+            _BottomItem(
+              icon: Icons.groups_outlined,
+              label: 'Groups',
+              selected: currentIndex == 2,
+              onTap: () => onTap(2),
+            ),
+            _BottomItem(
+              icon: Icons.person_outline_rounded,
+              label: 'Profile',
+              selected: currentIndex == 3,
+              onTap: () => onTap(3),
+            ),
+          ],
         ),
       ),
     );
   }
+}
 
-  Widget _item(BuildContext context, int index, IconData icon, String label) {
-    final selected = currentIndex == index;
-    const primary = Palette.primaryColor;
+class _BottomItem extends StatelessWidget {
+
+  const _BottomItem({
+    required this.icon,
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+  final IconData icon;
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
 
     return Expanded(
-      child: InkWell(
-        splashColor: Colors.transparent,
-        borderRadius: BorderRadius.circular(24),
-        onTap: () => onTap(index),
+      child: GestureDetector(
+        onTap: onTap,
+        behavior: HitTestBehavior.opaque,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeOut,
-          margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
+          padding: const EdgeInsets.symmetric(vertical: 7),
           decoration: BoxDecoration(
             color: selected
-                ? primary.withValues(alpha: .12)
+                ? theme.colorScheme.primaryContainer
                 : Colors.transparent,
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(18),
           ),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
             children: [
               AnimatedScale(
                 duration: const Duration(milliseconds: 250),
                 scale: selected ? 1.15 : 1,
                 child: Icon(
                   icon,
-                  color: selected ? primary : Colors.grey.shade500,
+                  size: 20,
+                  color: selected
+                      ? theme.colorScheme.primary
+                      : theme.colorScheme.onSurfaceVariant,
                 ),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 3),
               AnimatedDefaultTextStyle(
                 duration: const Duration(milliseconds: 250),
-                style: TextStyle(
-                  fontSize: 11,
+                style: theme.textTheme.labelSmall!.copyWith(
+                  color: selected
+                      ? theme.colorScheme.primary
+                      : theme.colorScheme.onSurfaceVariant,
                   fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
-                  color: selected ? primary : Colors.grey.shade500,
                 ),
                 child: Text(label),
               ),
