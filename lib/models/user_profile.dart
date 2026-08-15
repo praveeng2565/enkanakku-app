@@ -5,6 +5,7 @@ import 'notification_model.dart';
 class UserProfile {
   UserProfile({
     required this.id,
+    required this.uid,
     this.name = AppConstants.emptyString,
     this.email = AppConstants.emptyString,
     this.mobileno = AppConstants.emptyString,
@@ -16,6 +17,7 @@ class UserProfile {
 
   factory UserProfile.fromMap(Map<String, dynamic> m) => UserProfile(
     id: m['id'] as String,
+    uid: m['uid'] as String,
     name: m['name'] as String,
     email: m['email'] as String,
     mobileno: m['mobileno'] as String,
@@ -30,6 +32,7 @@ class UserProfile {
   factory UserProfile.fromJson(Map<String, dynamic> j) =>
       UserProfile.fromMap(j);
   final String id;
+  final String uid;
   String name;
   String email;
   String mobileno;
@@ -40,6 +43,7 @@ class UserProfile {
 
   Map<String, dynamic> toMap() => {
     'id': id,
+    'uid': uid,
     'name': name,
     'email': email,
     'mobileno': mobileno,

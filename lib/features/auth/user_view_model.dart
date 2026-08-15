@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../models/user_expense.dart';
 import '../../models/user_insurance.dart';
@@ -6,6 +7,9 @@ import '../../models/user_loan.dart';
 import '../../models/user_profile.dart';
 import '../../models/user_remainder.dart';
 import '../../models/user_warranty.dart';
+import '../../repositories/user_session.dart';
+import '../../repositories/users_repository.dart';
+import '../../services/update_service.dart';
 
 class UserViewModel with ChangeNotifier {
   bool appVersionValidated = true;
@@ -52,5 +56,24 @@ class UserViewModel with ChangeNotifier {
 
   set remainders(List<UserRemainder> remainder) {
     _remainderList = remainder;
+  }
+
+  Future<bool> validateAppUpdate() async {
+    final updateInfo = await UpdateService().checkForUpdate();
+    appVersionErrorMsg = '';
+    if (updateInfo != null) {
+      appVersionValidated = false;
+    } else {
+      final packageInfo = await PackageInfo.fromPlatform();
+      appVersion = packageInfo.version;
+    }
+    return appVersionValidated;
+  }
+
+  Future<bool> fetchCustomerId() async {
+    final val = await UsersRepository().getUserUniqueId();
+    if (val == null || val.isEmpty) return false;
+    UserSession.instance.id = val;
+    return true;
   }
 }

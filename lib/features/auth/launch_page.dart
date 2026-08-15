@@ -23,6 +23,7 @@ class _LaunchPageState extends State<LaunchPage> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+    final userViewModel = Provider.of<UserViewModel>(context, listen: false);
     hasUser = AuthService().getUser != null;
     _controller = AnimationController(
       vsync: this,
@@ -35,19 +36,26 @@ class _LaunchPageState extends State<LaunchPage> with TickerProviderStateMixin {
     );
     _controller
       ..forward()
-      ..addStatusListener((AnimationStatus status) {
+      ..addStatusListener((AnimationStatus status) async {
         if (status == AnimationStatus.completed) {
-          Future.delayed(const Duration(milliseconds: 300), () async {
-            final status = await _onLoginSuccess(context);
-            if (status && context.mounted) {
-              Navigator.pushReplacementNamed(
-                context.mounted
-                    ? context
-                    : throw Exception('Context is not mounted'),
-                hasUser ? '/Home' : '/Login',
-              );
-            }
-          });
+          final stopwatch = Stopwatch()..start();
+          final results = await Future.wait([
+            userViewModel.validateAppUpdate(),
+            if (hasUser)
+              userViewModel.fetchCustomerId()
+            else
+              Future.value(false),
+          ]);
+          final remaining =
+              const Duration(milliseconds: 300) - stopwatch.elapsed;
+          if (remaining > Duration.zero) {
+            await Future.delayed(remaining);
+          }
+          if (!context.mounted) return;
+          final updateAllowed = results[0];
+          hasUser = results[1];
+          if (!updateAllowed) return;
+          Navigator.pushReplacementNamed(context, hasUser ? '/Home' : '/Login');
         }
       });
   }
@@ -105,19 +113,5 @@ class _LaunchPageState extends State<LaunchPage> with TickerProviderStateMixin {
         ],
       ),
     );
-  }
-
-  Future<bool> _onLoginSuccess(BuildContext context) async {
-    final userViewModel = Provider.of<UserViewModel>(context, listen: false);
-    final updateInfo = await UpdateService().checkForUpdate();
-    userViewModel.appVersionErrorMsg = '';
-    if (updateInfo != null && context.mounted) {
-      userViewModel.appVersionValidated = false;
-      await showUpdateDialog(context, updateInfo);
-    } else {
-      final packageInfo = await PackageInfo.fromPlatform();
-      userViewModel.appVersion = packageInfo.version;
-    }
-    return userViewModel.appVersionValidated;
   }
 }

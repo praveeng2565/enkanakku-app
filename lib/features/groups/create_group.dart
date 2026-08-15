@@ -1,31 +1,28 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
-import '../../models/user_expense.dart';
-import '../../repositories/expense_repository.dart';
+import '../../models/room.dart';
+import '../../repositories/user_session.dart';
+import '../../services/login_auth.dart';
 import '../../services/snackbar_service.dart';
+import '../../services/user_service.dart';
 import '../../utils/base_page.dart';
 import '../../utils/common.dart';
-import '../../utils/drop_down_items.dart';
-import '../../widgets/custom_date_picker.dart';
-import '../../widgets/custom_drop_down_field.dart';
 import '../../widgets/custom_text_field.dart';
-import '../home/home_view_model.dart';
 
-class AddExpense extends StatefulWidget {
-  const AddExpense({super.key});
+class CreateGroup extends StatefulWidget {
+  const CreateGroup({super.key});
 
   @override
-  State<AddExpense> createState() => _AddExpenseState();
+  State<CreateGroup> createState() => _CreateGroupState();
 }
 
-class _AddExpenseState extends State<AddExpense> {
-  late UserExpense _userExpense;
+class _CreateGroupState extends State<CreateGroup> {
+  late Room _room;
 
   @override
   void initState() {
     super.initState();
-    _userExpense = UserExpense(id: getNewID(), date: DateTime.now());
+    _room = Room(id: getNewID(), createdBy: UserSession.instance.id);
   }
 
   @override
@@ -36,7 +33,7 @@ class _AddExpenseState extends State<AddExpense> {
   @override
   Widget build(BuildContext context) {
     return BasePage(
-      title: 'Add Expense',
+      title: 'Create Group',
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
@@ -47,49 +44,22 @@ class _AddExpenseState extends State<AddExpense> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    CustomDropDownField(
-                      label: 'Category',
-                      hintText: 'Choose your category',
-                      items: getExpenseCategories(),
+                    CustomTextField(
+                      label: 'Name',
+                      hintText: 'Enter the group name',
                       onChanged: (value) {
-                        _userExpense.category = value!;
-                      },
-                    ),
-                    const SizedBox(height: 20),
-                    CustomDatePicker(
-                      label: 'Date',
-                      hintText: 'Enter buy category time',
-                      initialValue: _userExpense.date,
-                      onChanged: (DateTime p0) {
-                        _userExpense.date = p0;
+                        _room.name = value;
                       },
                     ),
                     const SizedBox(height: 20),
                     CustomTextField(
-                      label: 'Amount',
-                      hintText: 'Enter your amount',
-                      keyboardType: const TextInputType.numberWithOptions(
-                        decimal: true,
-                      ),
-                      prefixIcon: Icons.currency_rupee,
-                      onChanged: (value) {
-                        if (value.isNotEmpty) {
-                          _userExpense.amount = double.parse(value);
-                        }
-                        if (value.isEmpty) {
-                          _userExpense.amount = 0;
-                        }
-                      },
-                    ),
-                    const SizedBox(height: 20),
-                    CustomTextField(
-                      label: 'Note',
-                      hintText: 'Enter your notes',
+                      label: 'About',
+                      hintText: 'Say about group',
                       minLines: 2,
                       maxLines: 4,
                       prefixIcon: Icons.edit_note_rounded,
                       onChanged: (value) {
-                        _userExpense.note = value;
+                        _room.note = value;
                       },
                     ),
                   ],
@@ -122,7 +92,7 @@ class _AddExpenseState extends State<AddExpense> {
                     ),
                   ),
                   ElevatedButton(
-                    onPressed: _validateAndSaveExpense,
+                    onPressed: _validateAndCreateGroup,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF1E3A8A),
                       shape: RoundedRectangleBorder(
@@ -130,7 +100,7 @@ class _AddExpenseState extends State<AddExpense> {
                       ),
                     ),
                     child: const Text(
-                      'Save Expense',
+                      'Create Group',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
@@ -148,37 +118,17 @@ class _AddExpenseState extends State<AddExpense> {
     );
   }
 
-  Future<void> _validateAndSaveExpense() async {
+  Future<void> _validateAndCreateGroup() async {
     hideKeyboard();
     final val = _validate();
     if (!val) return;
     showProgressCircle(context);
-    await ExpenseRepository()
-        .addExpense(_userExpense)
-        .whenComplete(() {
-          removeProgressCircle(context);
-        })
-        .then((void value) {
-          Provider.of<HomeViewModel>(context, listen: false)
-            ..expenses.add(_userExpense)
-            ..calculateData();
-          Navigator.of(context).pop();
-          SnackbarService.showInfoMessage('Expense added successfully !!!');
-        })
-        .onError((Object error, StackTrace stackTrace) {
-          SnackbarService.showErrorMessage(error);
-        });
+    //
   }
 
   bool _validate() {
-    if (_userExpense.category.isEmpty) {
-      SnackbarService.showErrorMessage('Expense Category cannot be empty');
-      return false;
-    }
-    if (_userExpense.amount == null || _userExpense.amount! <= 0.0) {
-      SnackbarService.showErrorMessage(
-        'Expense Amount should be greater than 0',
-      );
+    if (_room.name.isEmpty) {
+      SnackbarService.showErrorMessage('Group name cannot be empty');
       return false;
     }
     return true;

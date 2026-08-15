@@ -1,22 +1,20 @@
 import 'package:flutter/material.dart';
 // import 'package:firebase_storage/firebase_storage.dart';
 import '../../models/user_profile.dart';
-import '../../repositories/user_repository.dart';
+import '../../repositories/user_session.dart';
+import '../../repositories/users_repository.dart';
 
 class ProfileViewModel extends ChangeNotifier {
   ProfileViewModel(this._userRepository);
-  final UserRepository _userRepository;
+  final UsersRepository _userRepository;
 
   UserProfile? profile;
   bool isLoading = false;
   bool isSaving = false;
 
   Future<void> loadProfile() async {
-    isLoading = true;
-    notifyListeners();
-    final user = await _userRepository.getUser();
+    final user = await _userRepository.getUserData(UserSession.instance.id);
     profile = user;
-    isLoading = false;
     notifyListeners();
   }
 

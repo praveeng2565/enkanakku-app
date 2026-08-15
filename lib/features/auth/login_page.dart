@@ -18,6 +18,7 @@ class _LoginPageState extends State<LoginPage> {
   late final TextEditingController _name;
   late final TextEditingController _email;
   late final TextEditingController _password;
+  late final TextEditingController _mobile;
   late bool loginObscure;
   late PageType pageType;
 
@@ -29,6 +30,7 @@ class _LoginPageState extends State<LoginPage> {
     _name = TextEditingController(text: 'Praveen Keerthana');
     _email = TextEditingController(text: 'lifeledgerappdev@gmail.com');
     _password = TextEditingController(text: 'TestPassword@2026()');
+    _mobile = TextEditingController(text: '9698357997');
   }
 
   @override
@@ -36,6 +38,7 @@ class _LoginPageState extends State<LoginPage> {
     _name.dispose();
     _email.dispose();
     _password.dispose();
+    _mobile.dispose();
     super.dispose();
   }
 
@@ -113,6 +116,15 @@ class _LoginPageState extends State<LoginPage> {
                 hint: 'Enter your email',
                 icon: Icons.email_outlined,
               ),
+              if (!isLoginPage) const SizedBox(height: 18),
+              if (!isLoginPage)
+                authTextField(
+                  controller: _mobile,
+                  label: 'Mobile',
+                  hint: 'Enter your mobile no',
+                  icon: Icons.phone,
+                  keyboardType: TextInputType.phone,
+                ),
               const SizedBox(height: 18),
               authTextField(
                 controller: _password,
@@ -215,6 +227,14 @@ class _LoginPageState extends State<LoginPage> {
       SnackbarService.showErrorMessage('Email cannot be empty');
       return;
     }
+    if (!isLoginPage && _mobile.text.isEmpty) {
+      SnackbarService.showErrorMessage('Mobile no cannot be empty');
+      return;
+    }
+    if (!isLoginPage && _mobile.text.length != 10) {
+      SnackbarService.showErrorMessage('Mobile no should be 10 digits');
+      return;
+    }
     if (_password.text.isEmpty) {
       SnackbarService.showErrorMessage('Password cannot be empty');
       return;
@@ -236,6 +256,7 @@ class _LoginPageState extends State<LoginPage> {
             name: _name.text,
             email: _email.text,
             password: _password.text,
+            mobile:_mobile.text,
           )
           .catchError((error) {
             removeProgressCircle(context);
@@ -258,6 +279,7 @@ Widget authTextField({
   required IconData icon,
   bool obscure = false,
   Widget? suffixIcon,
+  TextInputType? keyboardType,
 }) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -270,6 +292,7 @@ Widget authTextField({
       TextField(
         obscureText: obscure,
         controller: controller,
+        keyboardType: keyboardType,
         style: const TextStyle(fontSize: 14, color: Colors.black),
         decoration: InputDecoration(
           hintText: hint,

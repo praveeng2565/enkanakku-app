@@ -2,7 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../core/exceptions.dart';
 import '../models/user_expense.dart';
 import '../services/login_auth.dart';
+import '../services/user_service.dart';
 import '../utils/common.dart';
+import 'user_session.dart';
 
 class ExpenseRepository {
   ExpenseRepository();
@@ -10,7 +12,7 @@ class ExpenseRepository {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   DocumentReference<Map<String, dynamic>> get _userData =>
-      _firestore.collection('users').doc(AuthService().currentUid);
+      _firestore.collection('Personal').doc(UserSession.instance.id);
 
   DocumentReference<Map<String, dynamic>> _expensesYearRef(String yearID) =>
       _userData.collection('expenses').doc(yearID);

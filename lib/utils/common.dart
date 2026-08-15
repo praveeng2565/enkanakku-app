@@ -1,8 +1,33 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../core/constants.dart';
+import '../models/user_profile.dart';
+import '../repositories/users_repository.dart';
+
 String getNewID() {
   return DateFormat('yyyyMMMdd#HHmmss#SSS').format(DateTime.now());
+}
+
+Future<String> generateUniqueId() async {
+  String finalId = '';
+
+  do {
+    final id = generateCode();
+
+    final UserProfile? doc = await UsersRepository().getUserOnce(id);
+    if (doc == null) {
+      finalId = id;
+    }
+  } while (finalId.isEmpty);
+
+  return finalId;
+}
+
+String generateCode() {
+  return '#${List.generate(8, (_) => AppConstants.friendCodeChars[Random.secure().nextInt(AppConstants.friendCodeChars.length)]).join()}';
 }
 
 void showProgressCircle(BuildContext context) {

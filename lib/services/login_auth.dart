@@ -3,15 +3,20 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import '../models/user_profile.dart';
-import '../repositories/user_repository.dart';
+import '../repositories/user_session.dart';
+import '../repositories/users_repository.dart';
 import '../utils/common.dart';
+import 'user_service.dart';
 
 class AuthService {
+  // AuthService._();
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   User? get getUser => _auth.currentUser;
 
   String get currentUid => _auth.currentUser?.uid ?? '';
+
+  String get userEmailId => _auth.currentUser?.email ?? '';
 
   // Stream<User> get user => _auth.authStateChanges();
 
@@ -25,6 +30,7 @@ class AuthService {
     required String name,
     required String email,
     required String password,
+    required String mobile,
   }) async {
     final u = await FirebaseAuth.instance.createUserWithEmailAndPassword(
       email: email,
@@ -32,15 +38,16 @@ class AuthService {
     );
     final User? user = u.user;
     final UserProfile info = UserProfile(
-      id: user?.uid ?? getNewID(),
-      email: user?.email ?? '',
-      name: user?.displayName ?? '',
-      mobileno: user?.phoneNumber ?? '',
+      id: await generateUniqueId(),
+      uid: user?.uid ?? '',
+      email: email,
+      name: name,
+      mobileno: mobile,
       photoUrl: user?.photoURL ?? '',
     );
     info.name = name;
     await u.user?.updateProfile(displayName: info.name);
-    await UserRepository().createOrUpdateUser(info);
+    await UsersRepository().createOrUpdateUser(info);
     return true;
   }
 
@@ -53,15 +60,14 @@ class AuthService {
       email: email,
       password: password,
     );
-    final User? user = AuthService().getUser;
-    final UserProfile info = UserProfile(
-      id: user?.uid ?? getNewID(),
-      email: user?.email ?? '',
-      name: user?.displayName ?? '',
-      mobileno: user?.phoneNumber ?? '',
-      photoUrl: user?.photoURL ?? '',
-    );
-    await UserRepository().createOrUpdateUser(info);
+
+    final val = await UsersRepository().getUserUniqueId();
+    if (val == null || val.isEmpty) return false;
+    UserSession.instance.id = val;
     return true;
+  }
+
+  Future<void> resetPassword(String email) async {
+    await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
   }
 }

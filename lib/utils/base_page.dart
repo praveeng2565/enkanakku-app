@@ -20,7 +20,7 @@ class BasePage extends StatefulWidget {
   final bool showNotifications;
   final Widget? drawer;
   final bool showLogout;
-  final FloatingActionButton? floatingActionButton;
+  final Widget? floatingActionButton;
   final Widget? bottomNavigationBar;
 
   @override

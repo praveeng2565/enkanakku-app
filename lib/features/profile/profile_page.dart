@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../repositories/user_repository.dart';
+import '../../repositories/users_repository.dart';
 import '../../services/login_auth.dart';
 import '../../theme/color.dart';
 import '../../utils/common.dart';
+import '../../widgets/custom_bottom_sheet.dart';
+import 'profile_edit_page.dart';
 import 'profile_view_model.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -12,7 +14,7 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (BuildContext context) => ProfileViewModel(UserRepository()),
+      create: (BuildContext context) => ProfileViewModel(UsersRepository()),
       builder: (BuildContext context, Widget? child) => const Profile(),
     );
   }
@@ -26,11 +28,13 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
+  late ProfileViewModel profileViewModel;
   @override
   void initState() {
     super.initState();
+    profileViewModel = Provider.of<ProfileViewModel>(context, listen: false);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<ProfileViewModel>().loadProfile();
+      profileViewModel.loadProfile();
     });
   }
 
@@ -83,7 +87,7 @@ class _ProfileState extends State<Profile> {
                         children: [
                           _SettingsTile(
                             icon: Icons.groups_outlined,
-                            title: 'Rooms',
+                            title: 'Groups',
                             subtitle: '${profile.roomList.length} joined',
                             onTap: () {},
                           ),
@@ -163,8 +167,12 @@ class _ProfileState extends State<Profile> {
                 Align(
                   alignment: Alignment.topRight,
                   child: IconButton(
-                    onPressed: () =>
-                        Navigator.pushNamed(context, '/ProfileEdit'),
+                    onPressed: () {
+                      CustomBottomSheet.show(
+                        context,
+                        ProfileEditScreen(vm: profileViewModel),
+                      );
+                    },
                     icon: const Icon(Icons.edit_outlined, color: Colors.white),
                   ),
                 ),
@@ -233,7 +241,7 @@ class _ProfileState extends State<Profile> {
           Expanded(
             child: _StatItem(
               value: '${profile.roomList.length}',
-              label: 'Rooms',
+              label: 'Groups',
             ),
           ),
           _StatDivider(),

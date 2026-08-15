@@ -6,8 +6,10 @@ import 'features/auth/login_page.dart';
 import 'features/auth/user_view_model.dart';
 import 'features/expenses/add_expense.dart';
 import 'features/expenses/edit_expense.dart';
-import 'features/home/home_page.dart';
+import 'features/groups/create_group.dart';
+import 'features/home/base_home_page.dart';
 import 'features/home/home_view_model.dart';
+import 'features/profile/profile_edit_page.dart';
 import 'services/snackbar_service.dart';
 import 'theme/app_theme.dart';
 import 'theme/theme_view_model.dart';
@@ -57,7 +59,6 @@ class MyApp extends StatelessWidget {
                 case '/AddExpense':
                   return MaterialPageRoute(
                     settings: const RouteSettings(name: '/AddExpense'),
-
                     builder: (_) => const AddExpense(),
                   );
                 case '/EditExpense':
@@ -68,6 +69,11 @@ class MyApp extends StatelessWidget {
                       userExpense: args['userExpense'],
                       index: args['index'],
                     ),
+                  );
+                case '/CreateGroup':
+                  return MaterialPageRoute(
+                    settings: const RouteSettings(name: '/CreateGroup'),
+                    builder: (_) => const CreateGroup(),
                   );
                 default:
                   return MaterialPageRoute(

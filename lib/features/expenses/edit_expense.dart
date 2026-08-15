@@ -136,7 +136,7 @@ class _EditExpenseState extends State<EditExpense> {
                       keyboardType: const TextInputType.numberWithOptions(
                         decimal: true,
                       ),
-                      prefixIcon: const Icon(Icons.currency_rupee, size: 18),
+                      prefixIcon: Icons.currency_rupee,
                       onChanged: (value) {
                         if (value.isNotEmpty) {
                           _userExpense.amount = double.parse(value);
@@ -154,7 +154,7 @@ class _EditExpenseState extends State<EditExpense> {
                       maxLines: 4,
                       isDisabled: !isEdit,
                       initialValue: _userExpense.note,
-                      prefixIcon: const Icon(Icons.edit_note_rounded, size: 18),
+                      prefixIcon: Icons.edit_note_rounded,
                       onChanged: (value) {
                         _userExpense.note = value;
                       },

@@ -1,3 +1,5 @@
+
+
 class AppConstants {
   static const String appName = 'Enkanakku';
   static const String appVersion = '1.0.0';
@@ -8,4 +10,5 @@ class AppConstants {
   static const String emptyString = '';
   static const String hash = '#';
   static const String themeKey = 'app_theme';
+  static const String friendCodeChars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 }
