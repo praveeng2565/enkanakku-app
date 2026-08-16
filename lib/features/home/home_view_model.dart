@@ -4,7 +4,7 @@ import '../../models/user_expense.dart';
 class HomeViewModel with ChangeNotifier {
   late DateTime currentDate;
   late DateTime dashMonthYear;
-  late double totalBudget;
+  final double monthlyBudget = 30000;
   late double totalSpent;
   late double totalRemaining;
   late double spentToday;
@@ -29,15 +29,14 @@ class HomeViewModel with ChangeNotifier {
       }
     }
     this
-      ..totalRemaining = totalBudget - totalSpent
+      ..totalRemaining = monthlyBudget - totalSpent
       ..totalSpentPerc = totalSpent == 0
           ? 0
-          : (totalSpent / totalBudget).clamp(0.0, 1.0)
+          : (totalSpent / monthlyBudget).clamp(0.0, 1.0)
       ..refresh();
   }
 
   void reset() {
-    totalBudget = 10000;
     totalSpent = 0;
     totalRemaining = 0;
     spentToday = 0;

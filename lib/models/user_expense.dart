@@ -7,6 +7,7 @@ class UserExpense {
     this.category = AppConstants.emptyString,
     required this.date,
     this.note = AppConstants.emptyString,
+    this.title = AppConstants.emptyString,
   });
   factory UserExpense.fromMap(Map<String, dynamic> m) => UserExpense(
     id: m['id'] as String,
@@ -14,6 +15,7 @@ class UserExpense {
     category: m['category'] as String,
     date: DateTime.parse(m['date']),
     note: m['note'] as String,
+    title: m['title'] as String? ?? '',
   );
   factory UserExpense.fromJson(Map<String, dynamic> j) =>
       UserExpense.fromMap(j);
@@ -22,12 +24,14 @@ class UserExpense {
   String category;
   DateTime date;
   String note;
+  String title;
   Map<String, dynamic> toMap() => {
     'id': id,
     'amount': amount,
     'category': category,
     'date': date.toIso8601String(),
     'note': note,
+    'title': title,
   };
   Map<String, dynamic> toJson() => toMap();
   UserExpense copyWith({
@@ -36,6 +40,7 @@ class UserExpense {
     String? category,
     DateTime? date,
     String? note,
+    String? title,
   }) {
     return UserExpense(
       id: id ?? this.id,
@@ -43,6 +48,7 @@ class UserExpense {
       category: category ?? this.category,
       date: date ?? this.date,
       note: note ?? this.note,
+      title: title ?? this.title,
     );
   }
 }

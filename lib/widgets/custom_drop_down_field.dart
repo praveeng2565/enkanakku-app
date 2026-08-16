@@ -75,12 +75,10 @@ class DropDownItems {
     required this.value,
     required this.label,
     this.show = true,
-    this.iconData = Icons.shopping_cart_checkout_sharp,
-    this.iconColor = const Color(0xFF3D8BFD),
+    this.icon = Icons.attach_money_outlined,
   });
   final String value;
   final String label;
   final bool show;
-  final IconData iconData;
-  final Color iconColor;
+  final IconData icon;
 }
