@@ -42,11 +42,11 @@ dev_dependencies:
 flutter_launcher_icons:
   android: "launcher_icon"
   # ios: true
-  image_path: "lib/utils/images/launch_logo.png"
+  image_path: "lib/utils/images/app_logo.png"
   min_sdk_android: 21
 
   adaptive_icon_background: "#EEF6FF"
-  adaptive_icon_foreground: "lib/utils/images/launch_logo.png"
+  adaptive_icon_foreground: "lib/utils/images/app_logo.png"
 
 
 # The following section is specific to Flutter packages.

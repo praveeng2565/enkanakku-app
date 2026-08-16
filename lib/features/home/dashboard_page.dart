@@ -3,7 +3,6 @@ import 'package:intl/intl.dart';
 
 import '../../models/user_expense.dart';
 
-
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key, required this.scaffoldKey});
 

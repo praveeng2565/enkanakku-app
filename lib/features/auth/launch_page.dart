@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/constants.dart';
 import 'user_view_model.dart';
 
 class LaunchPage extends StatefulWidget {
@@ -56,45 +57,54 @@ class _LaunchPageState extends State<LaunchPage> with TickerProviderStateMixin {
     super.dispose();
   }
 
+  Widget _buildBackground(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    Color darken(Color color, [double amount = 0.25]) {
+      final hsl = HSLColor.fromColor(color);
+
+      return hsl
+          .withLightness((hsl.lightness * (1 - amount)).clamp(0.0, 1.0))
+          .toColor();
+    }
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: isDark
+              ? [
+                  darken(colors.primary, 0.15),
+                  darken(colors.secondary),
+                  darken(colors.tertiary, 0.30),
+                  darken(colors.primaryContainer, 0.45),
+                ]
+              : [
+                  colors.primary,
+                  colors.secondary,
+                  colors.tertiary,
+                  colors.primaryContainer,
+                ],
+          stops: const [0.0, 0.34, 0.70, 1.0],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Material(
       child: Stack(
         alignment: Alignment.center,
         children: [
-          Image.asset(
-            'lib/utils/images/launch_bg.png',
-            fit: BoxFit.cover,
-            width: double.infinity,
-            height: double.infinity,
-          ),
+          Positioned.fill(child: _buildBackground(context)),
           ScaleTransition(
             scale: _scaleAnimation,
             child: FadeTransition(
               opacity: _animation,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Image.asset('lib/utils/images/launch_logo.png'),
-                  const SizedBox(height: 20),
-                  const Text(
-                    'EN-KANAKKU',
-                    style: TextStyle(
-                      fontSize: 40,
-                      fontWeight: FontWeight.w900,
-                      color: Color(0xFF0F4C81),
-                    ),
-                  ),
-                  const Text(
-                    'One app for every financial responsibility',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF8A8A8A),
-                    ),
-                  ),
-                ],
-              ),
+              child: Image.asset('lib/utils/images/app_logo_text.png'),
             ),
           ),
         ],

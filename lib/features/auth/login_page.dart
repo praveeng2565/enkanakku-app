@@ -164,18 +164,34 @@ class _LoginPageState extends State<LoginPage>
 
   Widget _buildBackground(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    Color darken(Color color, [double amount = 0.25]) {
+      final hsl = HSLColor.fromColor(color);
+
+      return hsl
+          .withLightness((hsl.lightness * (1 - amount)).clamp(0.0, 1.0))
+          .toColor();
+    }
 
     return DecoratedBox(
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            colors.primary,
-            colors.secondary,
-            colors.tertiary,
-            colors.primaryContainer,
-          ],
+          colors: isDark
+              ? [
+                  darken(colors.primary, 0.15),
+                  darken(colors.secondary, 0.25),
+                  darken(colors.tertiary, 0.30),
+                  darken(colors.primaryContainer, 0.45),
+                ]
+              : [
+                  colors.primary,
+                  colors.secondary,
+                  colors.tertiary,
+                  colors.primaryContainer,
+                ],
           stops: const [0.0, 0.34, 0.70, 1.0],
         ),
       ),
@@ -223,69 +239,9 @@ class _LoginPageState extends State<LoginPage>
   // =========================================================================
 
   Widget _buildHeader(BuildContext context) {
-    return Column(
-      children: [
-        // ---------------------------------------------------------------
-        // LOGO
-        // ---------------------------------------------------------------
-        Container(
-          height: 68,
-          width: 68,
-
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.13),
-
-            shape: BoxShape.circle,
-
-            border: Border.all(color: Colors.white.withValues(alpha: 0.25)),
-
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.10),
-                blurRadius: 25,
-                offset: const Offset(0, 8),
-              ),
-            ],
-          ),
-
-          child: const Icon(
-            Icons.account_balance_wallet_rounded,
-            size: 32,
-            color: Colors.white,
-          ),
-        ),
-
-        const SizedBox(height: 13),
-
-        // ---------------------------------------------------------------
-        // APP NAME
-        // ---------------------------------------------------------------
-        Text(
-          AppConstants.appName.toUpperCase(),
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 31,
-            fontWeight: FontWeight.w900,
-            letterSpacing: -1.2,
-          ),
-        ),
-
-        const SizedBox(height: 5),
-
-        // ---------------------------------------------------------------
-        // TAGLINE
-        // ---------------------------------------------------------------
-        Text(
-          'Your money. Your life. One place.',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: Colors.white.withValues(alpha: 0.80),
-            fontSize: 12.5,
-            fontWeight: FontWeight.w600,
-            fontStyle: FontStyle.italic,
-          ),
-        ),
-      ],
+    return SizedBox(
+      height: 180,
+      child: Image.asset('lib/utils/images/app_logo_text.png'),
     );
   }
 

@@ -11,8 +11,8 @@ import '../../utils/common.dart';
 import '../auth/user_view_model.dart';
 import '../profile/profile_page.dart';
 import 'dashboard_page.dart';
-import 'friends_page.dart';
-import 'group_page.dart';
+import '../friends/friends_page.dart';
+import '../groups/group_page.dart';
 import 'home_view_model.dart';
 
 class HomePage extends StatefulWidget {
