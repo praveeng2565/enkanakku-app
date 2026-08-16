@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../core/constants.dart';
 import '../../models/user_expense.dart';
 import '../../models/user_insurance.dart';
 import '../../models/user_loan.dart';
@@ -9,12 +11,15 @@ import '../../models/user_remainder.dart';
 import '../../models/user_warranty.dart';
 import '../../repositories/user_session.dart';
 import '../../repositories/users_repository.dart';
+import '../../services/login_auth.dart';
 import '../../services/update_service.dart';
+import 'update_app_dialog.dart';
 
 class UserViewModel with ChangeNotifier {
-  bool appVersionValidated = true;
+  bool appVersionValidated = false;
   String appVersionErrorMsg = '';
   String appVersion = '';
+  String loginVersion = '';
   UserProfile? _userData;
 
   UserProfile? get user => _userData;
@@ -58,16 +63,47 @@ class UserViewModel with ChangeNotifier {
     _remainderList = remainder;
   }
 
-  Future<bool> validateAppUpdate() async {
+  Future<bool> validateAppUpdate(BuildContext context) async {
     final updateInfo = await UpdateService().checkForUpdate();
+    final packageInfo = await PackageInfo.fromPlatform();
+    appVersion = packageInfo.version;
     appVersionErrorMsg = '';
     if (updateInfo != null) {
-      appVersionValidated = false;
+      if (updateInfo.apkUrl.isNotEmpty) {
+        appVersionValidated = false;
+        showUpdateDialog(context, updateInfo);
+      } else if (updateInfo.loginVersion != null &&
+          updateInfo.loginVersion!.isNotEmpty) {
+        appVersionValidated = true;
+        loginVersion = updateInfo.loginVersion!;
+      }
     } else {
-      final packageInfo = await PackageInfo.fromPlatform();
-      appVersion = packageInfo.version;
+      appVersionValidated = true;
     }
     return appVersionValidated;
+  }
+
+  Future<String> getInitialPageRoute() async {
+    final hasUser = AuthService().getUser != null;
+    if (hasUser && !await shouldUserRelogin()) {
+      if (await fetchCustomerId()) {
+        return '/Home';
+      }
+    }
+    return '/Login';
+  }
+
+  Future<bool> shouldUserRelogin() async {
+    final prefs = await SharedPreferences.getInstance();
+    final lastLoginVerison = prefs.getString(AppConstants.loginVersionKey);
+    if (lastLoginVerison == null ||
+        lastLoginVerison.isEmpty ||
+        lastLoginVerison != loginVersion) {
+      await AuthService().logout();
+      return true;
+    }
+
+    return false;
   }
 
   Future<bool> fetchCustomerId() async {

@@ -54,8 +54,7 @@ class _UpdateDialogContentState extends State<_UpdateDialogContent> {
               ..appVersionValidated = false;
             setState(() => _downloading = false);
           } else if (mounted) {
-            userViewModel.appVersionValidated = true;
-            Navigator.pop(context);
+            nextStep();
           }
         },
         onError: (String message) {
@@ -65,8 +64,7 @@ class _UpdateDialogContentState extends State<_UpdateDialogContent> {
               ..appVersionValidated = false;
             setState(() => _downloading = false);
           } else if (mounted) {
-            userViewModel.appVersionValidated = true;
-            Navigator.pop(context);
+            nextStep();
           }
         },
       );
@@ -77,8 +75,7 @@ class _UpdateDialogContentState extends State<_UpdateDialogContent> {
           ..appVersionValidated = false;
         setState(() => _downloading = false);
       } else if (mounted) {
-        userViewModel.appVersionValidated = true;
-        Navigator.pop(context);
+        nextStep();
       }
     }
   }
@@ -184,9 +181,8 @@ class _UpdateDialogContentState extends State<_UpdateDialogContent> {
           : [
               if (!widget.info.mandatory)
                 TextButton(
-                  onPressed: () {
-                    userViewModel.appVersionValidated = true;
-                    Navigator.pop(context);
+                  onPressed: () async {
+                    nextStep();
                   },
                   child: const Text('Later'),
                 ),
@@ -197,5 +193,15 @@ class _UpdateDialogContentState extends State<_UpdateDialogContent> {
               ),
             ],
     );
+  }
+
+  Future<void> nextStep([bool canLogin = true]) async {
+    userViewModel.appVersionValidated = true;
+    Navigator.pop(context);
+    if (canLogin) {
+      final route = await userViewModel.getInitialPageRoute();
+      if (!context.mounted) return;
+      Navigator.pushReplacementNamed(context, route);
+    }
   }
 }

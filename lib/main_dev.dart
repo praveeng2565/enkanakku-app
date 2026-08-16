@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'core/constants.dart';
 import 'firebase_options_dev.dart';
 import 'my_app.dart';
+import 'repositories/user_session.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,5 +39,6 @@ void main() async {
   };
   final prefs = await SharedPreferences.getInstance();
   final theme = prefs.getString(AppConstants.themeKey);
+  UserSession.instance.isDev = true;
   runApp(MyApp(initialTheme: theme));
 }

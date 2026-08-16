@@ -38,6 +38,22 @@ class GroupPage extends StatelessWidget {
       members: 5,
       createdAt: '2026-07-28T09:45:00',
     ),
+    GroupModel(
+      id: '4',
+      name: 'Ooty Trip',
+      description: 'Trip expenses with friends',
+      emoji: '🚗',
+      members: 5,
+      createdAt: '2026-07-28T09:45:00',
+    ),
+    GroupModel(
+      id: '4',
+      name: 'Erode Trip',
+      description: 'Trip expenses with friends',
+      emoji: '🚗',
+      members: 5,
+      createdAt: '2026-07-28T09:45:00',
+    ),
   ];
 
   @override
@@ -73,26 +89,32 @@ class GroupPage extends StatelessWidget {
 
       body: groups.isEmpty
           ? _EmptyGroups()
-          : CustomScrollView(
-              physics: const BouncingScrollPhysics(),
-              slivers: [
-                SliverToBoxAdapter(child: _buildHeader(theme)),
+          : Column(
+              children: [
+                _buildHeader(theme),
+                Expanded(
+                  child: CustomScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    slivers: [
+                      SliverPadding(
+                        padding: const EdgeInsets.fromLTRB(20, 4, 20, 30),
+                        sliver: SliverList.separated(
+                          itemCount: groups.length,
+                          separatorBuilder: (_, _) =>
+                              const SizedBox(height: 12),
+                          itemBuilder: (context, index) {
+                            final group = groups[index];
 
-                SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(20, 4, 20, 30),
-                  sliver: SliverList.separated(
-                    itemCount: groups.length,
-                    separatorBuilder: (_, _) => const SizedBox(height: 12),
-                    itemBuilder: (context, index) {
-                      final group = groups[index];
-
-                      return _GroupCard(
-                        group: group,
-                        onTap: () {
-                          // Open group
-                        },
-                      );
-                    },
+                            return _GroupCard(
+                              group: group,
+                              onTap: () {
+                                // Open group
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -104,6 +126,7 @@ class GroupPage extends StatelessWidget {
         },
         icon: const Icon(Icons.group_add_rounded),
         label: const Text('New Group'),
+        heroTag: 'group_page',
       ),
     );
   }
@@ -152,7 +175,6 @@ class GroupPage extends StatelessWidget {
 }
 
 class _GroupCard extends StatelessWidget {
-
   const _GroupCard({required this.group, required this.onTap});
   final GroupModel group;
   final VoidCallback onTap;
@@ -262,7 +284,6 @@ class _GroupCard extends StatelessWidget {
 }
 
 class _InfoItem extends StatelessWidget {
-
   const _InfoItem({required this.icon, required this.text});
   final IconData icon;
   final String text;
@@ -349,7 +370,6 @@ class _EmptyGroups extends StatelessWidget {
 }
 
 class GroupModel {
-
   const GroupModel({
     required this.id,
     required this.name,

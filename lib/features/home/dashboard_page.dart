@@ -3,11 +3,13 @@ import 'package:intl/intl.dart';
 
 import '../../models/user_expense.dart';
 
+
 class DashboardPage extends StatelessWidget {
-  const DashboardPage({super.key});
+  const DashboardPage({super.key, required this.scaffoldKey});
 
   final double monthlyBudget = 30000;
   final double totalSpent = 18450;
+  final GlobalKey<ScaffoldState> scaffoldKey;
 
   final List<ExpenseModel> todayExpenses = const [
     ExpenseModel(
@@ -59,7 +61,6 @@ class DashboardPage extends StatelessWidget {
       type: ReminderType.warranty,
     ),
   ];
-
   @override
   Widget build(BuildContext context) {
     final remaining = monthlyBudget - totalSpent;
@@ -169,6 +170,7 @@ class DashboardPage extends StatelessWidget {
         },
         icon: const Icon(Icons.add_rounded),
         label: const Text('Expense'),
+        heroTag: 'dashboard_page',
       ),
     );
   }
@@ -206,6 +208,13 @@ class DashboardPage extends StatelessWidget {
               // Notifications
             },
             icon: const Icon(Icons.notifications_none_rounded),
+          ),
+
+          IconButton.filledTonal(
+            onPressed: () {
+              scaffoldKey.currentState?.openDrawer();
+            },
+            icon: const Icon(Icons.more_horiz_outlined),
           ),
         ],
       ),
@@ -421,7 +430,6 @@ class DashboardPage extends StatelessWidget {
 }
 
 class _AmountInfo extends StatelessWidget {
-
   const _AmountInfo({
     required this.title,
     required this.value,
@@ -460,7 +468,6 @@ class _AmountInfo extends StatelessWidget {
 }
 
 class _StatCard extends StatelessWidget {
-
   const _StatCard({
     required this.icon,
     required this.title,
@@ -508,7 +515,6 @@ class _StatCard extends StatelessWidget {
 }
 
 class _ExpenseTile extends StatelessWidget {
-
   const _ExpenseTile({required this.expense, required this.onTap});
   final ExpenseModel expense;
   final VoidCallback onTap;
@@ -589,7 +595,6 @@ class _ExpenseTile extends StatelessWidget {
 }
 
 class _ReminderTile extends StatelessWidget {
-
   const _ReminderTile({required this.reminder, required this.onTap});
   final ReminderModel reminder;
   final VoidCallback onTap;
@@ -680,7 +685,6 @@ class _ReminderTile extends StatelessWidget {
 }
 
 class ExpenseModel {
-
   const ExpenseModel({
     required this.title,
     required this.category,
@@ -698,7 +702,6 @@ class ExpenseModel {
 enum ReminderType { loan, insurance, warranty }
 
 class ReminderModel {
-
   const ReminderModel({
     required this.title,
     required this.subtitle,

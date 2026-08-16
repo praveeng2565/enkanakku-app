@@ -64,7 +64,6 @@ class FloatingNavigationBar extends StatelessWidget {
 }
 
 class _BottomItem extends StatelessWidget {
-
   const _BottomItem({
     required this.icon,
     required this.label,

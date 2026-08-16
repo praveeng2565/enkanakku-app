@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../services/login_auth.dart';
 import '../../utils/common.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -349,7 +348,7 @@ class ProfilePage extends StatelessWidget {
         borderRadius: BorderRadius.circular(18),
         child: InkWell(
           onTap: () {
-            _showLogoutDialog(context);
+            showLogoutDialog(context);
           },
           borderRadius: BorderRadius.circular(18),
           child: Padding(
@@ -400,41 +399,6 @@ class ProfilePage extends StatelessWidget {
       ),
     );
   }
-  // ---------------------------------------------------------------------------
-  // LOGOUT
-  // ---------------------------------------------------------------------------
-
-  void _showLogoutDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Sign out?'),
-          content: const Text(
-            'Are you sure you want to sign out from your account?',
-          ),
-          actions: [
-            TextButton(
-              onPressed: () async {
-                Navigator.pop(context);
-              },
-              child: const Text('Cancel'),
-            ),
-            FilledButton(
-              onPressed: () async {
-                showProgressCircle(context);
-                Navigator.pop(context);
-                await AuthService().logout();
-                removeProgressCircle(context);
-                Navigator.pushReplacementNamed(context, '/Login');
-              },
-              child: const Text('Sign out'),
-            ),
-          ],
-        );
-      },
-    );
-  }
 
   String _getInitial(String value) {
     if (value.trim().isEmpty) {
@@ -450,7 +414,6 @@ class ProfilePage extends StatelessWidget {
 // =============================================================================
 
 class _StatItem extends StatelessWidget {
-
   const _StatItem({required this.value, required this.label});
   final String value;
   final String label;
@@ -481,7 +444,6 @@ class _StatItem extends StatelessWidget {
 }
 
 class _SectionCard extends StatelessWidget {
-
   const _SectionCard({required this.children});
   final List<Widget> children;
 
@@ -519,7 +481,6 @@ class _CardDivider extends StatelessWidget {
 }
 
 class _InfoTile extends StatelessWidget {
-
   const _InfoTile({
     required this.icon,
     required this.title,
@@ -570,7 +531,6 @@ class _InfoTile extends StatelessWidget {
 }
 
 class _NavigationTile extends StatelessWidget {
-
   const _NavigationTile({
     required this.icon,
     required this.title,
@@ -634,7 +594,6 @@ class _NavigationTile extends StatelessWidget {
 }
 
 class _IconContainer extends StatelessWidget {
-
   const _IconContainer({required this.icon});
   final IconData icon;
 

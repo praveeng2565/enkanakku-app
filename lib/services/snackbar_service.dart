@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../theme/color.dart';
+import '../utils/enum.dart';
 
 class SnackbarService {
   SnackbarService._();
@@ -13,14 +14,18 @@ class SnackbarService {
     _showMessage(message, context: context);
   }
 
+  static void showSuccessMessage(dynamic message, {BuildContext? context}) {
+    _showMessage(message, context: context, type: SnackType.success);
+  }
+
   static void showErrorMessage(dynamic error, {BuildContext? context}) {
-    _showMessage(error, context: context, isError: true);
+    _showMessage(error, context: context, type: SnackType.error);
   }
 
   static void _showMessage(
     dynamic msg, {
     BuildContext? context,
-    bool isError = false,
+    SnackType type = SnackType.info,
   }) {
     final state = (context == null)
         ? messengerKey.currentState!
@@ -35,7 +40,11 @@ class SnackbarService {
           content: Text(message),
           duration: const Duration(seconds: 3),
           showCloseIcon: true,
-          backgroundColor: isError ? Colors.redAccent : Palette.color7,
+          backgroundColor: ((type == SnackType.error)
+              ? Colors.redAccent
+              : ((type == SnackType.success)
+                    ? Colors.greenAccent
+                    : Palette.color7)),
           behavior: SnackBarBehavior.floating,
         ),
       );

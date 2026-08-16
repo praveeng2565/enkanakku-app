@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../services/login_auth.dart';
 import 'user_view_model.dart';
 
 class LaunchPage extends StatefulWidget {
@@ -15,13 +14,12 @@ class _LaunchPageState extends State<LaunchPage> with TickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
   late Animation<double> _scaleAnimation;
-  bool hasUser = true;
+  late UserViewModel userViewModel;
 
   @override
   void initState() {
     super.initState();
-    final userViewModel = Provider.of<UserViewModel>(context, listen: false);
-    hasUser = AuthService().getUser != null;
+    userViewModel = Provider.of<UserViewModel>(context, listen: false);
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1200),
@@ -33,35 +31,27 @@ class _LaunchPageState extends State<LaunchPage> with TickerProviderStateMixin {
     );
     _controller
       ..forward()
-      ..addStatusListener((AnimationStatus status) async {
-        if (status == AnimationStatus.completed) {
-          final stopwatch = Stopwatch()..start();
-          final results = await Future.wait([
-            userViewModel.validateAppUpdate(),
-            if (hasUser)
-              userViewModel.fetchCustomerId()
-            else
-              Future.value(false),
-          ]);
-          final remaining =
-              const Duration(milliseconds: 300) - stopwatch.elapsed;
-          if (remaining > Duration.zero) {
-            await Future.delayed(remaining);
-          }
+      ..addStatusListener(statusListener);
+  }
+
+  Future<void> statusListener(AnimationStatus status) async {
+    if (status == AnimationStatus.completed) {
+      await userViewModel.validateAppUpdate(context);
+      if (userViewModel.appVersionValidated) {
+        final route = await userViewModel.getInitialPageRoute();
+        Future.delayed(const Duration(milliseconds: 250), () {
           if (!context.mounted) return;
-          final updateAllowed = results[0];
-          hasUser = results[1];
-          if (!updateAllowed) return;
-          Navigator.pushReplacementNamed(context, hasUser ? '/Home' : '/Login');
-        }
-      });
+          Navigator.pushReplacementNamed(context, route);
+        });
+      }
+    }
   }
 
   @override
   void dispose() {
     _controller
-      // ..removeStatusListener(listener)
       ..stop()
+      ..removeStatusListener(statusListener)
       ..dispose();
     super.dispose();
   }

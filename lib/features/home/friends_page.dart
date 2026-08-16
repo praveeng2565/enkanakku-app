@@ -79,26 +79,32 @@ class FriendsSplitPage extends StatelessWidget {
 
       body: friends.isEmpty
           ? const _EmptyFriends()
-          : CustomScrollView(
-              physics: const BouncingScrollPhysics(),
-              slivers: [
-                SliverToBoxAdapter(child: _buildHeader(theme)),
+          : Column(
+              children: [
+                _buildHeader(theme),
+                Expanded(
+                  child: CustomScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    slivers: [
+                      SliverPadding(
+                        padding: const EdgeInsets.fromLTRB(20, 4, 20, 30),
+                        sliver: SliverList.separated(
+                          itemCount: friends.length,
+                          separatorBuilder: (_, _) =>
+                              const SizedBox(height: 12),
+                          itemBuilder: (context, index) {
+                            final friend = friends[index];
 
-                SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(20, 4, 20, 30),
-                  sliver: SliverList.separated(
-                    itemCount: friends.length,
-                    separatorBuilder: (_, _) => const SizedBox(height: 12),
-                    itemBuilder: (context, index) {
-                      final friend = friends[index];
-
-                      return _FriendCard(
-                        friend: friend,
-                        onTap: () {
-                          // Open friend split details
-                        },
-                      );
-                    },
+                            return _FriendCard(
+                              friend: friend,
+                              onTap: () {
+                                // Open friend split details
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -110,6 +116,7 @@ class FriendsSplitPage extends StatelessWidget {
         },
         icon: const Icon(Icons.person_add_alt_1_rounded),
         label: const Text('Add Friend'),
+        heroTag: 'friends_page',
       ),
     );
   }
@@ -161,7 +168,6 @@ class FriendsSplitPage extends StatelessWidget {
 }
 
 class _FriendCard extends StatelessWidget {
-
   const _FriendCard({required this.friend, required this.onTap});
   final FriendSplitModel friend;
   final VoidCallback onTap;
@@ -393,7 +399,6 @@ class _EmptyFriends extends StatelessWidget {
 }
 
 class FriendSplitModel {
-
   const FriendSplitModel({
     required this.id,
     required this.name,

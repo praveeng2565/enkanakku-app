@@ -727,7 +727,6 @@ class _AddExpenseState extends State<AddExpense> {
 // =============================================================================
 
 class _InputCard extends StatelessWidget {
-
   const _InputCard({required this.child, required this.onTap});
   final Widget child;
   final VoidCallback onTap;
@@ -762,7 +761,6 @@ class _InputCard extends StatelessWidget {
 // =============================================================================
 
 class _LeadingIcon extends StatelessWidget {
-
   const _LeadingIcon({required this.icon, required this.selected});
   final IconData icon;
   final bool selected;
@@ -794,7 +792,6 @@ class _LeadingIcon extends StatelessWidget {
 // =============================================================================
 
 class _HeaderButton extends StatelessWidget {
-
   const _HeaderButton({required this.icon, required this.onTap});
   final IconData icon;
   final VoidCallback onTap;
@@ -824,7 +821,6 @@ class _HeaderButton extends StatelessWidget {
 // =============================================================================
 
 class _Category {
-
   const _Category({required this.name, required this.icon});
   final String name;
   final IconData icon;

@@ -6,6 +6,7 @@ class UserSession {
   String id = '';
   String uid = '';
   String name = '';
+  bool isDev = false;
 
   bool get isLoggedIn => id.isNotEmpty;
 

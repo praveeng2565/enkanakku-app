@@ -1,5 +1,5 @@
 class AppConstants {
-  static const String appName = 'Enkanakku';
+  static const String appName = 'En Kanakku';
   static const String appVersion = '1.0.0';
   static const String appDescription =
       'Enkanakku is a personal finance management app that helps you track your expenses and manage your budget.';
@@ -8,5 +8,6 @@ class AppConstants {
   static const String emptyString = '';
   static const String hash = '#';
   static const String themeKey = 'app_theme';
+  static const String loginVersionKey = 'login_version';
   static const String friendCodeChars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 }

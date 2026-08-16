@@ -10,12 +10,14 @@ class UpdateInfo {
   UpdateInfo({
     required this.latestVersion,
     required this.currentVersion,
-    required this.apkUrl,
-    required this.mandatory,
+    this.apkUrl = '',
+    this.mandatory = false,
+    this.loginVersion,
   });
   final String latestVersion;
   final String currentVersion;
   final String apkUrl;
+  final String? loginVersion;
   final bool mandatory;
 }
 
@@ -52,9 +54,14 @@ class UpdateService {
         latestVersion: latestVersion,
         apkUrl: data['apkUrl'] as String,
         mandatory: data['mandatory'] as bool? ?? false,
+        loginVersion: data['loginVersion'] as String?,
       );
     }
-    return null;
+    return UpdateInfo(
+      currentVersion: currentVersion,
+      latestVersion: latestVersion,
+      loginVersion: data['loginVersion'] as String?,
+    );
   }
 
   /// Simple semantic version comparison: "1.3.0" > "1.2.9" etc.

@@ -812,7 +812,6 @@ class _CircleButton extends StatelessWidget {
 // =============================================================================
 
 class _ExpenseCategory {
-
   const _ExpenseCategory({required this.name, required this.icon});
   final String name;
   final IconData icon;

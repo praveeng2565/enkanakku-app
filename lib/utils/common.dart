@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import '../core/constants.dart';
 import '../models/user_profile.dart';
 import '../repositories/users_repository.dart';
+import '../services/login_auth.dart';
 
 String getNewID() {
   return DateFormat('yyyyMMMdd#HHmmss#SSS').format(DateTime.now());
@@ -41,7 +42,7 @@ void showProgressCircle(BuildContext context) {
         child: Center(
           child: CircularProgressIndicator(
             backgroundColor: Colors.grey[200],
-            color: Colors.blue,
+            color: Theme.of(context).colorScheme.primary,
             strokeWidth: 4.0,
           ),
         ),
@@ -52,6 +53,38 @@ void showProgressCircle(BuildContext context) {
 
 void removeProgressCircle(BuildContext context) {
   Navigator.of(context, rootNavigator: true).pop('dialog');
+}
+
+void showLogoutDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: const Text('Sign out?'),
+        content: const Text(
+          'Are you sure you want to sign out from your account?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(context);
+            },
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () async {
+              showProgressCircle(context);
+              Navigator.pop(context);
+              await AuthService().logout();
+              removeProgressCircle(context);
+              Navigator.pushReplacementNamed(context, '/Login');
+            },
+            child: const Text('Sign out'),
+          ),
+        ],
+      );
+    },
+  );
 }
 
 void hideKeyboard() {
