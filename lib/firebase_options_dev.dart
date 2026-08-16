@@ -58,7 +58,6 @@ class DefaultFirebaseOptions {
     storageBucket: 'enkanakku-app-dev.firebasestorage.app',
     measurementId: 'G-1TFRD3P75W',
   );
-
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyCue5mqBFgeK8eVqU8b--XOmy5ykDP0PGA',
     appId: '1:947449486608:android:f4f40f8234e49c1c211995',

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import 'features/auth/launch_page.dart';
 import 'features/auth/login_page.dart';
 import 'features/auth/user_view_model.dart';
@@ -16,9 +15,7 @@ import 'utils/coming_soon.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key, this.initialTheme});
-
   final String? initialTheme;
-
   @override
   Widget build(BuildContext context) {
     return MultiProvider(

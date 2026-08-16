@@ -3,7 +3,6 @@ import 'package:intl/intl.dart';
 
 class FriendsSplitPage extends StatelessWidget {
   const FriendsSplitPage({super.key});
-
   final List<FriendSplitModel> friends = const [
     FriendSplitModel(
       id: '1',
@@ -42,11 +41,9 @@ class FriendsSplitPage extends StatelessWidget {
       lastActivity: '2026-08-03T19:45:00',
     ),
   ];
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 20,
@@ -76,7 +73,6 @@ class FriendsSplitPage extends StatelessWidget {
           ),
         ],
       ),
-
       body: friends.isEmpty
           ? const _EmptyFriends()
           : Column(
@@ -94,7 +90,6 @@ class FriendsSplitPage extends StatelessWidget {
                               const SizedBox(height: 12),
                           itemBuilder: (context, index) {
                             final friend = friends[index];
-
                             return _FriendCard(
                               friend: friend,
                               onTap: () {
@@ -109,7 +104,6 @@ class FriendsSplitPage extends StatelessWidget {
                 ),
               ],
             ),
-
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           // Find / add friend
@@ -138,9 +132,7 @@ class FriendsSplitPage extends StatelessWidget {
               color: theme.colorScheme.primary,
             ),
           ),
-
           const SizedBox(width: 12),
-
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -171,25 +163,18 @@ class _FriendCard extends StatelessWidget {
   const _FriendCard({required this.friend, required this.onTap});
   final FriendSplitModel friend;
   final VoidCallback onTap;
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
     final balance = friend.youPaid - friend.theyPaid;
-
     final lastActivity = DateTime.tryParse(friend.lastActivity);
-
     final formattedDate = lastActivity == null
         ? friend.lastActivity
         : DateFormat('dd MMM yyyy').format(lastActivity);
-
     final bool youGet = balance > 0;
     // final bool youOwe = balance < 0;
     final bool settled = balance == 0;
-
     String balanceText;
-
     if (settled) {
       balanceText = 'Settled up';
     } else if (youGet) {
@@ -197,7 +182,6 @@ class _FriendCard extends StatelessWidget {
     } else {
       balanceText = 'You owe ₹${_formatAmount(balance.abs())}';
     }
-
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -231,9 +215,7 @@ class _FriendCard extends StatelessWidget {
                   ),
                 ),
               ),
-
               const SizedBox(width: 14),
-
               // Friend information
               Expanded(
                 child: Column(
@@ -247,9 +229,7 @@ class _FriendCard extends StatelessWidget {
                         fontWeight: FontWeight.w700,
                       ),
                     ),
-
                     const SizedBox(height: 3),
-
                     Text(
                       friend.customId,
                       style: theme.textTheme.bodySmall?.copyWith(
@@ -257,9 +237,7 @@ class _FriendCard extends StatelessWidget {
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-
                     const SizedBox(height: 11),
-
                     Row(
                       children: [
                         Icon(
@@ -292,9 +270,7 @@ class _FriendCard extends StatelessWidget {
                         ),
                       ],
                     ),
-
                     const SizedBox(height: 7),
-
                     Row(
                       children: [
                         Icon(
@@ -314,9 +290,7 @@ class _FriendCard extends StatelessWidget {
                   ],
                 ),
               ),
-
               const SizedBox(width: 6),
-
               Padding(
                 padding: const EdgeInsets.only(top: 16),
                 child: Icon(
@@ -338,11 +312,9 @@ class _FriendCard extends StatelessWidget {
 
 class _EmptyFriends extends StatelessWidget {
   const _EmptyFriends();
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(40),
@@ -362,18 +334,14 @@ class _EmptyFriends extends StatelessWidget {
                 color: theme.colorScheme.primary,
               ),
             ),
-
             const SizedBox(height: 20),
-
             Text(
               'No friends yet',
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.w700,
               ),
             ),
-
             const SizedBox(height: 8),
-
             Text(
               'Add a friend to start splitting expenses directly.',
               textAlign: TextAlign.center,
@@ -381,9 +349,7 @@ class _EmptyFriends extends StatelessWidget {
                 color: theme.colorScheme.onSurfaceVariant,
               ),
             ),
-
             const SizedBox(height: 20),
-
             FilledButton.icon(
               onPressed: () {
                 // Add friend
@@ -418,6 +384,5 @@ class FriendSplitModel {
 
   /// Total amount paid by your friend towards shared expenses.
   final double theyPaid;
-
   final String lastActivity;
 }

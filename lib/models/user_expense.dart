@@ -30,7 +30,6 @@ class UserExpense {
     'note': note,
   };
   Map<String, dynamic> toJson() => toMap();
-
   UserExpense copyWith({
     String? id,
     double? amount,

@@ -5,7 +5,6 @@ import 'user_view_model.dart';
 
 Future<void> showUpdateDialog(BuildContext context, UpdateInfo info) async {
   final updateService = UpdateService();
-
   await showDialog(
     context: context,
     barrierDismissible: false,
@@ -21,7 +20,6 @@ class _UpdateDialogContent extends StatefulWidget {
   const _UpdateDialogContent({required this.info, required this.updateService});
   final UpdateInfo info;
   final UpdateService updateService;
-
   @override
   State<_UpdateDialogContent> createState() => _UpdateDialogContentState();
 }
@@ -30,7 +28,6 @@ class _UpdateDialogContentState extends State<_UpdateDialogContent> {
   bool _downloading = false;
   DownloadProgress _progress = DownloadProgress();
   late UserViewModel userViewModel;
-
   Future<void> _startUpdate() async {
     userViewModel.appVersionErrorMsg = '';
     setState(() => _downloading = true);

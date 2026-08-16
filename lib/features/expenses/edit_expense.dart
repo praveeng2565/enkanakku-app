@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
 import '../../models/user_expense.dart';
 
 class EditExpense extends StatefulWidget {
@@ -9,25 +8,19 @@ class EditExpense extends StatefulWidget {
     required this.userExpense,
     required this.index,
   });
-
   final UserExpense userExpense;
   final int index;
-
   @override
   State<EditExpense> createState() => _EditExpenseState();
 }
 
 class _EditExpenseState extends State<EditExpense> {
   final _formKey = GlobalKey<FormState>();
-
   late final TextEditingController _amountController;
   late final TextEditingController _noteController;
-
   late DateTime _selectedDate;
   late String _selectedCategory;
-
   bool _isUpdating = false;
-
   final List<_ExpenseCategory> _categories = const [
     _ExpenseCategory(name: 'Food', icon: Icons.restaurant_rounded),
     _ExpenseCategory(name: 'Travel', icon: Icons.directions_car_rounded),
@@ -39,19 +32,15 @@ class _EditExpenseState extends State<EditExpense> {
     _ExpenseCategory(name: 'EMI', icon: Icons.account_balance_rounded),
     _ExpenseCategory(name: 'Other', icon: Icons.category_rounded),
   ];
-
   @override
   void initState() {
     super.initState();
-
     _amountController = TextEditingController(
       text: widget.userExpense.amount! % 1 == 0
           ? widget.userExpense.amount!.toStringAsFixed(0)
           : widget.userExpense.amount!.toString(),
     );
-
     _noteController = TextEditingController(text: widget.userExpense.note);
-
     _selectedDate = widget.userExpense.date;
     _selectedCategory = widget.userExpense.category;
   }
@@ -66,7 +55,6 @@ class _EditExpenseState extends State<EditExpense> {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
-
     return Scaffold(
       backgroundColor: colors.surface,
       resizeToAvoidBottomInset: true,
@@ -75,7 +63,6 @@ class _EditExpenseState extends State<EditExpense> {
           children: [
             // Fixed header
             _buildHeader(context),
-
             // Scrollable form
             Expanded(
               child: Form(
@@ -89,36 +76,23 @@ class _EditExpenseState extends State<EditExpense> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _buildAmountCard(context),
-
                       const SizedBox(height: 26),
-
                       _buildSectionTitle(context, 'Category'),
-
                       const SizedBox(height: 9),
-
                       _buildCategoryCard(context),
-
                       const SizedBox(height: 22),
-
                       _buildSectionTitle(context, 'Date'),
-
                       const SizedBox(height: 9),
-
                       _buildDateCard(context),
-
                       const SizedBox(height: 22),
-
                       _buildSectionTitle(context, 'Note'),
-
                       const SizedBox(height: 9),
-
                       _buildNoteCard(context),
                     ],
                   ),
                 ),
               ),
             ),
-
             // Fixed bottom action
             _buildBottomAction(context),
           ],
@@ -130,11 +104,9 @@ class _EditExpenseState extends State<EditExpense> {
   // ===========================================================================
   // HEADER
   // ===========================================================================
-
   Widget _buildHeader(BuildContext context) {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-
     return Padding(
       padding: const EdgeInsets.fromLTRB(10, 5, 12, 10),
       child: Row(
@@ -143,7 +115,6 @@ class _EditExpenseState extends State<EditExpense> {
             icon: Icons.arrow_back_rounded,
             onTap: _isUpdating ? null : () => Navigator.pop(context),
           ),
-
           Expanded(
             child: Column(
               children: [
@@ -164,7 +135,6 @@ class _EditExpenseState extends State<EditExpense> {
               ],
             ),
           ),
-
           // Keeps title centered
           const SizedBox(width: 44),
         ],
@@ -175,11 +145,9 @@ class _EditExpenseState extends State<EditExpense> {
   // ===========================================================================
   // AMOUNT
   // ===========================================================================
-
   Widget _buildAmountCard(BuildContext context) {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(20, 18, 20, 20),
@@ -221,9 +189,7 @@ class _EditExpenseState extends State<EditExpense> {
               ),
             ],
           ),
-
           const SizedBox(height: 12),
-
           TextFormField(
             controller: _amountController,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
@@ -250,19 +216,14 @@ class _EditExpenseState extends State<EditExpense> {
               if (value == null || value.trim().isEmpty) {
                 return 'Enter amount';
               }
-
               final amount = double.tryParse(value.trim());
-
               if (amount == null || amount <= 0) {
                 return 'Enter a valid amount';
               }
-
               return null;
             },
           ),
-
           const SizedBox(height: 3),
-
           Text(
             'Change the amount if required',
             style: theme.textTheme.labelSmall?.copyWith(
@@ -277,7 +238,6 @@ class _EditExpenseState extends State<EditExpense> {
   // ===========================================================================
   // SECTION TITLE
   // ===========================================================================
-
   Widget _buildSectionTitle(BuildContext context, String title) {
     return Text(
       title,
@@ -290,25 +250,20 @@ class _EditExpenseState extends State<EditExpense> {
   // ===========================================================================
   // CATEGORY
   // ===========================================================================
-
   Widget _buildCategoryCard(BuildContext context) {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-
     final category = _categories.firstWhere(
       (item) => item.name == _selectedCategory,
       orElse: () =>
           const _ExpenseCategory(name: 'Other', icon: Icons.category_rounded),
     );
-
     return _InputCard(
       onTap: _showCategorySheet,
       child: Row(
         children: [
           _LeadingIcon(icon: category.icon),
-
           const SizedBox(width: 13),
-
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -329,7 +284,6 @@ class _EditExpenseState extends State<EditExpense> {
               ],
             ),
           ),
-
           Icon(Icons.chevron_right_rounded, color: colors.onSurfaceVariant),
         ],
       ),
@@ -339,19 +293,15 @@ class _EditExpenseState extends State<EditExpense> {
   // ===========================================================================
   // DATE
   // ===========================================================================
-
   Widget _buildDateCard(BuildContext context) {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-
     return _InputCard(
       onTap: _selectDate,
       child: Row(
         children: [
           const _LeadingIcon(icon: Icons.calendar_month_rounded),
-
           const SizedBox(width: 13),
-
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -372,7 +322,6 @@ class _EditExpenseState extends State<EditExpense> {
               ],
             ),
           ),
-
           Icon(Icons.chevron_right_rounded, color: colors.onSurfaceVariant),
         ],
       ),
@@ -382,11 +331,9 @@ class _EditExpenseState extends State<EditExpense> {
   // ===========================================================================
   // NOTE
   // ===========================================================================
-
   Widget _buildNoteCard(BuildContext context) {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-
     return Container(
       decoration: BoxDecoration(
         color: colors.surfaceContainerLow,
@@ -419,10 +366,8 @@ class _EditExpenseState extends State<EditExpense> {
   // ===========================================================================
   // BOTTOM ACTION
   // ===========================================================================
-
   Widget _buildBottomAction(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
-
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 10, 16, 12),
       decoration: BoxDecoration(
@@ -455,9 +400,7 @@ class _EditExpenseState extends State<EditExpense> {
               ),
             ),
           ),
-
           const SizedBox(width: 10),
-
           Expanded(
             flex: 4,
             child: SizedBox(
@@ -508,13 +451,10 @@ class _EditExpenseState extends State<EditExpense> {
   // ===========================================================================
   // CATEGORY SHEET
   // ===========================================================================
-
   Future<void> _showCategorySheet() async {
     FocusScope.of(context).unfocus();
-
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-
     final result = await showModalBottomSheet<String>(
       context: context,
       backgroundColor: colors.surface,
@@ -534,18 +474,14 @@ class _EditExpenseState extends State<EditExpense> {
                     fontWeight: FontWeight.w800,
                   ),
                 ),
-
                 const SizedBox(height: 4),
-
                 Text(
                   'Select a category for this expense',
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: colors.onSurfaceVariant,
                   ),
                 ),
-
                 const SizedBox(height: 18),
-
                 GridView.builder(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
@@ -558,9 +494,7 @@ class _EditExpenseState extends State<EditExpense> {
                   ),
                   itemBuilder: (_, index) {
                     final item = _categories[index];
-
                     final selected = item.name == _selectedCategory;
-
                     return InkWell(
                       onTap: () {
                         Navigator.pop(sheetContext, item.name);
@@ -611,7 +545,6 @@ class _EditExpenseState extends State<EditExpense> {
         );
       },
     );
-
     if (result != null && mounted) {
       setState(() {
         _selectedCategory = result;
@@ -622,17 +555,14 @@ class _EditExpenseState extends State<EditExpense> {
   // ===========================================================================
   // DATE
   // ===========================================================================
-
   Future<void> _selectDate() async {
     FocusScope.of(context).unfocus();
-
     final result = await showDatePicker(
       context: context,
       initialDate: _selectedDate,
       firstDate: DateTime(2000),
       lastDate: DateTime.now(),
     );
-
     if (result != null && mounted) {
       setState(() {
         _selectedDate = result;
@@ -643,25 +573,19 @@ class _EditExpenseState extends State<EditExpense> {
   // ===========================================================================
   // UPDATE
   // ===========================================================================
-
   Future<void> _updateExpense() async {
     FocusScope.of(context).unfocus();
-
     if (!_formKey.currentState!.validate()) {
       return;
     }
-
     setState(() {
       _isUpdating = true;
     });
-
     try {
       // final amount = double.parse(_amountController.text.trim());
-
       // ==============================================================
       // YOUR REPOSITORY
       // ==============================================================
-
       // await ExpenseRepository().updateExpense(
       //   expenseId: widget.expenseId,
       //   category: _selectedCategory,
@@ -669,20 +593,15 @@ class _EditExpenseState extends State<EditExpense> {
       //   amount: amount,
       //   note: _noteController.text.trim(),
       // );
-
       await Future.delayed(const Duration(milliseconds: 500));
-
       if (!mounted) return;
-
       // true = expense was changed.
       Navigator.pop(context, true);
     } catch (e) {
       if (!mounted) return;
-
       setState(() {
         _isUpdating = false;
       });
-
       _showMessage('Unable to update expense. Please try again.');
     }
   }
@@ -690,10 +609,8 @@ class _EditExpenseState extends State<EditExpense> {
   // ===========================================================================
   // HELPERS
   // ===========================================================================
-
   bool _isToday(DateTime date) {
     final now = DateTime.now();
-
     return date.year == now.year &&
         date.month == now.month &&
         date.day == now.day;
@@ -701,7 +618,6 @@ class _EditExpenseState extends State<EditExpense> {
 
   void _showMessage(String message) {
     if (!mounted) return;
-
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(
@@ -720,17 +636,13 @@ class _EditExpenseState extends State<EditExpense> {
 // =============================================================================
 // INPUT CARD
 // =============================================================================
-
 class _InputCard extends StatelessWidget {
   const _InputCard({required this.child, required this.onTap});
-
   final Widget child;
   final VoidCallback onTap;
-
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
-
     return Material(
       color: colors.surfaceContainerLow,
       borderRadius: BorderRadius.circular(20),
@@ -755,16 +667,12 @@ class _InputCard extends StatelessWidget {
 // =============================================================================
 // LEADING ICON
 // =============================================================================
-
 class _LeadingIcon extends StatelessWidget {
   const _LeadingIcon({required this.icon});
-
   final IconData icon;
-
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
-
     return Container(
       height: 44,
       width: 44,
@@ -780,17 +688,13 @@ class _LeadingIcon extends StatelessWidget {
 // =============================================================================
 // HEADER BUTTON
 // =============================================================================
-
 class _CircleButton extends StatelessWidget {
   const _CircleButton({required this.icon, required this.onTap});
-
   final IconData icon;
   final VoidCallback? onTap;
-
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
-
     return Material(
       color: colors.surfaceContainerLow,
       shape: const CircleBorder(),
@@ -810,7 +714,6 @@ class _CircleButton extends StatelessWidget {
 // =============================================================================
 // CATEGORY MODEL
 // =============================================================================
-
 class _ExpenseCategory {
   const _ExpenseCategory({required this.name, required this.icon});
   final String name;

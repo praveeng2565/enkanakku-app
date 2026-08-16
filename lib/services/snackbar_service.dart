@@ -1,20 +1,15 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
 import '../utils/enum.dart';
 
 class SnackbarService {
   SnackbarService._();
-
   static final GlobalKey<ScaffoldMessengerState> messengerKey =
       GlobalKey<ScaffoldMessengerState>();
-
   static const Duration _defaultDuration = Duration(seconds: 4);
-
   // ===========================================================================
   // INFO
   // ===========================================================================
-
   static void showInfoMessage(dynamic message, {BuildContext? context}) {
     _showMessage(message, context: context, type: SnackType.info);
   }
@@ -22,7 +17,6 @@ class SnackbarService {
   // ===========================================================================
   // SUCCESS
   // ===========================================================================
-
   static void showSuccessMessage(dynamic message, {BuildContext? context}) {
     _showMessage(message, context: context, type: SnackType.success);
   }
@@ -30,7 +24,6 @@ class SnackbarService {
   // ===========================================================================
   // ERROR
   // ===========================================================================
-
   static void showErrorMessage(dynamic error, {BuildContext? context}) {
     _showMessage(error, context: context, type: SnackType.error);
   }
@@ -38,7 +31,6 @@ class SnackbarService {
   // ===========================================================================
   // MAIN
   // ===========================================================================
-
   static void _showMessage(
     dynamic message, {
     BuildContext? context,
@@ -47,11 +39,8 @@ class SnackbarService {
     final messenger = context != null
         ? ScaffoldMessenger.of(context)
         : messengerKey.currentState;
-
     if (messenger == null) return;
-
     final text = _parseMessage(message);
-
     messenger
       ..hideCurrentSnackBar()
       ..showSnackBar(
@@ -74,20 +63,16 @@ class SnackbarService {
   // ===========================================================================
   // MESSAGE PARSER
   // ===========================================================================
-
   static String _parseMessage(dynamic message) {
     if (message is FirebaseAuthException) {
       return message.message ?? 'Something went wrong. Please try again.';
     }
-
     if (message is Exception) {
       return message.toString().replaceFirst('Exception: ', '');
     }
-
     if (message == null) {
       return 'Something went wrong. Please try again.';
     }
-
     return message.toString();
   }
 }
@@ -95,9 +80,7 @@ class SnackbarService {
 // =============================================================================
 // PREMIUM SNACKBAR
 // =============================================================================
-
 class _PremiumSnackbar extends StatefulWidget {
-
   const _PremiumSnackbar({
     required this.message,
     required this.type,
@@ -106,7 +89,6 @@ class _PremiumSnackbar extends StatefulWidget {
   final String message;
   final SnackType type;
   final Duration duration;
-
   @override
   State<_PremiumSnackbar> createState() => _PremiumSnackbarState();
 }
@@ -116,32 +98,24 @@ class _PremiumSnackbarState extends State<_PremiumSnackbar>
   late AnimationController _entryController;
   late AnimationController _progressController;
   late AnimationController _messageController;
-
   late Animation<double> _fade;
   late Animation<double> _scale;
   late Animation<Offset> _slide;
-
   late Animation<double> _messageFade;
   late Animation<Offset> _messageSlide;
-
   bool _isClosing = false;
-
   // ===========================================================================
   // COLORS
   // ===========================================================================
-
   static const Color _successColor = Color(0xFF00A878);
   static const Color _errorColor = Color(0xFFE5484D);
   static const Color _infoColor = Color(0xFF4F6BED);
-
   Color get accentColor {
     switch (widget.type) {
       case SnackType.success:
         return _successColor;
-
       case SnackType.error:
         return _errorColor;
-
       case SnackType.info:
         return _infoColor;
     }
@@ -151,10 +125,8 @@ class _PremiumSnackbarState extends State<_PremiumSnackbar>
     switch (widget.type) {
       case SnackType.success:
         return const Color(0xFFE5F7F1);
-
       case SnackType.error:
         return const Color(0xFFFDEBEC);
-
       case SnackType.info:
         return const Color(0xFFEBEEFF);
     }
@@ -164,10 +136,8 @@ class _PremiumSnackbarState extends State<_PremiumSnackbar>
     switch (widget.type) {
       case SnackType.success:
         return Icons.check_rounded;
-
       case SnackType.error:
         return Icons.close_rounded;
-
       case SnackType.info:
         return Icons.info_outline_rounded;
     }
@@ -177,10 +147,8 @@ class _PremiumSnackbarState extends State<_PremiumSnackbar>
     switch (widget.type) {
       case SnackType.success:
         return 'Success';
-
       case SnackType.error:
         return 'Error';
-
       case SnackType.info:
         return 'Info';
     }
@@ -189,46 +157,36 @@ class _PremiumSnackbarState extends State<_PremiumSnackbar>
   // ===========================================================================
   // INIT
   // ===========================================================================
-
   @override
   void initState() {
     super.initState();
-
     // -------------------------------------------------------------------------
     // ENTRY
     // -------------------------------------------------------------------------
-
     _entryController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 380),
       reverseDuration: const Duration(milliseconds: 250),
     );
-
     _fade = CurvedAnimation(parent: _entryController, curve: Curves.easeOut);
-
     _scale = Tween<double>(begin: 0.94, end: 1.0).animate(
       CurvedAnimation(parent: _entryController, curve: Curves.easeOutCubic),
     );
-
     _slide = Tween<Offset>(begin: const Offset(0, 0.18), end: Offset.zero)
         .animate(
           CurvedAnimation(parent: _entryController, curve: Curves.easeOutCubic),
         );
-
     // -------------------------------------------------------------------------
     // MESSAGE
     // -------------------------------------------------------------------------
-
     _messageController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 300),
     );
-
     _messageFade = CurvedAnimation(
       parent: _messageController,
       curve: Curves.easeOut,
     );
-
     _messageSlide =
         Tween<Offset>(begin: const Offset(0.04, 0), end: Offset.zero).animate(
           CurvedAnimation(
@@ -236,26 +194,20 @@ class _PremiumSnackbarState extends State<_PremiumSnackbar>
             curve: Curves.easeOutCubic,
           ),
         );
-
     // -------------------------------------------------------------------------
     // PROGRESS
     // -------------------------------------------------------------------------
-
     _progressController = AnimationController(
       vsync: this,
       duration: widget.duration,
     );
-
     _start();
   }
 
   Future<void> _start() async {
     _entryController.forward();
-
     await Future.delayed(const Duration(milliseconds: 100));
-
     if (!mounted) return;
-
     _messageController.forward();
     _progressController.forward();
   }
@@ -263,51 +215,38 @@ class _PremiumSnackbarState extends State<_PremiumSnackbar>
   // ===========================================================================
   // CLOSE
   // ===========================================================================
-
   Future<void> _close() async {
     if (_isClosing) return;
-
     _isClosing = true;
-
     _progressController.stop();
-
     await _entryController.reverse();
-
     if (!mounted) return;
-
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
   }
 
   // ===========================================================================
   // DISPOSE
   // ===========================================================================
-
   @override
   void dispose() {
     _entryController.dispose();
     _progressController.dispose();
     _messageController.dispose();
-
     super.dispose();
   }
 
   // ===========================================================================
   // BUILD
   // ===========================================================================
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-
     final backgroundColor = isDark ? const Color(0xFF1E2025) : Colors.white;
-
     final primaryTextColor = isDark ? Colors.white : const Color(0xFF17181C);
-
     final secondaryTextColor = isDark
         ? Colors.white.withValues(alpha: 0.62)
         : const Color(0xFF62666F);
-
     return SlideTransition(
       position: _slide,
       child: FadeTransition(
@@ -344,7 +283,6 @@ class _PremiumSnackbarState extends State<_PremiumSnackbar>
   // ===========================================================================
   // CONTENT
   // ===========================================================================
-
   Widget _buildContent(Color primaryTextColor, Color secondaryTextColor) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(14, 13, 8, 13),
@@ -362,9 +300,7 @@ class _PremiumSnackbarState extends State<_PremiumSnackbar>
             ),
             child: Icon(icon, color: accentColor, size: 24),
           ),
-
           const SizedBox(width: 12),
-
           // -------------------------------------------------------------------
           // MESSAGE
           // -------------------------------------------------------------------
@@ -388,9 +324,7 @@ class _PremiumSnackbarState extends State<_PremiumSnackbar>
                         letterSpacing: 0.2,
                       ),
                     ),
-
                     const SizedBox(height: 3),
-
                     Text(
                       widget.message,
                       maxLines: 3,
@@ -407,12 +341,10 @@ class _PremiumSnackbarState extends State<_PremiumSnackbar>
               ),
             ),
           ),
-
           // -------------------------------------------------------------------
           // CLOSE
           // -------------------------------------------------------------------
           const SizedBox(width: 4),
-
           _buildCloseButton(),
         ],
       ),
@@ -422,7 +354,6 @@ class _PremiumSnackbarState extends State<_PremiumSnackbar>
   // ===========================================================================
   // CLOSE BUTTON
   // ===========================================================================
-
   Widget _buildCloseButton() {
     return Material(
       color: Colors.transparent,
@@ -449,7 +380,6 @@ class _PremiumSnackbarState extends State<_PremiumSnackbar>
   // ===========================================================================
   // PROGRESS BAR
   // ===========================================================================
-
   Widget _buildProgress() {
     return SizedBox(
       height: 3,

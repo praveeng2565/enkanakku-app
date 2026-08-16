@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:android_package_installer/android_package_installer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
@@ -39,15 +38,12 @@ class UpdateService {
   Future<UpdateInfo?> checkForUpdate() async {
     final packageInfo = await PackageInfo.fromPlatform();
     final currentVersion = packageInfo.version;
-
     final doc = await _firestore.collection('app_config').doc('version').get();
     if (!doc.exists) {
       return null;
     }
-
     final data = doc.data()!;
     final latestVersion = data['latestVersion'] as String;
-
     if (_isNewer(latestVersion, currentVersion)) {
       return UpdateInfo(
         currentVersion: currentVersion,
@@ -94,16 +90,12 @@ class UpdateService {
     void Function()? onCancelled,
   }) async {
     _cancelToken = CancelToken();
-
     final stopwatch = Stopwatch()..start();
-
     int lastBytes = 0;
     DateTime lastTick = DateTime.now();
-
     double currentSpeed = 0;
     final dir = await getTemporaryDirectory();
     final savePath = '${dir.path}/kanakku_update.apk';
-
     try {
       await _dio.download(
         url,
@@ -111,33 +103,22 @@ class UpdateService {
         cancelToken: _cancelToken,
         onReceiveProgress: (received, total) {
           final now = DateTime.now();
-
           final diffMs = now.difference(lastTick).inMilliseconds;
-
           // Update speed every second
           if (diffMs >= 1000) {
             final bytesSinceLast = received - lastBytes;
-
             currentSpeed = bytesSinceLast / (diffMs / 1000);
-
             lastBytes = received;
             lastTick = now;
           }
-
           final totalKnown = total > 0;
-
           final progress = totalKnown ? received / total : 0.0;
-
           final downloadedMB = received / 1024 / 1024;
-
           final totalMB = totalKnown ? total / 1024 / 1024 : 0.0;
-
           int remaining = 0;
-
           if (totalKnown && currentSpeed > 0 && received < total) {
             remaining = ((total - received) / currentSpeed).ceil();
           }
-
           onProgress(
             DownloadProgress(
               receivedBytes: received.toStringAsFixed(2),
@@ -153,33 +134,25 @@ class UpdateService {
           );
         },
       );
-
       stopwatch.stop();
-
       if (_cancelToken?.isCancelled == true) {
         onCancelled?.call();
         return;
       }
-
       return onCompleted(savePath);
     } on DioException catch (e) {
       stopwatch.stop();
       switch (e.type) {
         case DioExceptionType.connectionTimeout:
           return onError('Connection timeout.');
-
         case DioExceptionType.receiveTimeout:
           return onError('Download timeout.');
-
         case DioExceptionType.sendTimeout:
           return onError('Send timeout.');
-
         case DioExceptionType.badResponse:
           return onError('Server error (${e.response?.statusCode}).');
-
         case DioExceptionType.connectionError:
           return onError('No internet connection.');
-
         case DioExceptionType.cancel:
           return onCancelled?.call();
         case DioExceptionType.unknown:
@@ -213,14 +186,11 @@ class DownloadProgress {
   });
   final String receivedBytes;
   final String totalBytes;
-
   final double progress; // 0 - 1 (0 if unknown)
   final String downloadedMB;
   final String totalMB;
-
   final String speedMBps;
   final String remainingSeconds;
-
   final bool isTotalKnown;
   final bool isCompleted;
 }

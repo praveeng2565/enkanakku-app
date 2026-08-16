@@ -1,17 +1,12 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 
 class ProgressService {
   ProgressService._();
-
   static bool _isShowing = false;
-
   static void show(BuildContext context, {String message = 'Loading....'}) {
     if (_isShowing) return;
-
     _isShowing = true;
-
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -29,7 +24,6 @@ class ProgressService {
                 filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
                 child: Container(color: Colors.black.withValues(alpha: 0.20)),
               ),
-
               // ---------------------------------------------------------------
               // LOADER
               // ---------------------------------------------------------------
@@ -43,11 +37,8 @@ class ProgressService {
 
   static void hide(BuildContext context) {
     if (!_isShowing) return;
-
     _isShowing = false;
-
     final navigator = Navigator.of(context, rootNavigator: true);
-
     if (navigator.canPop()) {
       navigator.pop();
     }
@@ -55,16 +46,12 @@ class ProgressService {
 }
 
 class _LoadingIndicator extends StatelessWidget {
-
   const _LoadingIndicator({required this.message});
   final String message;
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
     final primaryColor = theme.colorScheme.primary;
-
     return Material(
       color: Colors.transparent,
       child: Column(
@@ -82,9 +69,7 @@ class _LoadingIndicator extends StatelessWidget {
               backgroundColor: primaryColor.withValues(alpha: 0.18),
             ),
           ),
-
           const SizedBox(height: 14),
-
           // ---------------------------------------------------------------------
           // MESSAGE
           // ---------------------------------------------------------------------

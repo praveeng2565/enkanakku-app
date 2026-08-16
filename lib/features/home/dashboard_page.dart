@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
 import '../../models/user_expense.dart';
 
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key, required this.scaffoldKey});
-
   final double monthlyBudget = 30000;
   final double totalSpent = 18450;
   final GlobalKey<ScaffoldState> scaffoldKey;
-
   final List<ExpenseModel> todayExpenses = const [
     ExpenseModel(
       title: 'Lunch',
@@ -33,7 +30,6 @@ class DashboardPage extends StatelessWidget {
       time: '9:15 AM',
     ),
   ];
-
   final List<ReminderModel> upcoming = const [
     ReminderModel(
       title: 'Home Loan',
@@ -63,16 +59,13 @@ class DashboardPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final remaining = monthlyBudget - totalSpent;
-
     final percentage = monthlyBudget == 0
         ? 0.0
         : (totalSpent / monthlyBudget).clamp(0.0, 1.0);
-
     final todayTotal = todayExpenses.fold<double>(
       0,
       (sum, item) => sum + item.amount,
     );
-
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -85,11 +78,9 @@ class DashboardPage extends StatelessWidget {
                   SliverToBoxAdapter(
                     child: _buildMonthCard(context, remaining, percentage),
                   ),
-
                   SliverToBoxAdapter(
                     child: _buildQuickStats(context, todayTotal),
                   ),
-
                   SliverToBoxAdapter(
                     child: _buildSectionHeader(
                       context,
@@ -100,7 +91,6 @@ class DashboardPage extends StatelessWidget {
                       },
                     ),
                   ),
-
                   SliverPadding(
                     padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
                     sliver: SliverList.separated(
@@ -129,7 +119,6 @@ class DashboardPage extends StatelessWidget {
                       },
                     ),
                   ),
-
                   SliverToBoxAdapter(
                     child: _buildSectionHeader(
                       context,
@@ -140,7 +129,6 @@ class DashboardPage extends StatelessWidget {
                       },
                     ),
                   ),
-
                   SliverPadding(
                     padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
                     sliver: SliverList.separated(
@@ -162,7 +150,6 @@ class DashboardPage extends StatelessWidget {
           ],
         ),
       ),
-
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           Navigator.pushNamed(context, '/AddExpense');
@@ -176,7 +163,6 @@ class DashboardPage extends StatelessWidget {
 
   Widget _buildHeader(BuildContext context) {
     final theme = Theme.of(context);
-
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 18, 12, 16),
       child: Row(
@@ -201,14 +187,12 @@ class DashboardPage extends StatelessWidget {
               ],
             ),
           ),
-
           IconButton.filledTonal(
             onPressed: () {
               // Notifications
             },
             icon: const Icon(Icons.notifications_none_rounded),
           ),
-
           IconButton.filledTonal(
             onPressed: () {
               scaffoldKey.currentState?.openDrawer();
@@ -226,27 +210,22 @@ class DashboardPage extends StatelessWidget {
     double percentage,
   ) {
     final theme = Theme.of(context);
-
     final spentText = NumberFormat.currency(
       locale: 'en_IN',
       symbol: '₹',
       decimalDigits: 0,
     ).format(totalSpent);
-
     final budgetText = NumberFormat.currency(
       locale: 'en_IN',
       symbol: '₹',
       decimalDigits: 0,
     ).format(monthlyBudget);
-
     final remainingText = NumberFormat.currency(
       locale: 'en_IN',
       symbol: '₹',
       decimalDigits: 0,
     ).format(remaining);
-
     final monthName = DateFormat('MMMM yyyy').format(DateTime.now());
-
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Container(
@@ -281,9 +260,7 @@ class DashboardPage extends StatelessWidget {
                 ),
               ],
             ),
-
             const SizedBox(height: 12),
-
             Text(
               spentText,
               style: theme.textTheme.displaySmall?.copyWith(
@@ -291,18 +268,14 @@ class DashboardPage extends StatelessWidget {
                 fontWeight: FontWeight.w800,
               ),
             ),
-
             const SizedBox(height: 2),
-
             Text(
               'Total spent',
               style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.colorScheme.onPrimary.withValues(alpha: 0.75),
               ),
             ),
-
             const SizedBox(height: 22),
-
             ClipRRect(
               borderRadius: BorderRadius.circular(20),
               child: LinearProgressIndicator(
@@ -314,9 +287,7 @@ class DashboardPage extends StatelessWidget {
                 color: theme.colorScheme.onPrimary,
               ),
             ),
-
             const SizedBox(height: 10),
-
             Row(
               children: [
                 Text(
@@ -335,9 +306,7 @@ class DashboardPage extends StatelessWidget {
                 ),
               ],
             ),
-
             const SizedBox(height: 18),
-
             Row(
               children: [
                 Expanded(
@@ -369,7 +338,6 @@ class DashboardPage extends StatelessWidget {
       symbol: '₹',
       decimalDigits: 0,
     ).format(todayTotal);
-
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 14, 20, 8),
       child: Row(
@@ -409,7 +377,6 @@ class DashboardPage extends StatelessWidget {
     required VoidCallback onTap,
   }) {
     final theme = Theme.of(context);
-
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 22, 16, 12),
       child: Row(
@@ -437,11 +404,9 @@ class _AmountInfo extends StatelessWidget {
   final String title;
   final String value;
   final bool alignEnd;
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
     return Column(
       crossAxisAlignment: alignEnd
           ? CrossAxisAlignment.end
@@ -475,11 +440,9 @@ class _StatCard extends StatelessWidget {
   final IconData icon;
   final String title;
   final String value;
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 13),
       decoration: BoxDecoration(
@@ -517,17 +480,14 @@ class _ExpenseTile extends StatelessWidget {
   const _ExpenseTile({required this.expense, required this.onTap});
   final ExpenseModel expense;
   final VoidCallback onTap;
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
     final amount = NumberFormat.currency(
       locale: 'en_IN',
       symbol: '₹',
       decimalDigits: 0,
     ).format(expense.amount);
-
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -555,9 +515,7 @@ class _ExpenseTile extends StatelessWidget {
                   size: 21,
                 ),
               ),
-
               const SizedBox(width: 12),
-
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -578,7 +536,6 @@ class _ExpenseTile extends StatelessWidget {
                   ],
                 ),
               ),
-
               Text(
                 amount,
                 style: theme.textTheme.titleSmall?.copyWith(
@@ -597,11 +554,9 @@ class _ReminderTile extends StatelessWidget {
   const _ReminderTile({required this.reminder, required this.onTap});
   final ReminderModel reminder;
   final VoidCallback onTap;
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -629,9 +584,7 @@ class _ReminderTile extends StatelessWidget {
                   size: 21,
                 ),
               ),
-
               const SizedBox(width: 12),
-
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -660,7 +613,6 @@ class _ReminderTile extends StatelessWidget {
                   ],
                 ),
               ),
-
               if (reminder.amount != null)
                 Text(
                   reminder.amount!,
@@ -668,9 +620,7 @@ class _ReminderTile extends StatelessWidget {
                     fontWeight: FontWeight.w800,
                   ),
                 ),
-
               const SizedBox(width: 4),
-
               Icon(
                 Icons.chevron_right_rounded,
                 color: theme.colorScheme.onSurfaceVariant,

@@ -19,3 +19,5 @@ git tag -d v1.0.10; git push origin --delete v1.0.10
 
 flutter clean; flutter pub get
 dart format .; dart fix --apply
+
+^\s*\r?\n  -  Remove unwanted spaces regex.

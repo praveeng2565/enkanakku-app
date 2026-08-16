@@ -1,6 +1,4 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 import '../models/user_profile.dart';
 import '../services/login_auth.dart';
 
@@ -11,7 +9,6 @@ class UsersRepository {
   UsersRepository({FirebaseFirestore? firestore})
     : _firestore = firestore ?? FirebaseFirestore.instance;
   final FirebaseFirestore _firestore;
-
   DocumentReference<Map<String, dynamic>> _usersRef(String id) =>
       _firestore.collection('AllUsersProfile').doc(id);
 
@@ -23,19 +20,15 @@ class UsersRepository {
 
   Future<String?> getUserUniqueId() async {
     final uid = AuthService().currentUid;
-
     if (uid.isEmpty) return null;
-
     final snapshot = await FirebaseFirestore.instance
         .collection('AllUsersProfile')
         .where('uid', isEqualTo: uid)
         .limit(1)
         .get();
-
     if (snapshot.docs.isEmpty) {
       return null;
     }
-
     return snapshot.docs.first.id;
   }
 
@@ -53,7 +46,6 @@ class UsersRepository {
   //   await ref.putFile(file);
   //   return ref.getDownloadURL();
   // }
-
   /// Live stream — use in ProfileViewModel so profile screens update
   /// in real time if edited elsewhere (e.g. another device).
   // Stream<UserProfile?> watchUser(String uid) {
@@ -62,13 +54,11 @@ class UsersRepository {
   //     return UserProfile.fromMap(doc.data()!);
   //   });
   // }
-
   // Future<void> updateFcmToken(String uid, String token) async {
   //   await _profileRef(uid).update({
   //     'fcmTokens': FieldValue.arrayUnion([token]),
   //   });
   // }
-
   /// Used when a user looks up another member by uid — e.g. showing
   /// a payer's name on a room expense without a separate lookup screen.
   Future<UserProfile?> getUserOnce(String id) => getUserData(id);

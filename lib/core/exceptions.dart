@@ -9,7 +9,6 @@ class AppException implements Exception {
   final String message;
   final String? prefix;
   final String? url;
-
   @override
   String toString() {
     return '$prefix$message';

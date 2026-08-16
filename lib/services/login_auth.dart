@@ -1,7 +1,5 @@
 import 'dart:async';
-
 import 'package:firebase_auth/firebase_auth.dart';
-
 import '../models/user_profile.dart';
 import '../repositories/user_session.dart';
 import '../repositories/users_repository.dart';
@@ -9,15 +7,10 @@ import '../utils/common.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-
   User? get getUser => _auth.currentUser;
-
   String get currentUid => _auth.currentUser?.uid ?? '';
-
   String get userEmailId => _auth.currentUser?.email ?? '';
-
   // Stream<User> get user => _auth.authStateChanges();
-
   // wrappinhg the firebase calls
   Future<void> logout() {
     return FirebaseAuth.instance.signOut();
@@ -58,7 +51,6 @@ class AuthService {
       email: email,
       password: password,
     );
-
     final val = await UsersRepository().getUserUniqueId();
     if (val == null || val.isEmpty) return false;
     UserSession.instance.id = val;

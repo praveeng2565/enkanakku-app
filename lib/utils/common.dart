@@ -1,8 +1,6 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
 import '../core/constants.dart';
 import '../models/user_profile.dart';
 import '../repositories/users_repository.dart';
@@ -15,16 +13,13 @@ String getNewID() {
 
 Future<String> generateUniqueId() async {
   String finalId = '';
-
   do {
     final id = generateCode();
-
     final UserProfile? doc = await UsersRepository().getUserOnce(id);
     if (doc == null) {
       finalId = id;
     }
   } while (finalId.isEmpty);
-
   return finalId;
 }
 
@@ -87,7 +82,6 @@ String formatAmount(double? value) {
   if (value % 1 == 0) {
     return value.toInt().toString();
   }
-
   return value
       .toStringAsFixed(2)
       .replaceAll(RegExp(r'0+$'), '')
@@ -100,7 +94,6 @@ String formatAmountWithComma(double? value) {
     value % 1 == 0 ? '##,##,###' : '##,##,###.##',
     'en_IN',
   );
-
   return formatter.format(value);
 }
 

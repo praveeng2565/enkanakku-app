@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../services/login_auth.dart';
 import '../services/progress_service.dart';
 
@@ -14,7 +13,6 @@ class BasePage extends StatefulWidget {
     this.floatingActionButton,
     this.bottomNavigationBar,
   });
-
   final String title;
   final Widget child;
   final bool showNotifications;
@@ -22,7 +20,6 @@ class BasePage extends StatefulWidget {
   final bool showLogout;
   final Widget? floatingActionButton;
   final Widget? bottomNavigationBar;
-
   @override
   State<BasePage> createState() => _BasePageState();
 }

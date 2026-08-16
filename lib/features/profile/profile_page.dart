@@ -1,50 +1,36 @@
 import 'package:flutter/material.dart';
-
 import '../../utils/common.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
-
   final String name = 'Praveen Keerthana';
   final String email = 'lifeledgerappdev@gmail.com';
   final String mobile = '9698357997';
-
   final int groupCount = 0;
   final int alertCount = 0;
   final int sharedCount = 0;
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
-
       body: SafeArea(
         child: CustomScrollView(
           physics: const BouncingScrollPhysics(),
           slivers: [
             SliverToBoxAdapter(child: _buildProfileHeader(context)),
-
             SliverToBoxAdapter(child: _buildStats(context)),
-
             SliverToBoxAdapter(child: _buildSectionTitle(context, 'Personal')),
-
             SliverToBoxAdapter(child: _buildPersonalCard(context)),
-
             SliverToBoxAdapter(
               child: _buildSectionTitle(context, 'Your Activity'),
             ),
-
             SliverToBoxAdapter(child: _buildActivityCard(context)),
-
             SliverToBoxAdapter(child: _buildAccountCard(context)),
-
             const SliverToBoxAdapter(child: SizedBox(height: 100)),
           ],
         ),
       ),
-
       // bottomNavigationBar: _buildBottomNavigation(context),
     );
   }
@@ -52,10 +38,8 @@ class ProfilePage extends StatelessWidget {
   // ---------------------------------------------------------------------------
   // PROFILE HEADER
   // ---------------------------------------------------------------------------
-
   Widget _buildProfileHeader(BuildContext context) {
     final theme = Theme.of(context);
-
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(20, 22, 20, 28),
@@ -85,9 +69,7 @@ class ProfilePage extends StatelessWidget {
                   fontWeight: FontWeight.w800,
                 ),
               ),
-
               const Spacer(),
-
               IconButton(
                 onPressed: () {
                   // Open settings
@@ -104,9 +86,7 @@ class ProfilePage extends StatelessWidget {
               ),
             ],
           ),
-
           const SizedBox(height: 14),
-
           // Profile image
           Stack(
             children: [
@@ -130,7 +110,6 @@ class ProfilePage extends StatelessWidget {
                   ),
                 ),
               ),
-
               Positioned(
                 right: 0,
                 bottom: 0,
@@ -157,9 +136,7 @@ class ProfilePage extends StatelessWidget {
               ),
             ],
           ),
-
           const SizedBox(height: 12),
-
           Text(
             name,
             textAlign: TextAlign.center,
@@ -168,9 +145,7 @@ class ProfilePage extends StatelessWidget {
               fontWeight: FontWeight.w800,
             ),
           ),
-
           const SizedBox(height: 4),
-
           Text(
             email,
             textAlign: TextAlign.center,
@@ -178,9 +153,7 @@ class ProfilePage extends StatelessWidget {
               color: theme.colorScheme.onPrimary.withValues(alpha: 0.75),
             ),
           ),
-
           const SizedBox(height: 16),
-
           // Edit profile
           FilledButton.tonalIcon(
             onPressed: () {
@@ -203,10 +176,8 @@ class ProfilePage extends StatelessWidget {
   // ---------------------------------------------------------------------------
   // STATS
   // ---------------------------------------------------------------------------
-
   Widget _buildStats(BuildContext context) {
     final theme = Theme.of(context);
-
     return Transform.translate(
       offset: const Offset(0, -1),
       child: Container(
@@ -228,15 +199,11 @@ class ProfilePage extends StatelessWidget {
             Expanded(
               child: _StatItem(value: '$groupCount', label: 'Groups'),
             ),
-
             _verticalDivider(context),
-
             Expanded(
               child: _StatItem(value: '$alertCount', label: 'Alerts'),
             ),
-
             _verticalDivider(context),
-
             Expanded(
               child: _StatItem(value: '$sharedCount', label: 'Shared'),
             ),
@@ -257,10 +224,8 @@ class ProfilePage extends StatelessWidget {
   // ---------------------------------------------------------------------------
   // SECTION TITLE
   // ---------------------------------------------------------------------------
-
   Widget _buildSectionTitle(BuildContext context, String title) {
     final theme = Theme.of(context);
-
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 9),
       child: Text(
@@ -276,7 +241,6 @@ class ProfilePage extends StatelessWidget {
   // ---------------------------------------------------------------------------
   // PERSONAL
   // ---------------------------------------------------------------------------
-
   Widget _buildPersonalCard(BuildContext context) {
     return _SectionCard(
       children: [
@@ -285,9 +249,7 @@ class ProfilePage extends StatelessWidget {
           title: 'Mobile number',
           subtitle: mobile,
         ),
-
         const _CardDivider(),
-
         _InfoTile(icon: Icons.email_outlined, title: 'Email', subtitle: email),
       ],
     );
@@ -296,7 +258,6 @@ class ProfilePage extends StatelessWidget {
   // ---------------------------------------------------------------------------
   // ACTIVITY
   // ---------------------------------------------------------------------------
-
   Widget _buildActivityCard(BuildContext context) {
     return _SectionCard(
       children: [
@@ -308,9 +269,7 @@ class ProfilePage extends StatelessWidget {
             // Open groups
           },
         ),
-
         const _CardDivider(),
-
         _NavigationTile(
           icon: Icons.notifications_none_rounded,
           title: 'Notifications',
@@ -319,9 +278,7 @@ class ProfilePage extends StatelessWidget {
             // Open notifications
           },
         ),
-
         const _CardDivider(),
-
         _NavigationTile(
           icon: Icons.shield_outlined,
           title: 'Data & privacy',
@@ -337,10 +294,8 @@ class ProfilePage extends StatelessWidget {
   // ---------------------------------------------------------------------------
   // ACCOUNT
   // ---------------------------------------------------------------------------
-
   Widget _buildAccountCard(BuildContext context) {
     final theme = Theme.of(context);
-
     return Padding(
       padding: const EdgeInsets.fromLTRB(10, 12, 10, 0),
       child: Material(
@@ -368,9 +323,7 @@ class ProfilePage extends StatelessWidget {
                     color: theme.colorScheme.error,
                   ),
                 ),
-
                 const SizedBox(width: 12),
-
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -404,7 +357,6 @@ class ProfilePage extends StatelessWidget {
     if (value.trim().isEmpty) {
       return '?';
     }
-
     return value.trim()[0].toUpperCase();
   }
 }
@@ -412,16 +364,13 @@ class ProfilePage extends StatelessWidget {
 // =============================================================================
 // REUSABLE WIDGETS
 // =============================================================================
-
 class _StatItem extends StatelessWidget {
   const _StatItem({required this.value, required this.label});
   final String value;
   final String label;
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
     return Column(
       children: [
         Text(
@@ -446,11 +395,9 @@ class _StatItem extends StatelessWidget {
 class _SectionCard extends StatelessWidget {
   const _SectionCard({required this.children});
   final List<Widget> children;
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
@@ -465,7 +412,6 @@ class _SectionCard extends StatelessWidget {
 
 class _CardDivider extends StatelessWidget {
   const _CardDivider();
-
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -489,19 +435,15 @@ class _InfoTile extends StatelessWidget {
   final IconData icon;
   final String title;
   final String subtitle;
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
       child: Row(
         children: [
           _IconContainer(icon: icon),
-
           const SizedBox(width: 12),
-
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -541,11 +483,9 @@ class _NavigationTile extends StatelessWidget {
   final String title;
   final String subtitle;
   final VoidCallback onTap;
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -555,9 +495,7 @@ class _NavigationTile extends StatelessWidget {
           child: Row(
             children: [
               _IconContainer(icon: icon),
-
               const SizedBox(width: 12),
-
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -580,7 +518,6 @@ class _NavigationTile extends StatelessWidget {
                   ],
                 ),
               ),
-
               Icon(
                 Icons.chevron_right_rounded,
                 color: theme.colorScheme.onSurfaceVariant,
@@ -596,11 +533,9 @@ class _NavigationTile extends StatelessWidget {
 class _IconContainer extends StatelessWidget {
   const _IconContainer({required this.icon});
   final IconData icon;
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
     return Container(
       height: 40,
       width: 40,

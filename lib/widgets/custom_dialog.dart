@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../theme/color.dart';
 import 'custom_button.dart';
 

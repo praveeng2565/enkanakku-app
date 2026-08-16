@@ -10,14 +10,12 @@ class CustomDropDownField extends StatefulWidget {
     required this.items,
     required this.onChanged,
   });
-
   final String label;
   final String? hintText;
   final String? initialValue;
   final bool isDisabled;
   final List<DropDownItems> items;
   final Function(String?) onChanged;
-
   @override
   State<CustomDropDownField> createState() => _CustomDropDownFieldState();
 }

@@ -1,9 +1,7 @@
 import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../core/constants.dart';
 import '../../services/login_auth.dart';
 import '../../theme/app_theme.dart';
@@ -17,7 +15,6 @@ import 'home_view_model.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
-
   @override
   State<HomePage> createState() => _HomePageState();
 }
@@ -61,10 +58,8 @@ class _HomePageState extends State<HomePage> {
     const GroupPage(),
     const ProfilePage(),
   ];
-
   void _onBottomItemTap(int index) {
     if (index == homeViewModel.currentPageIndex) return;
-
     _pageController.animateToPage(
       index,
       duration: const Duration(milliseconds: 350),
@@ -86,13 +81,10 @@ class _HomePageState extends State<HomePage> {
           body: PageView.builder(
             controller: _pageController,
             physics: const BouncingScrollPhysics(),
-
             itemCount: _pages.length,
-
             onPageChanged: (index) {
               homeViewModel.changePage(index);
             },
-
             itemBuilder: (context, index) {
               return _KeepAlivePage(child: _pages[index]);
             },
@@ -106,14 +98,12 @@ class _HomePageState extends State<HomePage> {
     return Drawer(
       width: MediaQuery.sizeOf(context).width * 0.82,
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
           topRight: Radius.circular(28),
           bottomRight: Radius.circular(28),
         ),
       ),
-
       child: SafeArea(
         child: Column(
           children: [
@@ -121,134 +111,97 @@ class _HomePageState extends State<HomePage> {
             // PROFILE HEADER
             // ============================================================
             _buildDrawerHeader(context),
-
             const SizedBox(height: 10),
-
             // ============================================================
             // MENU
             // ============================================================
             Expanded(
               child: ListView(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
-
                 children: [
                   _drawerItem(
                     context,
-
                     icon: Icons.home_rounded,
-
                     title: 'Home',
-
                     selected: true,
-
                     onTap: () {
                       Navigator.pop(context);
                     },
                   ),
-
                   _drawerItem(
                     context,
-
                     icon: Icons.palette_outlined,
-
                     title: 'Appearance',
-
                     subtitle: 'Theme & display',
-
                     onTap: () {
                       showThemePicker(context);
                     },
                   ),
-
                   _drawerItem(
                     context,
-
                     icon: Icons.settings_rounded,
-
                     title: 'Settings',
-
                     subtitle: 'App preferences',
-
                     onTap: () {
                       Navigator.pop(context);
-
                       Navigator.pushNamed(context, '/settings');
                     },
                   ),
                 ],
               ),
             ),
-
             // ============================================================
             // BOTTOM SECTION
             // ============================================================
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 14),
-
               child: Column(
                 children: [
                   Divider(
                     height: 1,
-
                     color: Theme.of(
                       context,
                     ).colorScheme.outline.withValues(alpha: 0.12),
                   ),
-
                   const SizedBox(height: 8),
-
                   // ------------------------------------------------------
                   // LOGOUT
                   // ------------------------------------------------------
                   _drawerItem(
                     context,
-
                     icon: Icons.logout_rounded,
-
                     title: 'Logout',
-
                     danger: true,
-
                     onTap: () async {
                       Navigator.pop(context);
                       showLogoutDialog(context);
                     },
                   ),
-
                   const SizedBox(height: 8),
-
                   // ------------------------------------------------------
                   // VERSION
                   // ------------------------------------------------------
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-
                     children: [
                       Icon(
                         Icons.account_balance_wallet_rounded,
-
                         size: 13,
-
                         color: Theme.of(
                           context,
                         ).colorScheme.onSurfaceVariant.withValues(alpha: 0.65),
                       ),
-
                       const SizedBox(width: 5),
-
                       Text(
                         '${AppConstants.appName}  •  v${context.read<UserViewModel>().appVersion}',
-
                         style: Theme.of(context).textTheme.labelSmall?.copyWith(
                           color: Theme.of(context).colorScheme.onSurfaceVariant
                               .withValues(alpha: 0.65),
-
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                     ],
                   ),
-
                   const SizedBox(height: 14),
                 ],
               ),
@@ -261,136 +214,97 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildDrawerHeader(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
-
     final user = AuthService().getUser;
-
     final name = user?.displayName?.trim().isNotEmpty == true
         ? user!.displayName!.trim()
         : 'User';
-
     final email = user?.email ?? '';
-
     return Container(
       width: double.infinity,
-
       margin: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-
       padding: const EdgeInsets.fromLTRB(18, 20, 18, 18),
-
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(25),
-
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-
           colors: [
             colors.primary,
             colors.primary.withValues(alpha: 0.78),
             colors.secondary.withValues(alpha: 0.72),
           ],
         ),
-
         boxShadow: [
           BoxShadow(
             color: colors.primary.withValues(alpha: 0.20),
-
             blurRadius: 20,
-
             offset: const Offset(0, 8),
           ),
         ],
       ),
-
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-
         children: [
           // ============================================================
           // TOP ROW
           // ============================================================
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
-
             children: [
               // --------------------------------------------------------
               // PROFILE IMAGE
               // --------------------------------------------------------
               Container(
                 padding: const EdgeInsets.all(3),
-
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-
                   color: Colors.white.withValues(alpha: 0.22),
-
                   border: Border.all(
                     color: Colors.white.withValues(alpha: 0.35),
                   ),
                 ),
-
                 child: CircleAvatar(
                   radius: 30,
-
                   backgroundColor: Colors.white,
-
                   child: Text(
                     _getInitials(name),
-
                     style: TextStyle(
                       color: colors.primary,
-
                       fontSize: 20,
-
                       fontWeight: FontWeight.w900,
                     ),
                   ),
                 ),
               ),
-
               const SizedBox(width: 13),
-
               // --------------------------------------------------------
               // NAME
               // --------------------------------------------------------
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-
                   children: [
                     Text(
                       getGreeting(),
-
                       style: TextStyle(
                         color: Colors.white.withValues(alpha: 0.72),
-
                         fontSize: 12,
-
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-
                     const SizedBox(height: 2),
-
                     Text(
                       name,
-
                       maxLines: 1,
-
                       overflow: TextOverflow.ellipsis,
-
                       style: const TextStyle(
                         color: Colors.white,
-
                         fontSize: 17,
-
                         fontWeight: FontWeight.w800,
                       ),
                     ),
-
                     if (email.isNotEmpty) ...[
                       const SizedBox(height: 3),
-
                       Text(
                         email,
                         maxLines: 1,
@@ -405,31 +319,23 @@ class _HomePageState extends State<HomePage> {
                   ],
                 ),
               ),
-
               // --------------------------------------------------------
               // EDIT
               // --------------------------------------------------------
               Material(
                 color: Colors.white.withValues(alpha: 0.12),
-
                 shape: const CircleBorder(),
-
                 child: InkWell(
                   customBorder: const CircleBorder(),
-
                   onTap: () {
                     Navigator.pop(context);
                     _onBottomItemTap(3);
                   },
-
                   child: const Padding(
                     padding: EdgeInsets.all(9),
-
                     child: Icon(
                       Icons.edit_outlined,
-
                       color: Colors.white,
-
                       size: 17,
                     ),
                   ),
@@ -437,9 +343,7 @@ class _HomePageState extends State<HomePage> {
               ),
             ],
           ),
-
           const SizedBox(height: 18),
-
           // ============================================================
           // MINI BRAND
           // ============================================================
@@ -448,48 +352,32 @@ class _HomePageState extends State<HomePage> {
               Container(
                 height: 26,
                 width: 26,
-
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.15),
-
                   borderRadius: BorderRadius.circular(8),
                 ),
-
                 child: const Icon(
                   Icons.account_balance_wallet_rounded,
-
                   color: Colors.white,
-
                   size: 14,
                 ),
               ),
-
               const SizedBox(width: 8),
-
               const Text(
                 AppConstants.appName,
-
                 style: TextStyle(
                   color: Colors.white,
-
                   fontSize: 12,
-
                   fontWeight: FontWeight.w800,
-
                   letterSpacing: 0.2,
                 ),
               ),
-
               const Spacer(),
-
               Text(
                 'Manage smarter',
-
                 style: TextStyle(
                   color: Colors.white.withValues(alpha: 0.62),
-
                   fontSize: 10,
-
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -505,49 +393,35 @@ class _HomePageState extends State<HomePage> {
     required IconData icon,
     required String title,
     required VoidCallback onTap,
-
     String? subtitle,
-
     bool selected = false,
-
     bool danger = false,
   }) {
     final colors = Theme.of(context).colorScheme;
-
     final itemColor = danger
         ? colors.error
         : selected
         ? colors.primary
         : colors.onSurface;
-
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 3),
-
       child: Material(
         color: selected
             ? colors.primary.withValues(alpha: 0.10)
             : Colors.transparent,
-
         borderRadius: BorderRadius.circular(17),
-
         child: InkWell(
           onTap: onTap,
-
           borderRadius: BorderRadius.circular(17),
-
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 180),
-
             padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 11),
-
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(17),
-
               border: selected
                   ? Border.all(color: colors.primary.withValues(alpha: 0.10))
                   : null,
             ),
-
             child: Row(
               children: [
                 // ========================================================
@@ -556,57 +430,43 @@ class _HomePageState extends State<HomePage> {
                 Container(
                   height: 40,
                   width: 40,
-
                   decoration: BoxDecoration(
                     color: danger
                         ? colors.error.withValues(alpha: 0.08)
                         : selected
                         ? colors.primary.withValues(alpha: 0.12)
                         : colors.onSurface.withValues(alpha: 0.045),
-
                     borderRadius: BorderRadius.circular(13),
                   ),
-
                   child: Icon(icon, size: 20, color: itemColor),
                 ),
-
                 const SizedBox(width: 13),
-
                 // ========================================================
                 // TEXT
                 // ========================================================
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-
                     children: [
                       Text(
                         title,
-
                         style: TextStyle(
                           color: itemColor,
-
                           fontSize: 13.5,
-
                           fontWeight: selected
                               ? FontWeight.w800
                               : FontWeight.w600,
                         ),
                       ),
-
                       if (subtitle != null) ...[
                         const SizedBox(height: 2),
-
                         Text(
                           subtitle,
-
                           style: TextStyle(
                             color: colors.onSurfaceVariant.withValues(
                               alpha: 0.72,
                             ),
-
                             fontSize: 10.5,
-
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -614,16 +474,13 @@ class _HomePageState extends State<HomePage> {
                     ],
                   ),
                 ),
-
                 // ========================================================
                 // SELECTED ARROW
                 // ========================================================
                 if (selected)
                   Icon(
                     Icons.arrow_forward_ios_rounded,
-
                     size: 13,
-
                     color: colors.primary,
                   ),
               ],
@@ -640,17 +497,14 @@ class _HomePageState extends State<HomePage> {
         .split(RegExp(r'\s+'))
         .where((e) => e.isNotEmpty)
         .toList();
-
     if (parts.isEmpty) {
       return 'U';
     }
-
     if (parts.length == 1) {
       return parts.first
           .substring(0, math.min(2, parts.first.length))
           .toUpperCase();
     }
-
     return '${parts.first[0]}${parts.last[0]}'.toUpperCase();
   }
 
@@ -673,7 +527,6 @@ class _AnimatedBottomBar extends StatelessWidget {
   });
   final int currentIndex;
   final ValueChanged<int> onItemSelected;
-
   static const List<_BottomItemData> _items = [
     _BottomItemData(
       icon: Icons.home_outlined,
@@ -696,11 +549,9 @@ class _AnimatedBottomBar extends StatelessWidget {
       label: 'Profile',
     ),
   ];
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
     return SafeArea(
       top: false,
       child: Container(
@@ -742,14 +593,11 @@ class _AnimatedBottomItem extends StatelessWidget {
   final _BottomItemData data;
   final bool selected;
   final VoidCallback onTap;
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
     final primary = theme.colorScheme.primary;
     final inactive = theme.colorScheme.onSurfaceVariant;
-
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
@@ -783,9 +631,7 @@ class _AnimatedBottomItem extends StatelessWidget {
                 size: 21,
                 color: selected ? primary : inactive,
               ),
-
               const SizedBox(height: 3),
-
               Text(
                 data.label,
                 style: theme.textTheme.labelSmall?.copyWith(
@@ -815,7 +661,6 @@ class _BottomItemData {
 class _KeepAlivePage extends StatefulWidget {
   const _KeepAlivePage({required this.child});
   final Widget child;
-
   @override
   State<_KeepAlivePage> createState() => _KeepAlivePageState();
 }
@@ -824,11 +669,9 @@ class _KeepAlivePageState extends State<_KeepAlivePage>
     with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
-
   @override
   Widget build(BuildContext context) {
     super.build(context);
-
     return widget.child;
   }
 }

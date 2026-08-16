@@ -3,7 +3,6 @@ import 'package:intl/intl.dart';
 
 class GroupPage extends StatelessWidget {
   const GroupPage({super.key});
-
   // Replace this with your Firestore data later.
   final List<GroupModel> groups = const [
     GroupModel(
@@ -55,11 +54,9 @@ class GroupPage extends StatelessWidget {
       createdAt: '2026-07-28T09:45:00',
     ),
   ];
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 20,
@@ -86,7 +83,6 @@ class GroupPage extends StatelessWidget {
           ),
         ],
       ),
-
       body: groups.isEmpty
           ? _EmptyGroups()
           : Column(
@@ -104,7 +100,6 @@ class GroupPage extends StatelessWidget {
                               const SizedBox(height: 12),
                           itemBuilder: (context, index) {
                             final group = groups[index];
-
                             return _GroupCard(
                               group: group,
                               onTap: () {
@@ -119,7 +114,6 @@ class GroupPage extends StatelessWidget {
                 ),
               ],
             ),
-
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           // Create group
@@ -145,9 +139,7 @@ class GroupPage extends StatelessWidget {
             ),
             child: Icon(Icons.groups_rounded, color: theme.colorScheme.primary),
           ),
-
           const SizedBox(width: 12),
-
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -178,17 +170,13 @@ class _GroupCard extends StatelessWidget {
   const _GroupCard({required this.group, required this.onTap});
   final GroupModel group;
   final VoidCallback onTap;
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
     final createdDate = DateTime.tryParse(group.createdAt);
-
     final formattedDate = createdDate == null
         ? group.createdAt
         : DateFormat('dd MMM yyyy').format(createdDate);
-
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -215,9 +203,7 @@ class _GroupCard extends StatelessWidget {
                 alignment: Alignment.center,
                 child: Text(group.emoji, style: const TextStyle(fontSize: 26)),
               ),
-
               const SizedBox(width: 14),
-
               // Details
               Expanded(
                 child: Column(
@@ -231,9 +217,7 @@ class _GroupCard extends StatelessWidget {
                         fontWeight: FontWeight.w700,
                       ),
                     ),
-
                     const SizedBox(height: 5),
-
                     Text(
                       group.description,
                       maxLines: 2,
@@ -243,9 +227,7 @@ class _GroupCard extends StatelessWidget {
                         color: theme.colorScheme.onSurfaceVariant,
                       ),
                     ),
-
                     const SizedBox(height: 12),
-
                     Wrap(
                       spacing: 14,
                       runSpacing: 6,
@@ -264,9 +246,7 @@ class _GroupCard extends StatelessWidget {
                   ],
                 ),
               ),
-
               const SizedBox(width: 6),
-
               // Arrow
               Padding(
                 padding: const EdgeInsets.only(top: 16),
@@ -287,11 +267,9 @@ class _InfoItem extends StatelessWidget {
   const _InfoItem({required this.icon, required this.text});
   final IconData icon;
   final String text;
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -313,7 +291,6 @@ class _EmptyGroups extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(40),
@@ -333,18 +310,14 @@ class _EmptyGroups extends StatelessWidget {
                 color: theme.colorScheme.primary,
               ),
             ),
-
             const SizedBox(height: 20),
-
             Text(
               'No groups yet',
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.w700,
               ),
             ),
-
             const SizedBox(height: 8),
-
             Text(
               'Create a group to start splitting expenses with friends and family.',
               textAlign: TextAlign.center,
@@ -352,9 +325,7 @@ class _EmptyGroups extends StatelessWidget {
                 color: theme.colorScheme.onSurfaceVariant,
               ),
             ),
-
             const SizedBox(height: 20),
-
             FilledButton.icon(
               onPressed: () {
                 // Create group

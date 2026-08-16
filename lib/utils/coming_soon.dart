@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-
 import 'base_page.dart';
 
 class ComingSoon extends StatelessWidget {
   const ComingSoon({super.key, this.title = ''});
   final String title;
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);

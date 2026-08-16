@@ -3,27 +3,19 @@ import 'package:intl/intl.dart';
 
 class AddExpense extends StatefulWidget {
   const AddExpense({super.key, this.expenseId});
-
   final String? expenseId;
-
   bool get isEditing => expenseId != null;
-
   @override
   State<AddExpense> createState() => _AddExpenseState();
 }
 
 class _AddExpenseState extends State<AddExpense> {
   final _formKey = GlobalKey<FormState>();
-
   final _amountController = TextEditingController();
   final _noteController = TextEditingController();
-
   DateTime _selectedDate = DateTime.now();
-
   String? _selectedCategory;
-
   bool _isSaving = false;
-
   final List<_Category> _categories = const [
     _Category(name: 'Food', icon: Icons.restaurant_rounded),
     _Category(name: 'Travel', icon: Icons.directions_car_rounded),
@@ -34,7 +26,6 @@ class _AddExpenseState extends State<AddExpense> {
     _Category(name: 'Education', icon: Icons.school_rounded),
     _Category(name: 'Other', icon: Icons.category_rounded),
   ];
-
   @override
   void dispose() {
     _amountController.dispose();
@@ -45,7 +36,6 @@ class _AddExpenseState extends State<AddExpense> {
   // ---------------------------------------------------------------------------
   // BUILD
   // ---------------------------------------------------------------------------
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,7 +45,6 @@ class _AddExpenseState extends State<AddExpense> {
         child: Column(
           children: [
             _buildHeader(context),
-
             Expanded(
               child: Form(
                 key: _formKey,
@@ -68,36 +57,23 @@ class _AddExpenseState extends State<AddExpense> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _buildAmountCard(context),
-
                       const SizedBox(height: 26),
-
                       _buildSectionLabel(context, 'Category'),
-
                       const SizedBox(height: 9),
-
                       _buildCategorySelector(context),
-
                       const SizedBox(height: 22),
-
                       _buildSectionLabel(context, 'When'),
-
                       const SizedBox(height: 9),
-
                       _buildDateSelector(context),
-
                       const SizedBox(height: 22),
-
                       _buildSectionLabel(context, 'Note'),
-
                       const SizedBox(height: 9),
-
                       _buildNoteField(context),
                     ],
                   ),
                 ),
               ),
             ),
-
             _buildBottomActions(context),
           ],
         ),
@@ -108,11 +84,9 @@ class _AddExpenseState extends State<AddExpense> {
   // ---------------------------------------------------------------------------
   // HEADER
   // ---------------------------------------------------------------------------
-
   Widget _buildHeader(BuildContext context) {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-
     return Padding(
       padding: const EdgeInsets.fromLTRB(10, 5, 12, 8),
       child: Row(
@@ -121,7 +95,6 @@ class _AddExpenseState extends State<AddExpense> {
             icon: Icons.arrow_back_rounded,
             onTap: () => Navigator.pop(context),
           ),
-
           Expanded(
             child: Column(
               children: [
@@ -132,9 +105,7 @@ class _AddExpenseState extends State<AddExpense> {
                     letterSpacing: -0.3,
                   ),
                 ),
-
                 const SizedBox(height: 2),
-
                 Text(
                   widget.isEditing
                       ? 'Update your expense'
@@ -146,7 +117,6 @@ class _AddExpenseState extends State<AddExpense> {
               ],
             ),
           ),
-
           _HeaderButton(icon: Icons.more_horiz_rounded, onTap: () {}),
         ],
       ),
@@ -156,11 +126,9 @@ class _AddExpenseState extends State<AddExpense> {
   // ---------------------------------------------------------------------------
   // AMOUNT CARD
   // ---------------------------------------------------------------------------
-
   Widget _buildAmountCard(BuildContext context) {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(20, 18, 20, 20),
@@ -191,9 +159,7 @@ class _AddExpenseState extends State<AddExpense> {
                   color: colors.primary,
                 ),
               ),
-
               const SizedBox(width: 10),
-
               Text(
                 'EXPENSE AMOUNT',
                 style: theme.textTheme.labelSmall?.copyWith(
@@ -204,9 +170,7 @@ class _AddExpenseState extends State<AddExpense> {
               ),
             ],
           ),
-
           const SizedBox(height: 14),
-
           TextFormField(
             controller: _amountController,
             autofocus: true,
@@ -234,19 +198,14 @@ class _AddExpenseState extends State<AddExpense> {
               if (value == null || value.trim().isEmpty) {
                 return 'Enter amount';
               }
-
               final amount = double.tryParse(value.trim());
-
               if (amount == null || amount <= 0) {
                 return 'Enter a valid amount';
               }
-
               return null;
             },
           ),
-
           const SizedBox(height: 4),
-
           Text(
             'How much did you spend?',
             style: theme.textTheme.bodySmall?.copyWith(
@@ -261,10 +220,8 @@ class _AddExpenseState extends State<AddExpense> {
   // ---------------------------------------------------------------------------
   // SECTION LABEL
   // ---------------------------------------------------------------------------
-
   Widget _buildSectionLabel(BuildContext context, String title) {
     final theme = Theme.of(context);
-
     return Text(
       title,
       style: theme.textTheme.titleSmall?.copyWith(
@@ -277,16 +234,13 @@ class _AddExpenseState extends State<AddExpense> {
   // ---------------------------------------------------------------------------
   // CATEGORY
   // ---------------------------------------------------------------------------
-
   Widget _buildCategorySelector(BuildContext context) {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-
     final category = _categories.cast<_Category?>().firstWhere(
       (item) => item?.name == _selectedCategory,
       orElse: () => null,
     );
-
     return _InputCard(
       onTap: _showCategorySheet,
       child: Row(
@@ -295,9 +249,7 @@ class _AddExpenseState extends State<AddExpense> {
             icon: category?.icon ?? Icons.category_outlined,
             selected: category != null,
           ),
-
           const SizedBox(width: 13),
-
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -311,7 +263,6 @@ class _AddExpenseState extends State<AddExpense> {
                         : colors.onSurfaceVariant,
                   ),
                 ),
-
                 if (category == null) ...[
                   const SizedBox(height: 2),
                   Text(
@@ -324,7 +275,6 @@ class _AddExpenseState extends State<AddExpense> {
               ],
             ),
           ),
-
           Icon(Icons.chevron_right_rounded, color: colors.onSurfaceVariant),
         ],
       ),
@@ -334,11 +284,9 @@ class _AddExpenseState extends State<AddExpense> {
   // ---------------------------------------------------------------------------
   // DATE
   // ---------------------------------------------------------------------------
-
   Widget _buildDateSelector(BuildContext context) {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-
     return _InputCard(
       onTap: _selectDate,
       child: Row(
@@ -347,9 +295,7 @@ class _AddExpenseState extends State<AddExpense> {
             icon: Icons.calendar_month_outlined,
             selected: true,
           ),
-
           const SizedBox(width: 13),
-
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -370,7 +316,6 @@ class _AddExpenseState extends State<AddExpense> {
               ],
             ),
           ),
-
           Icon(Icons.chevron_right_rounded, color: colors.onSurfaceVariant),
         ],
       ),
@@ -380,11 +325,9 @@ class _AddExpenseState extends State<AddExpense> {
   // ---------------------------------------------------------------------------
   // NOTE
   // ---------------------------------------------------------------------------
-
   Widget _buildNoteField(BuildContext context) {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-
     return Container(
       decoration: BoxDecoration(
         color: colors.surfaceContainerLow,
@@ -417,11 +360,9 @@ class _AddExpenseState extends State<AddExpense> {
   // ---------------------------------------------------------------------------
   // BOTTOM ACTIONS
   // ---------------------------------------------------------------------------
-
   Widget _buildBottomActions(BuildContext context) {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 10, 16, 12),
       decoration: BoxDecoration(
@@ -450,9 +391,7 @@ class _AddExpenseState extends State<AddExpense> {
               ),
             ),
           ),
-
           const SizedBox(width: 10),
-
           // Save
           Expanded(
             flex: 4,
@@ -508,13 +447,10 @@ class _AddExpenseState extends State<AddExpense> {
   // ---------------------------------------------------------------------------
   // CATEGORY SHEET
   // ---------------------------------------------------------------------------
-
   Future<void> _showCategorySheet() async {
     FocusScope.of(context).unfocus();
-
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-
     final selected = await showModalBottomSheet<String>(
       context: context,
       backgroundColor: colors.surface,
@@ -534,18 +470,14 @@ class _AddExpenseState extends State<AddExpense> {
                     fontWeight: FontWeight.w800,
                   ),
                 ),
-
                 const SizedBox(height: 4),
-
                 Text(
                   'Where did you spend the money?',
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: colors.onSurfaceVariant,
                   ),
                 ),
-
                 const SizedBox(height: 18),
-
                 GridView.builder(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
@@ -558,9 +490,7 @@ class _AddExpenseState extends State<AddExpense> {
                   ),
                   itemBuilder: (context, index) {
                     final item = _categories[index];
-
                     final isSelected = item.name == _selectedCategory;
-
                     return InkWell(
                       onTap: () {
                         Navigator.pop(context, item.name);
@@ -612,7 +542,6 @@ class _AddExpenseState extends State<AddExpense> {
         );
       },
     );
-
     if (selected != null && mounted) {
       setState(() {
         _selectedCategory = selected;
@@ -623,17 +552,14 @@ class _AddExpenseState extends State<AddExpense> {
   // ---------------------------------------------------------------------------
   // DATE PICKER
   // ---------------------------------------------------------------------------
-
   Future<void> _selectDate() async {
     FocusScope.of(context).unfocus();
-
     final picked = await showDatePicker(
       context: context,
       initialDate: _selectedDate,
       firstDate: DateTime(2000),
       lastDate: DateTime.now(),
     );
-
     if (picked != null && mounted) {
       setState(() {
         _selectedDate = picked;
@@ -644,26 +570,20 @@ class _AddExpenseState extends State<AddExpense> {
   // ---------------------------------------------------------------------------
   // SAVE
   // ---------------------------------------------------------------------------
-
   Future<void> _saveExpense() async {
     FocusScope.of(context).unfocus();
-
     if (!_formKey.currentState!.validate()) {
       return;
     }
-
     if (_selectedCategory == null) {
       _showMessage('Please choose a category');
       return;
     }
-
     setState(() {
       _isSaving = true;
     });
-
     try {
       // final amount = double.parse(_amountController.text.trim());
-
       // ---------------------------------------------------------
       // CALL YOUR REPOSITORY HERE
       // ---------------------------------------------------------
@@ -675,11 +595,8 @@ class _AddExpenseState extends State<AddExpense> {
       // }
       //
       // ---------------------------------------------------------
-
       await Future.delayed(const Duration(milliseconds: 500));
-
       if (!mounted) return;
-
       Navigator.pop(context, true);
     } catch (e) {
       _showMessage('Unable to save expense. Please try again.');
@@ -695,10 +612,8 @@ class _AddExpenseState extends State<AddExpense> {
   // ---------------------------------------------------------------------------
   // HELPERS
   // ---------------------------------------------------------------------------
-
   bool _isToday(DateTime date) {
     final now = DateTime.now();
-
     return date.year == now.year &&
         date.month == now.month &&
         date.day == now.day;
@@ -706,7 +621,6 @@ class _AddExpenseState extends State<AddExpense> {
 
   void _showMessage(String message) {
     if (!mounted) return;
-
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(
@@ -725,16 +639,13 @@ class _AddExpenseState extends State<AddExpense> {
 // =============================================================================
 // INPUT CARD
 // =============================================================================
-
 class _InputCard extends StatelessWidget {
   const _InputCard({required this.child, required this.onTap});
   final Widget child;
   final VoidCallback onTap;
-
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
-
     return Material(
       color: colors.surfaceContainerLow,
       borderRadius: BorderRadius.circular(20),
@@ -759,16 +670,13 @@ class _InputCard extends StatelessWidget {
 // =============================================================================
 // LEADING ICON
 // =============================================================================
-
 class _LeadingIcon extends StatelessWidget {
   const _LeadingIcon({required this.icon, required this.selected});
   final IconData icon;
   final bool selected;
-
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
-
     return Container(
       height: 44,
       width: 44,
@@ -790,16 +698,13 @@ class _LeadingIcon extends StatelessWidget {
 // =============================================================================
 // HEADER BUTTON
 // =============================================================================
-
 class _HeaderButton extends StatelessWidget {
   const _HeaderButton({required this.icon, required this.onTap});
   final IconData icon;
   final VoidCallback onTap;
-
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
-
     return Material(
       color: colors.surfaceContainerLow,
       shape: const CircleBorder(),
@@ -819,7 +724,6 @@ class _HeaderButton extends StatelessWidget {
 // =============================================================================
 // CATEGORY
 // =============================================================================
-
 class _Category {
   const _Category({required this.name, required this.icon});
   final String name;

@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import 'user_view_model.dart';
 
 class LaunchPage extends StatefulWidget {
   const LaunchPage({super.key});
-
   @override
   State<LaunchPage> createState() => _LaunchPageState();
 }
@@ -15,7 +13,6 @@ class _LaunchPageState extends State<LaunchPage> with TickerProviderStateMixin {
   late Animation<double> _animation;
   late Animation<double> _scaleAnimation;
   late UserViewModel userViewModel;
-
   @override
   void initState() {
     super.initState();
@@ -59,10 +56,8 @@ class _LaunchPageState extends State<LaunchPage> with TickerProviderStateMixin {
   Widget _buildBackground(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-
     Color darken(Color color, [double amount = 0.25]) {
       final hsl = HSLColor.fromColor(color);
-
       return hsl
           .withLightness((hsl.lightness * (1 - amount)).clamp(0.0, 1.0))
           .toColor();

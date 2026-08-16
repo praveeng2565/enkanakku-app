@@ -6,24 +6,18 @@ import 'user_session.dart';
 
 class ExpenseRepository {
   ExpenseRepository();
-
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
   DocumentReference<Map<String, dynamic>> get _userData =>
       _firestore.collection('Personal').doc(UserSession.instance.id);
-
   DocumentReference<Map<String, dynamic>> _expensesYearRef(String yearID) =>
       _userData.collection('expenses').doc(yearID);
-
   CollectionReference<Map<String, dynamic>> _expensesMonthRef(
     String yearID,
     String monthID,
   ) => _expensesYearRef(yearID).collection(monthID);
-
   Future<void> addExpense(UserExpense expense) async {
     final yearID = getYearID(expense.date);
     final monthID = getMonthID(expense.date);
-
     await _expensesMonthRef(
       yearID,
       monthID,
@@ -33,7 +27,6 @@ class ExpenseRepository {
   Future<List<UserExpense>> getExpensesForMonth(DateTime date) async {
     final yearID = getYearID(date);
     final monthID = getMonthID(date);
-
     final snapshot = await _expensesMonthRef(yearID, monthID).get();
     return snapshot.docs.map((doc) => UserExpense.fromMap(doc.data())).toList();
   }
@@ -44,7 +37,6 @@ class ExpenseRepository {
   /* Stream<List<UserExpense>> watchExpensesForMonth(String yearMonthID) {
     // final start = DateTime(year, month, 1);
     // final end = DateTime(year, month + 1, 1);
-
     return _expensesRef(yearMonthID)
         // .where('date', isGreaterThanOrEqualTo: Timestamp.fromDate(start))
         // .where('date', isLessThan: Timestamp.fromDate(end))
@@ -56,7 +48,6 @@ class ExpenseRepository {
               .toList(),
         );
   } */
-
   /// Update an expense with a conflict check. Throws
   /// [ConcurrentEditException] if someone else modified it since this
   /// copy was loaded — the ViewModel catches this and the UI shows
@@ -71,18 +62,14 @@ class ExpenseRepository {
     if (shouldValidateUpdatedDate) {
       await _firestore.runTransaction((transaction) async {
         final snapshot = await transaction.get(docRef);
-
         if (!snapshot.exists) {
           throw ExpenseNotFoundException();
         }
-
         final currentUpdatedAt = (snapshot.data()!['updatedAt'] as Timestamp)
             .toDate();
-
         if (currentUpdatedAt.isAfter(DateTime.now())) {
           throw ConcurrentEditException();
         }
-
         transaction.update(docRef, expense.toMap());
       });
     } else {

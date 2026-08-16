@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
-
 import '../theme/color.dart';
 
 class CustomIconButton extends StatelessWidget {
   const CustomIconButton({super.key, required this.onTap, required this.icon});
-
   final IconData icon;
   final VoidCallback onTap;
-
   @override
   Widget build(BuildContext context) {
     return Padding(

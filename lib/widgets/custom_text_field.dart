@@ -15,7 +15,6 @@ class CustomTextField extends StatefulWidget {
     this.obscure = false,
     required this.onChanged,
   });
-
   final String label;
   final String? hintText;
   final IconData? prefixIcon;
@@ -27,14 +26,12 @@ class CustomTextField extends StatefulWidget {
   final bool obscure;
   final TextInputType? keyboardType;
   final Function(String) onChanged;
-
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();
 }
 
 class _CustomTextFieldState extends State<CustomTextField> {
   late TextEditingController _controller;
-
   @override
   void initState() {
     super.initState();

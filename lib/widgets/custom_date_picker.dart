@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
 import '../utils/enum.dart';
 
 class CustomDatePicker extends StatefulWidget {
@@ -14,7 +13,6 @@ class CustomDatePicker extends StatefulWidget {
     required this.onChanged,
     this.isDisabled = false,
   });
-
   final String label;
   final String? hintText;
   final bool isDisabled;
@@ -22,14 +20,12 @@ class CustomDatePicker extends StatefulWidget {
   final DatePickerType type;
   final DateTime? initialValue;
   final Function(DateTime) onChanged;
-
   @override
   State<CustomDatePicker> createState() => _CustomTextFieldState();
 }
 
 class _CustomTextFieldState extends State<CustomDatePicker> {
   late TextEditingController _controller;
-
   @override
   void initState() {
     super.initState();

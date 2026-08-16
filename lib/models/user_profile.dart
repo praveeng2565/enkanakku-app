@@ -1,5 +1,4 @@
 import '../core/constants.dart';
-
 import 'notification_model.dart';
 
 class UserProfile {
@@ -14,7 +13,6 @@ class UserProfile {
     this.notificationList = const [],
     this.dataSharing = const [],
   });
-
   factory UserProfile.fromMap(Map<String, dynamic> m) => UserProfile(
     id: m['id'] as String,
     uid: m['uid'] as String,
@@ -28,7 +26,6 @@ class UserProfile {
         .toList(),
     dataSharing: List<String>.from(m['dataSharing'] ?? []),
   );
-
   factory UserProfile.fromJson(Map<String, dynamic> j) =>
       UserProfile.fromMap(j);
   final String id;
@@ -40,7 +37,6 @@ class UserProfile {
   List<String> roomList;
   List<NotificationModel> notificationList;
   List<String> dataSharing;
-
   Map<String, dynamic> toMap() => {
     'id': id,
     'uid': uid,
@@ -52,6 +48,5 @@ class UserProfile {
     'notificationList': notificationList.map((e) => e.toMap()).toList(),
     'dataSharing': dataSharing,
   };
-
   Map<String, dynamic> toJson() => toMap();
 }

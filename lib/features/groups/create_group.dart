@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../../models/room.dart';
 import '../../repositories/user_session.dart';
 import '../../services/progress_service.dart';
@@ -10,14 +9,12 @@ import '../../widgets/custom_text_field.dart';
 
 class CreateGroup extends StatefulWidget {
   const CreateGroup({super.key});
-
   @override
   State<CreateGroup> createState() => _CreateGroupState();
 }
 
 class _CreateGroupState extends State<CreateGroup> {
   late Room _room;
-
   @override
   void initState() {
     super.initState();

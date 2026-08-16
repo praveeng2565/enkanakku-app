@@ -7,11 +7,9 @@ import '../../repositories/users_repository.dart';
 class ProfileViewModel extends ChangeNotifier {
   ProfileViewModel(this._userRepository);
   final UsersRepository _userRepository;
-
   UserProfile? profile;
   bool isLoading = false;
   bool isSaving = false;
-
   Future<void> loadProfile() async {
     final user = await _userRepository.getUserData(UserSession.instance.id);
     profile = user;

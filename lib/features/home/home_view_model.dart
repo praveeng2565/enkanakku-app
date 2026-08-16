@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../../models/user_expense.dart';
 
 class HomeViewModel with ChangeNotifier {
@@ -10,10 +9,8 @@ class HomeViewModel with ChangeNotifier {
   late double totalRemaining;
   late double spentToday;
   late double totalSpentPerc;
-
   List<UserExpense> expenses = [];
   int currentPageIndex = 0;
-
   void changePage(int index) {
     currentPageIndex = index;
     refresh();

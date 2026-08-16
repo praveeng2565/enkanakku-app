@@ -9,9 +9,7 @@ import 'profile_view_model.dart';
 
 class ProfileEditScreen extends StatefulWidget {
   const ProfileEditScreen({super.key, required this.vm});
-
   final ProfileViewModel vm;
-
   @override
   State<ProfileEditScreen> createState() => _ProfileEditScreenState();
 }
@@ -20,7 +18,6 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   File? _pickedImage;
   late UserProfile profile;
   late bool isEdited;
-
   @override
   void initState() {
     super.initState();
@@ -59,7 +56,6 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     // profile.photoUrl = photoUrl;
     final success = await widget.vm.updateProfile(profile);
     ProgressService.hide(context);
-
     if (success) {
       Navigator.pop(context);
       SnackbarService.showInfoMessage('Profile Updated');

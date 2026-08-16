@@ -6,14 +6,11 @@ class FloatingNavigationBar extends StatelessWidget {
     required this.currentIndex,
     required this.onTap,
   });
-
   final int currentIndex;
   final ValueChanged<int> onTap;
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
     return SafeArea(
       top: false,
       child: Container(
@@ -74,11 +71,9 @@ class _BottomItem extends StatelessWidget {
   final String label;
   final bool selected;
   final VoidCallback onTap;
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
     return Expanded(
       child: GestureDetector(
         onTap: onTap,
