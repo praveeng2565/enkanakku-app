@@ -16,7 +16,7 @@ async function updateVersionDoc() {
         apkUrl: process.env.APK_URL,
         mandatory: false,          // flip to true for must-update releases
         releasedAt: admin.firestore.FieldValue.serverTimestamp(),
-    });
+    }, { merge: true });
 
     console.log(`Version doc updated: ${process.env.APP_VERSION}`);
 }

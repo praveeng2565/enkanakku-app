@@ -19,7 +19,7 @@
             "name": "Prod-EnKanakku",
             "request": "launch",
             "type": "dart",
-            "program": "lib/main_prod.dart",
+            "program": "lib/main.dart",
             "flutterMode": "debug",
             "args": [
                 "--flavor",
