@@ -60,9 +60,9 @@ void showLogoutDialog(BuildContext context) {
     context: context,
     builder: (context) {
       return AlertDialog(
-        title: const Text('Sign out?'),
+        title: const Text('Log out'),
         content: const Text(
-          'Are you sure you want to sign out from your account?',
+          'Are you sure you want to log out from your account?',
         ),
         actions: [
           TextButton(
@@ -79,7 +79,7 @@ void showLogoutDialog(BuildContext context) {
               removeProgressCircle(context);
               Navigator.pushReplacementNamed(context, '/Login');
             },
-            child: const Text('Sign out'),
+            child: const Text('Sure'),
           ),
         ],
       );
