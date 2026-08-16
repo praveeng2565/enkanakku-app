@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../../core/constants.dart';
 import '../../repositories/user_session.dart';
 import '../../services/login_auth.dart';
+import '../../services/progress_service.dart';
 import '../../services/snackbar_service.dart';
 import '../../theme/theme_view_model.dart';
 import '../../utils/common.dart';
@@ -1008,7 +1009,7 @@ class _LoginPageState extends State<LoginPage>
     // START LOADING
     // ---------------------------------------------------------------
 
-    showProgressCircle(context);
+    ProgressService.show(context);
 
     try {
       late bool status;
@@ -1043,7 +1044,7 @@ class _LoginPageState extends State<LoginPage>
         return;
       }
 
-      removeProgressCircle(context);
+      ProgressService.hide(context);
 
       // =============================================================
       // SUCCESS
@@ -1054,7 +1055,7 @@ class _LoginPageState extends State<LoginPage>
       if (!mounted) {
         return;
       }
-      removeProgressCircle(context);
+      ProgressService.hide(context);
 
       SnackbarService.showErrorMessage(error.toString());
     } finally {}

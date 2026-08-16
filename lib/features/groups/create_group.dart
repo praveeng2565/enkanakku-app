@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../models/room.dart';
 import '../../repositories/user_session.dart';
+import '../../services/progress_service.dart';
 import '../../services/snackbar_service.dart';
 import '../../utils/base_page.dart';
 import '../../utils/common.dart';
@@ -120,8 +121,7 @@ class _CreateGroupState extends State<CreateGroup> {
     hideKeyboard();
     final val = _validate();
     if (!val) return;
-    showProgressCircle(context);
-    //
+    ProgressService.show(context);
   }
 
   bool _validate() {

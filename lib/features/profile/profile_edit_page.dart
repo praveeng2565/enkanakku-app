@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import '../../models/user_profile.dart';
+import '../../services/progress_service.dart';
 import '../../services/snackbar_service.dart';
 import '../../utils/base_page.dart';
-import '../../utils/common.dart';
 import '../../widgets/custom_text_field.dart';
 import 'profile_view_model.dart';
 
@@ -50,7 +50,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   }
 
   Future<void> _save() async {
-    showProgressCircle(context);
+    ProgressService.show(context);
     String photoUrl = profile.photoUrl;
     if (_pickedImage != null) {
       final uploadedUrl = await widget.vm.uploadProfilePhoto(_pickedImage!);
@@ -58,7 +58,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     }
     profile.photoUrl = photoUrl;
     final success = await widget.vm.updateProfile(profile);
-    removeProgressCircle(context);
+    ProgressService.hide(context);
 
     if (success) {
       Navigator.pop(context);

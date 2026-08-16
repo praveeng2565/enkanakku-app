@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../services/login_auth.dart';
-import 'common.dart';
+import '../services/progress_service.dart';
 
 class BasePage extends StatefulWidget {
   const BasePage({
@@ -49,9 +49,9 @@ class _BasePageState extends State<BasePage> {
             IconButton(
               icon: const Icon(Icons.logout),
               onPressed: () async {
-                showProgressCircle(context);
+                ProgressService.show(context);
                 await AuthService().logout();
-                removeProgressCircle(context);
+                ProgressService.hide(context);
                 Navigator.pushReplacementNamed(context, '/Login');
               },
             ),
