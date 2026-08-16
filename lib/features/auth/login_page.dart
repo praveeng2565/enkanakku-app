@@ -867,13 +867,13 @@ class GlassBubblePainter extends CustomPainter {
   GlassBubblePainter({required this.time, required this.colors});
   final double time;
   final ColorScheme colors;
-  static const List<_GlassBubble> bubbles = [
-    _GlassBubble(x: 0.08, y: 0.15, size: 170, speed: 0.34, phase: 0.0),
-    _GlassBubble(x: 0.88, y: 0.18, size: 110, speed: 0.46, phase: 1.4),
-    _GlassBubble(x: 0.80, y: 0.58, size: 210, speed: 0.27, phase: 2.5),
-    _GlassBubble(x: 0.12, y: 0.72, size: 125, speed: 0.40, phase: 3.5),
-    _GlassBubble(x: 0.55, y: 0.05, size: 80, speed: 0.52, phase: 4.0),
-    _GlassBubble(x: 0.45, y: 0.90, size: 150, speed: 0.30, phase: 5.0),
+  static const List<GlassBubble> bubbles = [
+    GlassBubble(x: 0.08, y: 0.15, size: 170, speed: 0.34, phase: 0.0),
+    GlassBubble(x: 0.88, y: 0.18, size: 110, speed: 0.46, phase: 1.4),
+    GlassBubble(x: 0.80, y: 0.58, size: 210, speed: 0.27, phase: 2.5),
+    GlassBubble(x: 0.12, y: 0.72, size: 125, speed: 0.40, phase: 3.5),
+    GlassBubble(x: 0.55, y: 0.05, size: 80, speed: 0.52, phase: 4.0),
+    GlassBubble(x: 0.45, y: 0.90, size: 150, speed: 0.30, phase: 5.0),
   ];
   @override
   void paint(Canvas canvas, Size size) {
@@ -885,7 +885,7 @@ class GlassBubblePainter extends CustomPainter {
   // =========================================================================
   // DRAW BUBBLE
   // =========================================================================
-  void _drawBubble(Canvas canvas, Size screen, _GlassBubble bubble) {
+  void _drawBubble(Canvas canvas, Size screen, GlassBubble bubble) {
     // ---------------------------------------------------------------
     // CONTINUOUS MOVEMENT
     // ---------------------------------------------------------------
@@ -993,8 +993,8 @@ class GlassBubblePainter extends CustomPainter {
 // =============================================================================
 // GLASS BUBBLE MODEL
 // =============================================================================
-class _GlassBubble {
-  const _GlassBubble({
+class GlassBubble {
+  const GlassBubble({
     required this.x,
     required this.y,
     required this.size,

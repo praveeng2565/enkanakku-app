@@ -1,42 +1,80 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../repositories/users_repository.dart';
 import '../../utils/common.dart';
+import 'profile_view_model.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
-  final String name = 'Praveen Keerthana';
-  final String email = 'lifeledgerappdev@gmail.com';
-  final String mobile = '9698357997';
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (BuildContext context) => ProfileViewModel(UsersRepository()),
+      builder: (BuildContext context, Widget? child) => const Profile(),
+    );
+  }
+}
+
+class Profile extends StatefulWidget {
+  const Profile({super.key});
+  @override
+  State<Profile> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<Profile> {
+  // final String name = 'Praveen Keerthana';
+  // final String email = 'lifeledgerappdev@gmail.com';
+  // final String mobile = '9698357997';
   final int groupCount = 0;
   final int alertCount = 0;
   final int sharedCount = 0;
+  late ProfileViewModel profileViewModel;
+  @override
+  void initState() {
+    super.initState();
+    profileViewModel = Provider.of<ProfileViewModel>(context, listen: false);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      profileViewModel.loadProfile();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
       body: SafeArea(
-        child: CustomScrollView(
-          physics: const BouncingScrollPhysics(),
-          slivers: [
-            SliverToBoxAdapter(child: _buildProfileHeader(context)),
-            SliverToBoxAdapter(child: _buildStats(context)),
-            SliverToBoxAdapter(child: _buildSectionTitle(context, 'Personal')),
-            SliverToBoxAdapter(child: _buildPersonalCard(context)),
-            SliverToBoxAdapter(
-              child: _buildSectionTitle(context, 'Your Activity'),
-            ),
-            SliverToBoxAdapter(child: _buildActivityCard(context)),
-            SliverToBoxAdapter(child: _buildAccountCard(context)),
-            const SliverToBoxAdapter(child: SizedBox(height: 100)),
-          ],
+        child: Consumer<ProfileViewModel>(
+          builder: (BuildContext context, ProfileViewModel vm, Widget? child) {
+            if (profileViewModel.profile == null) {
+              return const Scaffold(
+                body: Center(child: CircularProgressIndicator()),
+              );
+            }
+            return CustomScrollView(
+              physics: const BouncingScrollPhysics(),
+              slivers: [
+                SliverToBoxAdapter(child: _buildProfileHeader(context)),
+                SliverToBoxAdapter(child: _buildStats(context)),
+                SliverToBoxAdapter(
+                  child: _buildSectionTitle(context, 'Personal'),
+                ),
+                SliverToBoxAdapter(child: _buildPersonalCard(context)),
+                SliverToBoxAdapter(
+                  child: _buildSectionTitle(context, 'Your Activity'),
+                ),
+                SliverToBoxAdapter(child: _buildActivityCard(context)),
+                SliverToBoxAdapter(child: _buildAccountCard(context)),
+                const SliverToBoxAdapter(child: SizedBox(height: 100)),
+              ],
+            );
+          },
         ),
       ),
       // bottomNavigationBar: _buildBottomNavigation(context),
     );
   }
 
-  // ---------------------------------------------------------------------------
-  // PROFILE HEADER
   // ---------------------------------------------------------------------------
   Widget _buildProfileHeader(BuildContext context) {
     final theme = Theme.of(context);
@@ -103,7 +141,7 @@ class ProfilePage extends StatelessWidget {
                 ),
                 alignment: Alignment.center,
                 child: Text(
-                  _getInitial(name),
+                  _getInitial(profileViewModel.profile!.name),
                   style: theme.textTheme.headlineMedium?.copyWith(
                     color: theme.colorScheme.primary,
                     fontWeight: FontWeight.w800,
@@ -138,7 +176,7 @@ class ProfilePage extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           Text(
-            name,
+            profileViewModel.profile!.name,
             textAlign: TextAlign.center,
             style: theme.textTheme.titleLarge?.copyWith(
               color: theme.colorScheme.onPrimary,
@@ -147,7 +185,7 @@ class ProfilePage extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            email,
+            profileViewModel.profile!.email,
             textAlign: TextAlign.center,
             style: theme.textTheme.bodySmall?.copyWith(
               color: theme.colorScheme.onPrimary.withValues(alpha: 0.75),
@@ -173,8 +211,6 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  // ---------------------------------------------------------------------------
-  // STATS
   // ---------------------------------------------------------------------------
   Widget _buildStats(BuildContext context) {
     final theme = Theme.of(context);
@@ -222,8 +258,6 @@ class ProfilePage extends StatelessWidget {
   }
 
   // ---------------------------------------------------------------------------
-  // SECTION TITLE
-  // ---------------------------------------------------------------------------
   Widget _buildSectionTitle(BuildContext context, String title) {
     final theme = Theme.of(context);
     return Padding(
@@ -239,24 +273,24 @@ class ProfilePage extends StatelessWidget {
   }
 
   // ---------------------------------------------------------------------------
-  // PERSONAL
-  // ---------------------------------------------------------------------------
   Widget _buildPersonalCard(BuildContext context) {
     return _SectionCard(
       children: [
         _InfoTile(
           icon: Icons.phone_outlined,
           title: 'Mobile number',
-          subtitle: mobile,
+          subtitle: profileViewModel.profile!.mobileno,
         ),
         const _CardDivider(),
-        _InfoTile(icon: Icons.email_outlined, title: 'Email', subtitle: email),
+        _InfoTile(
+          icon: Icons.email_outlined,
+          title: 'Email',
+          subtitle: profileViewModel.profile!.email,
+        ),
       ],
     );
   }
 
-  // ---------------------------------------------------------------------------
-  // ACTIVITY
   // ---------------------------------------------------------------------------
   Widget _buildActivityCard(BuildContext context) {
     return _SectionCard(
@@ -291,8 +325,6 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  // ---------------------------------------------------------------------------
-  // ACCOUNT
   // ---------------------------------------------------------------------------
   Widget _buildAccountCard(BuildContext context) {
     final theme = Theme.of(context);

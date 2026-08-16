@@ -101,6 +101,6 @@ String formatAmountWithSymbol(double? val) {
   return '₹${formatAmountWithComma(val)}';
 }
 
-String formatTime(DateTime val){
+String formatTime(DateTime val) {
   return DateFormat('hh:mm a').format(val);
 }

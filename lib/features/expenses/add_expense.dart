@@ -1,41 +1,46 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import '../../models/user_expense.dart';
+import '../../repositories/expense_repository.dart';
+import '../../services/progress_service.dart';
+import '../../services/snackbar_service.dart';
+import '../../utils/common.dart';
+import '../../utils/drop_down_items.dart';
+import '../../widgets/custom_drop_down_field.dart';
+import '../home/home_view_model.dart';
 
 class AddExpense extends StatefulWidget {
-  const AddExpense({super.key, this.expenseId});
-  final String? expenseId;
-  bool get isEditing => expenseId != null;
+  const AddExpense({super.key});
   @override
   State<AddExpense> createState() => _AddExpenseState();
 }
 
 class _AddExpenseState extends State<AddExpense> {
   final _formKey = GlobalKey<FormState>();
-  final _amountController = TextEditingController();
-  final _noteController = TextEditingController();
-  DateTime _selectedDate = DateTime.now();
-  String? _selectedCategory;
-  bool _isSaving = false;
-  final List<_Category> _categories = const [
-    _Category(name: 'Food', icon: Icons.restaurant_rounded),
-    _Category(name: 'Travel', icon: Icons.directions_car_rounded),
-    _Category(name: 'Shopping', icon: Icons.shopping_bag_rounded),
-    _Category(name: 'Bills', icon: Icons.receipt_long_rounded),
-    _Category(name: 'Entertainment', icon: Icons.movie_rounded),
-    _Category(name: 'Health', icon: Icons.favorite_rounded),
-    _Category(name: 'Education', icon: Icons.school_rounded),
-    _Category(name: 'Other', icon: Icons.category_rounded),
-  ];
+  late TextEditingController _amountController;
+  late TextEditingController _noteController;
+  late TextEditingController _titleController;
+  late UserExpense _userExpense;
+  late List<DropDownItems> _categories;
+  @override
+  void initState() {
+    super.initState();
+    _userExpense = UserExpense(id: getNewID(), date: DateTime.now());
+    _amountController = TextEditingController();
+    _noteController = TextEditingController();
+    _titleController = TextEditingController();
+    _categories = getExpenseCategories();
+  }
+
   @override
   void dispose() {
     _amountController.dispose();
     _noteController.dispose();
+    _titleController.dispose();
     super.dispose();
   }
 
-  // ---------------------------------------------------------------------------
-  // BUILD
-  // ---------------------------------------------------------------------------
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -58,6 +63,10 @@ class _AddExpenseState extends State<AddExpense> {
                     children: [
                       _buildAmountCard(context),
                       const SizedBox(height: 26),
+                      _buildSectionLabel(context, 'Title'),
+                      const SizedBox(height: 9),
+                      _buildTitleField(context),
+                      const SizedBox(height: 22),
                       _buildSectionLabel(context, 'Category'),
                       const SizedBox(height: 9),
                       _buildCategorySelector(context),
@@ -99,7 +108,7 @@ class _AddExpenseState extends State<AddExpense> {
             child: Column(
               children: [
                 Text(
-                  widget.isEditing ? 'Edit Expense' : 'Add Expense',
+                  'Add Expense',
                   style: theme.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.w800,
                     letterSpacing: -0.3,
@@ -107,9 +116,7 @@ class _AddExpenseState extends State<AddExpense> {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  widget.isEditing
-                      ? 'Update your expense'
-                      : 'Track where your money goes',
+                  'Track where your money goes',
                   style: theme.textTheme.labelSmall?.copyWith(
                     color: colors.onSurfaceVariant,
                   ),
@@ -117,7 +124,7 @@ class _AddExpenseState extends State<AddExpense> {
               ],
             ),
           ),
-          _HeaderButton(icon: Icons.more_horiz_rounded, onTap: () {}),
+          // _HeaderButton(icon: Icons.more_horiz_rounded, onTap: () {}),
         ],
       ),
     );
@@ -204,6 +211,14 @@ class _AddExpenseState extends State<AddExpense> {
               }
               return null;
             },
+            onChanged: (String value) {
+              _formKey.currentState!.clearError();
+              if (value.isEmpty) {
+                _userExpense.amount = 0;
+              } else {
+                _userExpense.amount = double.parse(value);
+              }
+            },
           ),
           const SizedBox(height: 4),
           Text(
@@ -237,17 +252,17 @@ class _AddExpenseState extends State<AddExpense> {
   Widget _buildCategorySelector(BuildContext context) {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-    final category = _categories.cast<_Category?>().firstWhere(
-      (item) => item?.name == _selectedCategory,
-      orElse: () => null,
+    final DropDownItems category = _categories.firstWhere(
+      (item) => item.value == _userExpense.category,
+      orElse: () => const DropDownItems(label: '', value: ''),
     );
     return _InputCard(
       onTap: _showCategorySheet,
       child: Row(
         children: [
           _LeadingIcon(
-            icon: category?.icon ?? Icons.category_outlined,
-            selected: category != null,
+            icon: category.icon,
+            selected: category.value.isNotEmpty,
           ),
           const SizedBox(width: 13),
           Expanded(
@@ -255,15 +270,17 @@ class _AddExpenseState extends State<AddExpense> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  category?.name ?? 'Choose a category',
+                  category.label.isNotEmpty
+                      ? category.label
+                      : 'Choose a category',
                   style: theme.textTheme.bodyLarge?.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: category != null
+                    color: category.value.isNotEmpty
                         ? colors.onSurface
                         : colors.onSurfaceVariant,
                   ),
                 ),
-                if (category == null) ...[
+                if (category.value.isEmpty) ...[
                   const SizedBox(height: 2),
                   Text(
                     'Select one to organize this expense',
@@ -301,14 +318,14 @@ class _AddExpenseState extends State<AddExpense> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  DateFormat('dd MMM yyyy').format(_selectedDate),
+                  DateFormat('dd MMM yyyy').format(_userExpense.date),
                   style: theme.textTheme.bodyLarge?.copyWith(
                     fontWeight: FontWeight.w600,
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  _isToday(_selectedDate) ? 'Today' : 'Expense date',
+                  _isToday(_userExpense.date) ? 'Today' : 'Expense date',
                   style: theme.textTheme.labelSmall?.copyWith(
                     color: colors.onSurfaceVariant,
                   ),
@@ -343,7 +360,7 @@ class _AddExpenseState extends State<AddExpense> {
         textCapitalization: TextCapitalization.sentences,
         style: theme.textTheme.bodyLarge,
         decoration: InputDecoration(
-          hintText: 'What was this expense for?',
+          hintText: 'Add more info about this expense',
           hintStyle: TextStyle(color: colors.onSurfaceVariant),
           prefixIcon: Padding(
             padding: const EdgeInsets.only(left: 15, right: 7, top: 15),
@@ -353,6 +370,41 @@ class _AddExpenseState extends State<AddExpense> {
           border: InputBorder.none,
           contentPadding: const EdgeInsets.fromLTRB(5, 16, 16, 16),
         ),
+        onChanged: (String value) {
+          _userExpense.note = value;
+        },
+      ),
+    );
+  }
+
+  Widget _buildTitleField(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    return Container(
+      decoration: BoxDecoration(
+        color: colors.surfaceContainerLow,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: colors.outlineVariant.withValues(alpha: 0.65),
+        ),
+      ),
+      child: TextFormField(
+        controller: _titleController,
+        style: theme.textTheme.bodyLarge,
+        decoration: InputDecoration(
+          hintText: 'What was this expense for?',
+          hintStyle: TextStyle(color: colors.onSurfaceVariant),
+          prefixIcon: Icon(
+            Icons.insert_comment_outlined,
+            color: colors.primary,
+          ),
+          prefixIconConstraints: const BoxConstraints(minWidth: 48),
+          border: InputBorder.none,
+          contentPadding: const EdgeInsets.fromLTRB(5, 16, 16, 16),
+        ),
+        onChanged: (String value) {
+          _userExpense.title = value;
+        },
       ),
     );
   }
@@ -379,7 +431,7 @@ class _AddExpenseState extends State<AddExpense> {
             child: SizedBox(
               height: 54,
               child: OutlinedButton(
-                onPressed: _isSaving ? null : () => Navigator.pop(context),
+                onPressed: () => Navigator.pop(context),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: colors.onSurface,
                   side: BorderSide(color: colors.outlineVariant),
@@ -398,7 +450,7 @@ class _AddExpenseState extends State<AddExpense> {
             child: SizedBox(
               height: 54,
               child: FilledButton(
-                onPressed: _isSaving ? null : _saveExpense,
+                onPressed: _saveExpense,
                 style: FilledButton.styleFrom(
                   backgroundColor: colors.primary,
                   foregroundColor: colors.onPrimary,
@@ -407,34 +459,20 @@ class _AddExpenseState extends State<AddExpense> {
                     borderRadius: BorderRadius.circular(17),
                   ),
                 ),
-                child: AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 180),
-                  child: _isSaving
-                      ? SizedBox(
-                          key: const ValueKey('loading'),
-                          height: 21,
-                          width: 21,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2.3,
-                            color: colors.onPrimary,
-                          ),
-                        )
-                      : Row(
-                          key: const ValueKey('save'),
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              widget.isEditing
-                                  ? 'Update Expense'
-                                  : 'Save Expense',
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w800,
-                              ),
-                            ),
-                            const SizedBox(width: 7),
-                            const Icon(Icons.arrow_forward_rounded, size: 19),
-                          ],
-                        ),
+                child: const AnimatedSwitcher(
+                  duration: Duration(milliseconds: 180),
+                  child: Row(
+                    key: ValueKey('save'),
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Save Expense',
+                        style: TextStyle(fontWeight: FontWeight.w800),
+                      ),
+                      SizedBox(width: 7),
+                      Icon(Icons.arrow_forward_rounded, size: 19),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -490,10 +528,10 @@ class _AddExpenseState extends State<AddExpense> {
                   ),
                   itemBuilder: (context, index) {
                     final item = _categories[index];
-                    final isSelected = item.name == _selectedCategory;
+                    final isSelected = item.value == _userExpense.category;
                     return InkWell(
                       onTap: () {
-                        Navigator.pop(context, item.name);
+                        Navigator.pop(context, item.value);
                       },
                       borderRadius: BorderRadius.circular(17),
                       child: AnimatedContainer(
@@ -521,9 +559,10 @@ class _AddExpenseState extends State<AddExpense> {
                             ),
                             const SizedBox(height: 6),
                             Text(
-                              item.name,
-                              maxLines: 1,
+                              item.label,
+                              maxLines: 2,
                               overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.center,
                               style: theme.textTheme.labelSmall?.copyWith(
                                 fontWeight: isSelected
                                     ? FontWeight.w700
@@ -544,7 +583,7 @@ class _AddExpenseState extends State<AddExpense> {
     );
     if (selected != null && mounted) {
       setState(() {
-        _selectedCategory = selected;
+        _userExpense.category = selected;
       });
     }
   }
@@ -556,56 +595,57 @@ class _AddExpenseState extends State<AddExpense> {
     FocusScope.of(context).unfocus();
     final picked = await showDatePicker(
       context: context,
-      initialDate: _selectedDate,
+      initialDate: _userExpense.date,
       firstDate: DateTime(2000),
       lastDate: DateTime.now(),
     );
     if (picked != null && mounted) {
       setState(() {
-        _selectedDate = picked;
+        _userExpense.date = picked;
       });
     }
   }
 
-  // ---------------------------------------------------------------------------
-  // SAVE
-  // ---------------------------------------------------------------------------
   Future<void> _saveExpense() async {
     FocusScope.of(context).unfocus();
     if (!_formKey.currentState!.validate()) {
       return;
     }
-    if (_selectedCategory == null) {
-      _showMessage('Please choose a category');
+    if (_userExpense.title.isEmpty) {
+      SnackbarService.showErrorMessage('Expense Title cannot be empty');
       return;
     }
-    setState(() {
-      _isSaving = true;
-    });
+    if (_userExpense.category.isEmpty) {
+      SnackbarService.showErrorMessage('Choose any one Category');
+      return;
+    }
+    if (_userExpense.amount == null || _userExpense.amount! <= 0.0) {
+      SnackbarService.showErrorMessage(
+        'Expense Amount should be greater than 0',
+      );
+      return;
+    }
     try {
-      // final amount = double.parse(_amountController.text.trim());
-      // ---------------------------------------------------------
-      // CALL YOUR REPOSITORY HERE
-      // ---------------------------------------------------------
-      //
-      // if (widget.isEditing) {
-      //   await ExpenseRepository().updateExpense(...);
-      // } else {
-      //   await ExpenseRepository().addExpense(...);
-      // }
-      //
-      // ---------------------------------------------------------
-      await Future.delayed(const Duration(milliseconds: 500));
-      if (!mounted) return;
-      Navigator.pop(context, true);
+      ProgressService.show(context, message: 'Saving expense...');
+      await ExpenseRepository()
+          .addExpense(_userExpense)
+          .whenComplete(() {
+            ProgressService.hide(context);
+          })
+          .then((void value) {
+            Provider.of<HomeViewModel>(context, listen: false)
+              ..expenses.add(_userExpense)
+              ..calculateData();
+            Navigator.of(context).pop();
+            SnackbarService.showSuccessMessage(
+              'Expense added successfully !!!',
+            );
+          })
+          .onError((Object error, StackTrace stackTrace) {
+            SnackbarService.showErrorMessage(error);
+          });
     } catch (e) {
-      _showMessage('Unable to save expense. Please try again.');
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isSaving = false;
-        });
-      }
+      SnackbarService.showErrorMessage(e.toString());
     }
   }
 
@@ -618,27 +658,8 @@ class _AddExpenseState extends State<AddExpense> {
         date.month == now.month &&
         date.day == now.day;
   }
-
-  void _showMessage(String message) {
-    if (!mounted) return;
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(
-        SnackBar(
-          content: Text(message),
-          behavior: SnackBarBehavior.floating,
-          margin: const EdgeInsets.all(16),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
-          ),
-        ),
-      );
-  }
 }
 
-// =============================================================================
-// INPUT CARD
-// =============================================================================
 class _InputCard extends StatelessWidget {
   const _InputCard({required this.child, required this.onTap});
   final Widget child;
@@ -719,13 +740,4 @@ class _HeaderButton extends StatelessWidget {
       ),
     );
   }
-}
-
-// =============================================================================
-// CATEGORY
-// =============================================================================
-class _Category {
-  const _Category({required this.name, required this.icon});
-  final String name;
-  final IconData icon;
 }

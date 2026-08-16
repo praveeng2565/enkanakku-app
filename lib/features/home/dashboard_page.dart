@@ -13,7 +13,6 @@ import 'home_view_model.dart';
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key, required this.scaffoldKey});
   final GlobalKey<ScaffoldState> scaffoldKey;
-
   @override
   State<DashboardPage> createState() => _DashboardPageState();
 }
@@ -45,10 +44,8 @@ class _DashboardPageState extends State<DashboardPage> {
       type: ReminderType.warranty,
     ),
   ];
-
   late HomeViewModel dashboardViewModel;
   bool hasData = true;
-
   @override
   void initState() {
     super.initState();
@@ -66,7 +63,6 @@ class _DashboardPageState extends State<DashboardPage> {
       ProgressService.show(context, message: 'Fetching data...');
     }
     dashboardViewModel.reset();
-
     await ExpenseRepository()
         .getExpensesForMonth(dashboardViewModel.dashMonthYear)
         .then((List<UserExpense>? value) {
@@ -101,7 +97,6 @@ class _DashboardPageState extends State<DashboardPage> {
                                 if (asyncSnapshot.hasData && hasData) {
                                   return pageBody();
                                 }
-
                                 if (asyncSnapshot.hasError) {
                                   return Center(
                                     child: Padding(
@@ -118,9 +113,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                               context,
                                             ).colorScheme.primary,
                                           ),
-
                                           const SizedBox(height: 24),
-
                                           Text(
                                             'Something went wrong',
                                             style: Theme.of(context)
@@ -130,9 +123,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                           ),
-
                                           const SizedBox(height: 12),
-
                                           Text(
                                             "We're unable to load your data at the moment.\nPlease refresh or try again later.",
                                             textAlign: TextAlign.center,
@@ -140,9 +131,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                               context,
                                             ).textTheme.bodyMedium,
                                           ),
-
                                           const SizedBox(height: 32),
-
                                           FilledButton.icon(
                                             onPressed: loadData,
                                             icon: const Icon(
@@ -155,7 +144,6 @@ class _DashboardPageState extends State<DashboardPage> {
                                     ),
                                   );
                                 }
-
                                 return const Center(
                                   child: CircularProgressIndicator(),
                                 );
@@ -203,7 +191,9 @@ class _DashboardPageState extends State<DashboardPage> {
             SliverPadding(
               padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
               sliver: SliverList.separated(
-                itemCount: dashboardViewModel.expenses.length,
+                itemCount: dashboardViewModel.expenses.length > 3
+                    ? 3
+                    : dashboardViewModel.expenses.length,
                 separatorBuilder: (_, _) => const SizedBox(height: 8),
                 itemBuilder: (context, index) {
                   return _ExpenseTile(
@@ -433,25 +423,19 @@ class _DashboardPageState extends State<DashboardPage> {
     DateTime? initialDate,
   }) async {
     final now = DateTime.now();
-
     final currentMonth = DateTime(now.year, now.month);
-
     final firstEnabledMonth = DateTime(now.year, now.month - 2);
-
     DateTime selectedMonth = DateTime(
       initialDate?.year ?? now.year,
       initialDate?.month ?? now.month,
     );
-
     // Make sure initial date is inside allowed range.
     if (selectedMonth.isBefore(firstEnabledMonth)) {
       selectedMonth = firstEnabledMonth;
     }
-
     if (selectedMonth.isAfter(currentMonth)) {
       selectedMonth = currentMonth;
     }
-
     return showDialog<DateTime>(
       context: context,
       builder: (context) {
@@ -472,11 +456,9 @@ class _DashboardPageState extends State<DashboardPage> {
                   ),
                   itemBuilder: (context, index) {
                     final month = DateTime(now.year, now.month - 2 + index);
-
                     final isSelected =
                         month.year == selectedMonth.year &&
                         month.month == selectedMonth.month;
-
                     return InkWell(
                       borderRadius: BorderRadius.circular(12),
                       onTap: () {
@@ -722,7 +704,7 @@ class _ExpenseTile extends StatelessWidget {
                     ),
                     const SizedBox(height: 3),
                     Text(
-                      '${item.label} · $time}',
+                      '${item.label} · $time',
                       style: theme.textTheme.labelSmall?.copyWith(
                         color: theme.colorScheme.onSurfaceVariant,
                       ),

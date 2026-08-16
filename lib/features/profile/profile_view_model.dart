@@ -8,8 +8,6 @@ class ProfileViewModel extends ChangeNotifier {
   ProfileViewModel(this._userRepository);
   final UsersRepository _userRepository;
   UserProfile? profile;
-  bool isLoading = false;
-  bool isSaving = false;
   Future<void> loadProfile() async {
     final user = await _userRepository.getUserData(UserSession.instance.id);
     profile = user;
@@ -17,8 +15,6 @@ class ProfileViewModel extends ChangeNotifier {
   }
 
   Future<bool> updateProfile(UserProfile updated) async {
-    isSaving = true;
-    notifyListeners();
     try {
       await _userRepository.createOrUpdateUser(updated);
       profile = updated;
@@ -26,7 +22,6 @@ class ProfileViewModel extends ChangeNotifier {
     } catch (e) {
       return false;
     } finally {
-      isSaving = false;
       notifyListeners();
     }
   }
