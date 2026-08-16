@@ -42,5 +42,6 @@ class HomeViewModel with ChangeNotifier {
     totalRemaining = 0;
     spentToday = 0;
     totalSpentPerc = 0;
+    currentPageIndex = 0;
   }
 }

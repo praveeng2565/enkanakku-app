@@ -13,7 +13,7 @@ class AuthService {
   // Stream<User> get user => _auth.authStateChanges();
   // wrappinhg the firebase calls
   Future<void> logout() {
-    return FirebaseAuth.instance.signOut();
+    return _auth.signOut();
   }
 
   // wrappinhg the firebase calls
@@ -23,7 +23,12 @@ class AuthService {
     required String password,
     required String mobile,
   }) async {
-    final u = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+    final bool val = await UsersRepository().checkUserAlreadyExists(
+      email: email,
+      mobile: mobile,
+    );
+    if (!val) return false;
+    final u = await _auth.createUserWithEmailAndPassword(
       email: email,
       password: password,
     );
@@ -36,7 +41,6 @@ class AuthService {
       mobileno: mobile,
       photoUrl: user?.photoURL ?? '',
     );
-    info.name = name;
     await u.user?.updateProfile(displayName: info.name);
     await UsersRepository().createOrUpdateUser(info);
     return true;
@@ -44,20 +48,37 @@ class AuthService {
 
   // wrappinhg the firebase calls
   Future<bool> loginUser({
-    required String email,
+    required String login,
     required String password,
   }) async {
-    await FirebaseAuth.instance.signInWithEmailAndPassword(
-      email: email,
-      password: password,
-    );
+    final value = login.trim();
+    String email;
+    if (_isEmail(value)) {
+      email = value;
+    } else {
+      final foundEmail = await UsersRepository().getEmailFromMobile(value);
+      if (foundEmail == null || foundEmail.isEmpty) {
+        throw FirebaseAuthException(
+          code: 'invalid-credential',
+          message: 'Invalid credentials.',
+        );
+      }
+      email = foundEmail;
+    }
+    await _auth.signInWithEmailAndPassword(email: email, password: password);
     final val = await UsersRepository().getUserUniqueId();
     if (val == null || val.isEmpty) return false;
     UserSession.instance.id = val;
     return true;
   }
 
+  bool _isEmail(String value) {
+    return RegExp(
+      r'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$',
+    ).hasMatch(value);
+  }
+
   Future<void> resetPassword(String email) async {
-    await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+    await _auth.sendPasswordResetEmail(email: email);
   }
 }

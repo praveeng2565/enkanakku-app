@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../models/user_profile.dart';
 import '../services/login_auth.dart';
 
@@ -15,13 +16,15 @@ class UsersRepository {
   /// Creates or updates the nested profile doc. Safe to call on every
   /// login (merge: true won't wipe fields you don't pass).
   Future<void> createOrUpdateUser(UserProfile profile) async {
+    final normalizedMobile = normalizeMobile(profile.mobileno);
+    profile.mobileno = normalizedMobile;
     await _usersRef(profile.id).set(profile.toMap(), SetOptions(merge: true));
   }
 
   Future<String?> getUserUniqueId() async {
     final uid = AuthService().currentUid;
     if (uid.isEmpty) return null;
-    final snapshot = await FirebaseFirestore.instance
+    final snapshot = await _firestore
         .collection('AllUsersProfile')
         .where('uid', isEqualTo: uid)
         .limit(1)
@@ -30,6 +33,70 @@ class UsersRepository {
       return null;
     }
     return snapshot.docs.first.id;
+  }
+
+  Future<String?> getEmailFromMobile(String mobile) async {
+    final normalizedMobile = normalizeMobile(mobile);
+    final snapshot = await _firestore
+        .collection('AllUsersProfile')
+        .where('mobileno', isEqualTo: normalizedMobile)
+        .limit(1)
+        .get();
+    if (snapshot.docs.isEmpty) {
+      return null;
+    }
+    final data = snapshot.docs.first.data();
+    return data['email'] as String?;
+  }
+
+  Future<bool> checkUserAlreadyExists({
+    required String email,
+    required String mobile,
+  }) async {
+    final normalizedEmail = email.trim().toLowerCase();
+    final normalizedMobile = normalizeMobile(mobile);
+    final results = await Future.wait([
+      _firestore
+          .collection('AllUsersProfile')
+          .where('mobileno', isEqualTo: normalizedMobile)
+          .limit(1)
+          .get(),
+      _firestore
+          .collection('AllUsersProfile')
+          .where('email', isEqualTo: normalizedEmail)
+          .limit(1)
+          .get(),
+    ]);
+    final mobileSnapshot = results[0];
+    final emailSnapshot = results[1];
+    if (mobileSnapshot.docs.isNotEmpty) {
+      throw FirebaseAuthException(
+        code: 'mobile-already-in-use',
+        message: 'This mobile number is already registered.',
+      );
+    }
+    if (emailSnapshot.docs.isNotEmpty) {
+      throw FirebaseAuthException(
+        code: 'email-already-in-use',
+        message: 'This email address is already registered.',
+      );
+    }
+    return true;
+  }
+
+  String normalizeMobile(String mobile) {
+    var value = mobile.trim();
+    value = value.replaceAll(RegExp(r'[\s()-]'), '');
+    if (value.startsWith('+91')) {
+      return value;
+    }
+    if (value.startsWith('91') && value.length == 12) {
+      return '+$value';
+    }
+    if (value.length == 10) {
+      return '+91$value';
+    }
+    return value;
   }
 
   /// One-time fetch.

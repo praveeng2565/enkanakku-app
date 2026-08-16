@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../repositories/user_session.dart';
@@ -678,98 +679,184 @@ class _LoginPageState extends State<LoginPage>
     hideKeyboard();
     setState(() {
       pageType = type;
+      resetData();
     });
   }
 
-  // =========================================================================
-  // SUBMIT
-  // =========================================================================
+  void resetData() {
+    if (UserSession.instance.isDev) return;
+    _name.clear();
+    _email.clear();
+    _password.clear();
+    _mobile.clear();
+  }
+
   Future<void> _submit() async {
     hideKeyboard();
     final isLogin = pageType == PageType.login;
-    // ---------------------------------------------------------------
-    // NAME
-    // ---------------------------------------------------------------
-    if (!isLogin && _name.text.trim().isEmpty) {
-      SnackbarService.showErrorMessage('Name cannot be empty');
-      return;
-    }
-    // ---------------------------------------------------------------
-    // EMAIL
-    // ---------------------------------------------------------------
+    isLogin ? await loginSubmit() : await signupSubmit();
+  }
+
+  Future<void> loginSubmit() async {
     if (_email.text.trim().isEmpty) {
-      SnackbarService.showErrorMessage('Email cannot be empty');
+      SnackbarService.showErrorMessage('Email or mobile cannot be empty');
       return;
     }
-    // ---------------------------------------------------------------
-    // MOBILE
-    // ---------------------------------------------------------------
-    if (!isLogin && _mobile.text.trim().isEmpty) {
-      SnackbarService.showErrorMessage('Mobile no cannot be empty');
-      return;
-    }
-    if (!isLogin && _mobile.text.trim().length != 10) {
-      SnackbarService.showErrorMessage('Mobile no should be 10 digits');
-      return;
-    }
-    // ---------------------------------------------------------------
-    // PASSWORD
-    // ---------------------------------------------------------------
     if (_password.text.isEmpty) {
       SnackbarService.showErrorMessage('Password cannot be empty');
       return;
     }
-    // ---------------------------------------------------------------
-    // START LOADING
-    // ---------------------------------------------------------------
-    ProgressService.show(context);
     try {
+      ProgressService.show(context, message: 'Signing in...');
       late bool status;
-      // =============================================================
-      // LOGIN
-      // =============================================================
-      if (isLogin) {
-        status = await AuthService().loginUser(
-          email: _email.text.trim(),
-          password: _password.text,
-        );
-      }
-      // =============================================================
-      // SIGN UP
-      // =============================================================
-      else {
-        status = await AuthService().createUser(
-          name: _name.text.trim(),
-          email: _email.text.trim(),
-          password: _password.text,
-          mobile: _mobile.text.trim(),
-        );
-      }
-      if (!mounted) {
-        return;
+      status = await AuthService().loginUser(
+        login: _email.text.trim(),
+        password: _password.text,
+      );
+      if (mounted) {
+        ProgressService.hide(context);
       }
       if (!status) {
         return;
       }
-      ProgressService.hide(context);
-      // =============================================================
-      // SUCCESS
-      // =============================================================
       Navigator.pushReplacementNamed(context, '/Home');
-    } catch (error) {
-      if (!mounted) {
-        return;
+    } on FirebaseAuthException catch (error) {
+      if (mounted) {
+        ProgressService.hide(context);
       }
-      ProgressService.hide(context);
+      SnackbarService.showErrorMessage(getLoginErrorMessage(error));
+    } catch (error) {
+      if (mounted) {
+        ProgressService.hide(context);
+      }
       SnackbarService.showErrorMessage(error.toString());
-    } finally {}
+    }
   }
 
-  // =========================================================================
+  String getLoginErrorMessage(FirebaseAuthException error) {
+    switch (error.code) {
+      case 'invalid-credential':
+      case 'wrong-password':
+      case 'user-not-found':
+        return 'Invalid email/mobile number or password.';
+      case 'user-disabled':
+        return 'This account has been disabled.';
+      case 'too-many-requests':
+        return 'Too many attempts. Please try again later.';
+      case 'network-request-failed':
+        return 'Network error. Please check your connection.';
+      default:
+        return 'Unable to sign in. Please try again.';
+    }
+  }
+
+  Future<void> signupSubmit() async {
+    if (_name.text.trim().isEmpty) {
+      SnackbarService.showErrorMessage('Name cannot be empty');
+      return;
+    }
+    if (_email.text.trim().isEmpty) {
+      SnackbarService.showErrorMessage('Email cannot be empty');
+      return;
+    }
+    if (isValidEmail(_email.text)) {
+      SnackbarService.showErrorMessage('Enter valid Email');
+      return;
+    }
+    if (_mobile.text.trim().isEmpty) {
+      SnackbarService.showErrorMessage('Mobile no cannot be empty');
+      return;
+    }
+    if (isValidMobile(_mobile.text)) {
+      SnackbarService.showErrorMessage('Enter valid Mobile no');
+      return;
+    }
+    if (_password.text.isEmpty) {
+      SnackbarService.showErrorMessage('Password cannot be empty');
+      return;
+    }
+    try {
+      ProgressService.show(context, message: 'Creating Account...');
+      late bool status;
+      status = await AuthService().createUser(
+        name: _name.text.trim(),
+        email: _email.text.trim(),
+        password: _password.text,
+        mobile: _mobile.text.trim(),
+      );
+      if (mounted) {
+        ProgressService.hide(context);
+      }
+      if (!status) {
+        return;
+      }
+      Navigator.pushReplacementNamed(context, '/Home');
+    } on FirebaseAuthException catch (e) {
+      if (mounted) {
+        ProgressService.hide(context);
+      }
+      SnackbarService.showErrorMessage(
+        e.message ?? 'Unable to create account.',
+      );
+    } catch (error) {
+      if (mounted) {
+        ProgressService.hide(context);
+      }
+      SnackbarService.showErrorMessage(error.toString());
+    }
+  }
+
+  bool isValidMobile(String mobile) {
+    final value = mobile.trim();
+    return !RegExp(r'^(?:\+91)?[6-9]\d{9}$').hasMatch(value);
+  }
+
   // FORGOT PASSWORD
-  // =========================================================================
   Future<void> _forgotPassword() async {
-    SnackbarService.showInfoMessage('Coming soon');
+    if (_email.text.trim().isEmpty) {
+      SnackbarService.showErrorMessage('Email cannot be empty');
+      return;
+    }
+    if (isValidEmail(_email.text.trim())) {
+      SnackbarService.showErrorMessage('Enter valid Email');
+      return;
+    }
+    try {
+      ProgressService.show(context);
+      await AuthService().resetPassword(_email.text.trim());
+      SnackbarService.showSuccessMessage(
+        'Password reset link sent. Please check your email.',
+      );
+    } on FirebaseAuthException catch (error) {
+      SnackbarService.showErrorMessage(getPasswordResetMessage(error));
+    } catch (error) {
+      SnackbarService.showErrorMessage(
+        'Unable to send the reset link. Please try again.',
+      );
+    } finally {
+      ProgressService.hide(context);
+    }
+  }
+
+  String getPasswordResetMessage(FirebaseAuthException e) {
+    switch (e.code) {
+      case 'invalid-email':
+        return 'Please enter a valid email address.';
+      case 'user-disabled':
+        return 'This account has been disabled.';
+      case 'too-many-requests':
+        return 'Too many attempts. Please try again later.';
+      case 'network-request-failed':
+        return 'Network error. Please check your connection and try again.';
+      default:
+        return 'Unable to send the reset link. Please try again.';
+    }
+  }
+
+  bool isValidEmail(String email) {
+    return !RegExp(
+      r'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$',
+    ).hasMatch(email.trim());
   }
 }
 
