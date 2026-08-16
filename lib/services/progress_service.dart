@@ -55,9 +55,9 @@ class ProgressService {
 }
 
 class _LoadingIndicator extends StatelessWidget {
-  final String message;
 
   const _LoadingIndicator({required this.message});
+  final String message;
 
   @override
   Widget build(BuildContext context) {

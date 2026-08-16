@@ -51,12 +51,12 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
 
   Future<void> _save() async {
     ProgressService.show(context);
-    String photoUrl = profile.photoUrl;
-    if (_pickedImage != null) {
-      final uploadedUrl = await widget.vm.uploadProfilePhoto(_pickedImage!);
-      if (uploadedUrl != null) photoUrl = uploadedUrl;
-    }
-    profile.photoUrl = photoUrl;
+    // String photoUrl = profile.photoUrl;
+    // if (_pickedImage != null) {
+    //   final uploadedUrl = await widget.vm.uploadProfilePhoto(_pickedImage!);
+    //   if (uploadedUrl != null) photoUrl = uploadedUrl;
+    // }
+    // profile.photoUrl = photoUrl;
     final success = await widget.vm.updateProfile(profile);
     ProgressService.hide(context);
 

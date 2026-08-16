@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../core/constants.dart';
 import 'user_view_model.dart';
 
 class LaunchPage extends StatefulWidget {

@@ -3,7 +3,6 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../core/constants.dart';
 import '../../repositories/user_session.dart';
 import '../../services/login_auth.dart';
 import '../../services/progress_service.dart';
@@ -182,7 +181,7 @@ class _LoginPageState extends State<LoginPage>
           colors: isDark
               ? [
                   darken(colors.primary, 0.15),
-                  darken(colors.secondary, 0.25),
+                  darken(colors.secondary),
                   darken(colors.tertiary, 0.30),
                   darken(colors.primaryContainer, 0.45),
                 ]

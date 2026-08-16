@@ -1,7 +1,5 @@
 name: enkanakku_app
 description: "A new Flutter project."
-# The following line prevents the package from being accidentally published to
-# pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
 version: 1.0.10
@@ -14,7 +12,6 @@ dependencies:
     sdk: flutter
 
   cupertino_icons: ^1.0.8
-
   firebase_core: ^4.12.1 #Firebase core dependency
   firebase_auth: ^6.5.6 #Firebase core dependency
   # google_sign_in: ^7.2.0 #Firebase core dependency
@@ -29,9 +26,7 @@ dependencies:
   android_package_installer: ^0.0.3
   permission_handler: ^12.0.3
   intl: ^0.20.3
-  # image_picker: ^1.2.3
-
-  firebase_storage: any
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -39,7 +34,7 @@ dev_dependencies:
   flutter_lints: ^6.0.0
   flutter_launcher_icons: ^0.14.4
 
-flutter_launcher_icons:
+flutter_launcher_icons: # dart run flutter_launcher_icons
   android: "launcher_icon"
   # ios: true
   image_path: "lib/utils/images/app_logo.png"
@@ -49,14 +44,11 @@ flutter_launcher_icons:
   adaptive_icon_foreground: "lib/utils/images/app_logo.png"
 
 
-# The following section is specific to Flutter packages.
 flutter:
   uses-material-design: true
 
-  # To add assets to your application, add an assets section, like this:
   assets:
     - lib/utils/images/
-  #   - images/a_dot_ham.jpeg
 
   # fonts:
   #   - family: Schyler

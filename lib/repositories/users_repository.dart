@@ -1,11 +1,8 @@
-import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 
 import '../models/user_profile.dart';
 import '../services/login_auth.dart';
-import 'user_session.dart';
 
 /// Handles all Firestore reads/writes for the `users/{uid}` collection.
 /// No Flutter UI imports, no ChangeNotifier — pure data access, kept
@@ -49,13 +46,13 @@ class UsersRepository {
     return UserProfile.fromMap(doc.data()!);
   }
 
-  Future<String> uploadProfileImage({required File file}) async {
-    final ref = FirebaseStorage.instance.ref(
-      'profile_photos/${UserSession.instance.id}/profile.jpg',
-    );
-    await ref.putFile(file);
-    return ref.getDownloadURL();
-  }
+  // Future<String> uploadProfileImage({required File file}) async {
+  //   final ref = FirebaseStorage.instance.ref(
+  //     'profile_photos/${UserSession.instance.id}/profile.jpg',
+  //   );
+  //   await ref.putFile(file);
+  //   return ref.getDownloadURL();
+  // }
 
   /// Live stream — use in ProfileViewModel so profile screens update
   /// in real time if edited elsewhere (e.g. another device).

@@ -16,3 +16,6 @@ flutter build apk --flavor prod -t lib/main_prod.dart --release --build-name=1.1
 git tag
 git tag v1.0.10; git push origin v1.0.10
 git tag -d v1.0.10; git push origin --delete v1.0.10
+
+flutter clean; flutter pub get
+dart format .; dart fix --apply

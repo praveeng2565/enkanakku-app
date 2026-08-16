@@ -200,8 +200,9 @@ class _UpdateDialogContentState extends State<_UpdateDialogContent> {
     Navigator.pop(context);
     if (canLogin) {
       final route = await userViewModel.getInitialPageRoute();
-      if (!context.mounted) return;
-      Navigator.pushReplacementNamed(context, route);
+      if (context.mounted) {
+        Navigator.pushReplacementNamed(context, route);
+      }
     }
   }
 }

@@ -61,7 +61,6 @@ class SnackbarService {
             type: type,
             duration: _defaultDuration,
           ),
-          duration: _defaultDuration,
           behavior: SnackBarBehavior.floating,
           backgroundColor: Colors.transparent,
           elevation: 0,
@@ -98,15 +97,15 @@ class SnackbarService {
 // =============================================================================
 
 class _PremiumSnackbar extends StatefulWidget {
-  final String message;
-  final SnackType type;
-  final Duration duration;
 
   const _PremiumSnackbar({
     required this.message,
     required this.type,
     required this.duration,
   });
+  final String message;
+  final SnackType type;
+  final Duration duration;
 
   @override
   State<_PremiumSnackbar> createState() => _PremiumSnackbarState();
