@@ -43,6 +43,9 @@ class AuthService {
     );
     await u.user?.updateProfile(displayName: info.name);
     await UsersRepository().createOrUpdateUser(info);
+    final value = await UsersRepository().getUserUniqueId();
+    if (value == null || value.isEmpty) return false;
+    UserSession.instance.id = value;
     return true;
   }
 

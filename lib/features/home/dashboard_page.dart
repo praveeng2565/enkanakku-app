@@ -290,6 +290,10 @@ class _DashboardPageState extends State<DashboardPage> {
     final monthName = DateFormat(
       'MMMM yyyy',
     ).format(dashboardViewModel.dashMonthYear);
+    bool isExcessSpent = false;
+    if (dashboardViewModel.totalRemaining < 0) {
+      isExcessSpent = true;
+    }
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Container(
@@ -378,7 +382,17 @@ class _DashboardPageState extends State<DashboardPage> {
                 ),
                 const Spacer(),
                 Text(
-                  '${formatAmountWithSymbol(dashboardViewModel.totalRemaining)} remaining',
+                  formatAmountWithSymbol(
+                    dashboardViewModel.totalRemaining,
+                  ).replaceAll('-', ''),
+                  style: theme.textTheme.labelMedium?.copyWith(
+                    color: isExcessSpent
+                        ? Colors.deepOrange.withValues(alpha: 0.85)
+                        : theme.colorScheme.onPrimary.withValues(alpha: 0.85),
+                  ),
+                ),
+                Text(
+                  isExcessSpent ? ' over spent' : ' remaining',
                   style: theme.textTheme.labelMedium?.copyWith(
                     color: theme.colorScheme.onPrimary.withValues(alpha: 0.85),
                   ),

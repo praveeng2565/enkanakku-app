@@ -717,6 +717,7 @@ class _LoginPageState extends State<LoginPage>
         ProgressService.hide(context);
       }
       if (!status) {
+        SnackbarService.showErrorMessage(null);
         return;
       }
       Navigator.pushReplacementNamed(context, '/Home');
@@ -788,6 +789,7 @@ class _LoginPageState extends State<LoginPage>
         ProgressService.hide(context);
       }
       if (!status) {
+        SnackbarService.showErrorMessage(null);
         return;
       }
       Navigator.pushReplacementNamed(context, '/Home');

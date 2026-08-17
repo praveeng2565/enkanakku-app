@@ -65,13 +65,13 @@ class SnackbarService {
   // ===========================================================================
   static String _parseMessage(dynamic message) {
     if (message is FirebaseAuthException) {
-      return message.message ?? 'Something went wrong. Please try again.';
+      return message.message ?? 'Technical error. Please try again.';
     }
     if (message is Exception) {
       return message.toString().replaceFirst('Exception: ', '');
     }
     if (message == null) {
-      return 'Something went wrong. Please try again.';
+      return 'Technical error. Please try again.';
     }
     return message.toString();
   }
