@@ -31,8 +31,8 @@ class _LoginPageState extends State<LoginPage>
   void initState() {
     super.initState();
     if (UserSession.instance.isDev) {
-      _name = TextEditingController(text: 'Praveen Keerthana');
-      _email = TextEditingController(text: 'lifeledgerappdev@gmail.com');
+      _name = TextEditingController(text: 'Praveen G');
+      _email = TextEditingController(text: 'praveeng2565@gmail.com');
       _password = TextEditingController(text: 'TestPassword@2026()');
       _mobile = TextEditingController(text: '9698357997');
     } else {
@@ -254,6 +254,35 @@ class _LoginPageState extends State<LoginPage>
               ),
             ],
           ),
+          if (UserSession.instance.isDev)
+            Row(
+              children: [
+                IconButton(
+                  onPressed: () {
+                    _email.text = 'praveeng2565@gmail.com';
+                    _name.text = 'Praveen G';
+                    _mobile.text = '9698357997';
+                  },
+                  icon: const Text('P'),
+                ),
+                IconButton(
+                  onPressed: () {
+                    _email.text = 'bkeerthu2015@gmail.com';
+                    _name.text = 'Keerthana B';
+                    _mobile.text = '9750234500';
+                  },
+                  icon: const Text('K'),
+                ),
+                IconButton(
+                  onPressed: () {
+                    _email.text = 'dharshnagopalsamy@gmail.com';
+                    _name.text = 'Dharshna G';
+                    _mobile.text = '8526074867';
+                  },
+                  icon: const Text('D'),
+                ),
+              ],
+            ),
           const SizedBox(height: 19),
           AnimatedSwitcher(
             duration: const Duration(milliseconds: 250),

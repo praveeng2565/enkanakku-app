@@ -27,6 +27,7 @@ class AuthService {
     if (appConfigData == null) {
       return null;
     }
+    UserSession.instance.downloadUrl = appConfigData.apkUrl;
     UserSession.instance.loginVersion = appConfigData.loginVersion;
     if (_isNewer(
       appConfigData.latestVersion,

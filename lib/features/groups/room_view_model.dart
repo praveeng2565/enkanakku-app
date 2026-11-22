@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../models/room_model.dart';
 import '../../repositories/room_repository.dart';
+import '../../repositories/user_session.dart';
 import '../../services/snackbar_service.dart';
 
 /// Backs the Groups tab (list) and the Create Group screen.
@@ -20,7 +21,8 @@ class RoomViewModel extends ChangeNotifier {
   }
 
   /// Call once the user is signed in (e.g. from the Groups screen's initState).
-  void start(String uid) {
+  void start() {
+    final uid = UserSession.instance.uniqueId;
     _sub?.cancel();
     isLoading = true;
     _sub = _repo

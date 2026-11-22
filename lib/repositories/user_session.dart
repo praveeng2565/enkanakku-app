@@ -6,6 +6,7 @@ class UserSession {
   String name = '';
   String emailId = '';
   String appVersion = '';
+  String downloadUrl = '';
   String? loginVersion;
   bool isDev = false;
   bool get isLoggedIn => uniqueId.isNotEmpty;

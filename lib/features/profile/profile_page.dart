@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import '../../core/constants.dart';
+import '../../repositories/user_session.dart';
 import '../../repositories/users_repository.dart';
+import '../../services/snackbar_service.dart';
 import '../../utils/common.dart';
+import '../groups/room_view_model.dart';
+import 'profile_edit_page.dart';
 import 'profile_view_model.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -22,16 +28,15 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<Profile> {
-  // final String name = 'Praveen Keerthana';
-  // final String email = 'lifeledgerappdev@gmail.com';
-  // final String mobile = '9698357997';
-  final int groupCount = 0;
+  int groupCount = 0;
   final int alertCount = 0;
   final int sharedCount = 0;
   late ProfileViewModel profileViewModel;
+  late RoomViewModel roomViewModel;
   @override
   void initState() {
     super.initState();
+    roomViewModel = Provider.of<RoomViewModel>(context, listen: false);
     profileViewModel = Provider.of<ProfileViewModel>(context, listen: false);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       profileViewModel.loadProfile();
@@ -39,8 +44,15 @@ class _ProfilePageState extends State<Profile> {
   }
 
   @override
+  void didUpdateWidget(covariant Profile oldWidget) {
+    groupCount = roomViewModel.myRooms.length;
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    groupCount = roomViewModel.myRooms.length;
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
       body: SafeArea(
@@ -65,13 +77,12 @@ class _ProfilePageState extends State<Profile> {
                 ),
                 SliverToBoxAdapter(child: _buildActivityCard(context)),
                 SliverToBoxAdapter(child: _buildAccountCard(context)),
-                const SliverToBoxAdapter(child: SizedBox(height: 100)),
+                const SliverToBoxAdapter(child: SizedBox(height: 50)),
               ],
             );
           },
         ),
       ),
-      // bottomNavigationBar: _buildBottomNavigation(context),
     );
   }
 
@@ -80,7 +91,7 @@ class _ProfilePageState extends State<Profile> {
     final theme = Theme.of(context);
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(20, 22, 20, 28),
+      padding: const EdgeInsets.fromLTRB(20, 22, 20, 20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
@@ -110,15 +121,10 @@ class _ProfilePageState extends State<Profile> {
               const Spacer(),
               IconButton(
                 onPressed: () {
-                  // Open settings
+                  showLogoutDialog(context);
                 },
-                style: IconButton.styleFrom(
-                  backgroundColor: theme.colorScheme.onPrimary.withValues(
-                    alpha: 0.14,
-                  ),
-                ),
                 icon: Icon(
-                  Icons.settings_outlined,
+                  Icons.logout_rounded,
                   color: theme.colorScheme.onPrimary,
                 ),
               ),
@@ -191,11 +197,21 @@ class _ProfilePageState extends State<Profile> {
               color: theme.colorScheme.onPrimary.withValues(alpha: 0.75),
             ),
           ),
-          const SizedBox(height: 16),
+          buildFloatingUserId(context, userId: profileViewModel.profile!.id),
           // Edit profile
           FilledButton.tonalIcon(
             onPressed: () {
-              // Navigate to edit profile
+              final vm = context.read<ProfileViewModel>();
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  // Re-provide the existing ViewModel so the edit screen always finds it.
+                  builder: (_) => ChangeNotifierProvider.value(
+                    value: vm,
+                    child: ProfileEditScreen(vm: vm),
+                  ),
+                ),
+              );
             },
             style: FilledButton.styleFrom(
               backgroundColor: theme.colorScheme.onPrimary.withValues(
@@ -393,9 +409,6 @@ class _ProfilePageState extends State<Profile> {
   }
 }
 
-// =============================================================================
-// REUSABLE WIDGETS
-// =============================================================================
 class _StatItem extends StatelessWidget {
   const _StatItem({required this.value, required this.label});
   final String value;
@@ -576,6 +589,146 @@ class _IconContainer extends StatelessWidget {
         shape: BoxShape.circle,
       ),
       child: Icon(icon, size: 19, color: theme.colorScheme.primary),
+    );
+  }
+}
+
+Widget buildFloatingUserId(BuildContext context, {required String userId}) {
+  final theme = Theme.of(context);
+  final primary = theme.colorScheme.onPrimary;
+
+  Future<void> copyUserId() async {
+    await Clipboard.setData(ClipboardData(text: userId));
+    SnackbarService.showSuccessMessage('User ID copied successfully');
+  }
+
+  Future<void> shareUserId() async {
+    await shareOnWhatsApp('''
+Hey! 👋 I'm using **${AppConstants.appName}** to manage my personal finances and track my expenses.
+Join me on ${AppConstants.appName}! Let's connect, share, and manage our financial activities together.\n\n
+🔑 **My User ID:** $userId\n\n
+Search for my ID in the app and send me a connection request. Let's get connected! 😊\n
+📱 Download ${AppConstants.appName}: ${UserSession.instance.downloadUrl}
+''');
+  }
+
+  return Container(
+    margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+    decoration: BoxDecoration(
+      color: primary.withValues(alpha: 0.13),
+      borderRadius: BorderRadius.circular(40),
+      border: Border.all(color: primary.withValues(alpha: 0.22)),
+    ),
+    child: Row(
+      children: [
+        // Friends icon
+        Container(
+          height: 48,
+          width: 48,
+          decoration: BoxDecoration(
+            color: primary.withValues(alpha: 0.18),
+            shape: BoxShape.circle,
+          ),
+          child: Icon(Icons.groups_rounded, color: primary, size: 25),
+        ),
+
+        const SizedBox(width: 12),
+
+        // Divider
+        Container(height: 42, width: 1, color: primary.withValues(alpha: 0.4)),
+
+        const SizedBox(width: 12),
+
+        // User ID
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                children: [
+                  Flexible(
+                    child: Text(
+                      'Your User ID',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.labelMedium?.copyWith(
+                        color: primary.withValues(alpha: 0.9),
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  Tooltip(
+                    message:
+                        'Share this ID so friends can add you to their groups',
+                    triggerMode: TooltipTriggerMode.tap,
+                    child: Icon(Icons.info_outline, size: 14, color: primary),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 5),
+              Text(
+                userId,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: theme.textTheme.titleSmall?.copyWith(
+                  color: primary,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 0.3,
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        const SizedBox(width: 6),
+
+        // Copy button
+        _UserIdActionButton(
+          icon: Icons.copy_rounded,
+          onTap: copyUserId,
+          color: primary,
+        ),
+
+        const SizedBox(width: 6),
+
+        // Share button
+        _UserIdActionButton(
+          icon: Icons.share_rounded,
+          onTap: shareUserId,
+          color: primary,
+        ),
+      ],
+    ),
+  );
+}
+
+class _UserIdActionButton extends StatelessWidget {
+  const _UserIdActionButton({
+    required this.icon,
+    required this.onTap,
+    required this.color,
+  });
+  final IconData icon;
+  final VoidCallback onTap;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: color.withValues(alpha: 0.16),
+      shape: const CircleBorder(),
+      child: InkWell(
+        onTap: onTap,
+        customBorder: const CircleBorder(),
+        child: SizedBox(
+          height: 48,
+          width: 48,
+          child: Icon(icon, color: color, size: 22),
+        ),
+      ),
     );
   }
 }

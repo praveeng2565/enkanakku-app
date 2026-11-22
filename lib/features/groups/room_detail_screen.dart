@@ -9,7 +9,7 @@ import '../../repositories/user_session.dart';
 import '../../repositories/users_repository.dart';
 import '../../services/snackbar_service.dart';
 import '../../utils/currency_formatter.dart';
-import '../friends/find_friends.dart';
+import 'find_friends.dart';
 import 'room_detail_view_model.dart';
 import 'settle_up.dart';
 
@@ -39,7 +39,6 @@ BoxDecoration _cardDecoration(BuildContext context) {
 }
 
 void _openFindFriends(BuildContext context, String roomId) {
-  //TODO:
   Navigator.push(
     context,
     MaterialPageRoute(builder: (_) => FindFriendsScreen(roomIdToAddTo: roomId)),
@@ -469,7 +468,6 @@ class _MembersTab extends StatelessWidget {
       children: [
         ...room.memberIds.map((id) {
           final profile = vm.members[id];
-          final tag = UserSession.instance.uniqueId;
           return Container(
             margin: const EdgeInsets.only(bottom: 10),
             decoration: _cardDecoration(context),
@@ -479,13 +477,17 @@ class _MembersTab extends StatelessWidget {
                 vm.nameOf(id),
                 style: const TextStyle(fontWeight: FontWeight.w600),
               ),
-              subtitle: tag.isEmpty ? null : Text('#$tag'),
+              subtitle: Text(profile?.id ?? ''),
               trailing: id == room.createdBy
                   ? const Chip(
                       label: Text('Admin'),
                       visualDensity: VisualDensity.compact,
                     )
-                  : null,
+                  : IconButton(
+                      onPressed: () {},
+                      icon: const Icon(Icons.delete, color: Colors.red),
+                      visualDensity: VisualDensity.compact,
+                    ),
             ),
           );
         }),
@@ -610,9 +612,7 @@ class _AddExpenseSheetState extends State<_AddExpenseSheet> {
               keyboardType: const TextInputType.numberWithOptions(
                 decimal: true,
               ),
-              inputFormatters: [
-                FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
-              ],
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               decoration: InputDecoration(
                 labelText: 'Amount',
                 prefixText: '₹ ',

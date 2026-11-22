@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../core/constants.dart';
 import '../models/user_profile.dart';
 import '../repositories/users_repository.dart';
@@ -103,4 +104,10 @@ String formatAmountWithSymbol(double? val) {
 
 String formatTime(DateTime val) {
   return DateFormat('hh:mm a').format(val);
+}
+
+Future<void> shareOnWhatsApp(String msg) async {
+  final message = Uri.encodeComponent(msg);
+  final whatsappUrl = Uri.parse('https://wa.me/?text=$message');
+  await launchUrl(whatsappUrl, mode: LaunchMode.externalApplication);
 }

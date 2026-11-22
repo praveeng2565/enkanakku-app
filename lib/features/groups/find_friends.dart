@@ -24,11 +24,11 @@ class _FindFriendsScreenState extends State<FindFriendsScreen> {
     final tag = _tagController.text.trim();
     if (tag.isEmpty) return;
 
-    // setState(() {
-    //   _isSearching = true;
-    //   _searched = false;
-    //   _result = null;
-    // });
+    setState(() {
+      _isSearching = true;
+      _searched = false;
+      _result = null;
+    });
 
     final profile = await UsersRepository().searchUserByTag(tag);
 
@@ -82,7 +82,7 @@ class _FindFriendsScreenState extends State<FindFriendsScreen> {
                     controller: _tagController,
                     textCapitalization: TextCapitalization.characters,
                     decoration: InputDecoration(
-                      hintText: '#4X7K9QW2',
+                      hintText: '4X7K9QW2',
                       prefixIcon: const Icon(Icons.tag),
                       filled: true,
                       fillColor: Colors.white,
@@ -190,7 +190,7 @@ class _FindFriendsScreenState extends State<FindFriendsScreen> {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  '#${profile.id}',
+                  profile.id,
                   style: const TextStyle(fontSize: 12, color: Colors.black45),
                 ),
               ],

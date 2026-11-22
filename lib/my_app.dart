@@ -70,9 +70,9 @@ class MyApp extends StatelessWidget {
                       index: args['index'],
                     ),
                   );
-                case '/CreateGroup':
+                case '/CreateRoom':
                   return MaterialPageRoute(
-                    settings: const RouteSettings(name: '/CreateGroup'),
+                    settings: const RouteSettings(name: '/CreateRoom'),
                     builder: (_) => const RoomCreateScreen(),
                   );
                 case '/RoomDetailScreen':

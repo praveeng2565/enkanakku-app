@@ -1,29 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../../models/room_model.dart';
-import '../../repositories/user_session.dart';
 import 'room_view_model.dart';
 
-const _months = [
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'May',
-  'Jun',
-  'Jul',
-  'Aug',
-  'Sep',
-  'Oct',
-  'Nov',
-  'Dec',
-];
-String _fmtDate(DateTime d) =>
-    '${d.day.toString().padLeft(2, '0')} ${_months[d.month - 1]} ${d.year}';
-
-/// The "Group Split" tab. It is a tab body, so the bottom navigation bar
-/// belongs to your app shell, not to this screen.
 class RoomsOverViewScreen extends StatefulWidget {
   const RoomsOverViewScreen({super.key});
 
@@ -37,38 +18,53 @@ class _RoomsOverViewScreenState extends State<RoomsOverViewScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      final uid = UserSession.instance.uniqueId;
-      context.read<RoomViewModel>().start(uid);
+      context.read<RoomViewModel>().start();
     });
   }
 
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<RoomViewModel>();
-
     return Scaffold(
-      body: SafeArea(
-        child: Column(
+      appBar: AppBar(
+        titleSpacing: 20,
+        title: const Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _Header(
-              onAdd: () {
-                Navigator.pushNamed(context, '/CreateGroup');
-              },
+            Text('Group Split', style: TextStyle(fontWeight: FontWeight.w700)),
+            Text(
+              'Manage shared expenses',
+              style: TextStyle(fontSize: 12, fontWeight: FontWeight.normal),
             ),
-            Expanded(child: _buildBody(context, vm)),
           ],
         ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 12),
+            child: IconButton.filledTonal(
+              onPressed: () {
+                Navigator.pushNamed(context, '/CreateRoom');
+              },
+              icon: const Icon(Icons.add_rounded),
+              tooltip: 'Create group',
+            ),
+          ),
+        ],
       ),
+      body: _buildBody(context, vm),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => Navigator.pushNamed(context, '/CreateGroup'),
-        icon: const Icon(Icons.group_add_outlined),
+        onPressed: () {
+          Navigator.pushNamed(context, '/CreateRoom');
+        },
+        icon: const Icon(Icons.group_add_rounded),
         label: const Text('New Group'),
+        heroTag: 'group_page',
       ),
     );
   }
 
   Widget _buildBody(BuildContext context, RoomViewModel vm) {
+    final theme = Theme.of(context);
     return Consumer<RoomViewModel>(
       builder: (context, _, _) {
         if (vm.isLoading) {
@@ -76,127 +72,73 @@ class _RoomsOverViewScreenState extends State<RoomsOverViewScreen> {
         }
 
         final rooms = vm.myRooms;
-        if (rooms.isEmpty) {
-          return _EmptyState(
-            onCreate: () => Navigator.pushNamed(context, '/CreateGroup'),
-          );
-        }
-
-        return ListView.separated(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 96),
-          itemCount: rooms.length + 1, // +1 for the summary card at the top
-          separatorBuilder: (_, _) => const SizedBox(height: 14),
-          itemBuilder: (context, i) {
-            if (i == 0) return _SummaryCard(count: rooms.length);
-            final room = rooms[i - 1];
-            return _RoomCard(
-              room: room,
-              onTap: () => Navigator.pushNamed(
-                context,
-                '/RoomDetailScreen',
-                arguments: {'roomId': room.id},
-              ),
-            );
-          },
-        );
+        return rooms.isEmpty
+            ? _EmptyGroups()
+            : Column(
+                children: [
+                  _buildHeader(theme, rooms.length),
+                  Expanded(
+                    child: CustomScrollView(
+                      physics: const BouncingScrollPhysics(),
+                      slivers: [
+                        SliverPadding(
+                          padding: const EdgeInsets.fromLTRB(20, 4, 20, 30),
+                          sliver: SliverList.separated(
+                            itemCount: rooms.length,
+                            separatorBuilder: (_, _) =>
+                                const SizedBox(height: 12),
+                            itemBuilder: (context, index) {
+                              final room = rooms[index];
+                              return _GroupCard(
+                                group: room,
+                                onTap: () => Navigator.pushNamed(
+                                  context,
+                                  '/RoomDetailScreen',
+                                  arguments: {'roomId': room.id},
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              );
       },
     );
   }
-}
 
-// ---------------------------------------------------------------------------
-// Header: title, subtitle and the round "+" button
-// ---------------------------------------------------------------------------
-
-class _Header extends StatelessWidget {
-  const _Header({required this.onAdd});
-  final VoidCallback onAdd;
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-
+  Widget _buildHeader(ThemeData theme, int length) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 16, 16, 8),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Group Split',
-                  style: TextStyle(fontSize: 26, fontWeight: FontWeight.w800),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  'Manage shared expenses',
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: scheme.onSurfaceVariant,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          IconButton.filledTonal(
-            onPressed: onAdd,
-            tooltip: 'New group',
-            icon: const Icon(Icons.add),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ---------------------------------------------------------------------------
-// "6 Groups" summary card
-// ---------------------------------------------------------------------------
-
-class _SummaryCard extends StatelessWidget {
-  const _SummaryCard({required this.count});
-  final int count;
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: scheme.primaryContainer.withValues(alpha: 0.55),
-        borderRadius: BorderRadius.circular(20),
-      ),
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 18),
       child: Row(
         children: [
           Container(
-            width: 52,
-            height: 52,
+            height: 48,
+            width: 48,
             decoration: BoxDecoration(
-              color: scheme.primaryContainer,
-              borderRadius: BorderRadius.circular(16),
+              color: theme.colorScheme.primaryContainer,
+              borderRadius: BorderRadius.circular(15),
             ),
-            child: Icon(Icons.groups_rounded, color: scheme.onPrimaryContainer),
+            child: Icon(Icons.groups_rounded, color: theme.colorScheme.primary),
           ),
-          const SizedBox(width: 14),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '$count ${count == 1 ? 'Group' : 'Groups'}',
-                  style: const TextStyle(
-                    fontSize: 17,
+                  '$length ${length == 1 ? 'Group' : 'Groups'}',
+                  style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w700,
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   'Split expenses with friends and family',
-                  style: TextStyle(
-                    fontSize: 12.5,
-                    color: scheme.onSurfaceVariant,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
                   ),
                 ),
               ],
@@ -208,90 +150,93 @@ class _SummaryCard extends StatelessWidget {
   }
 }
 
-// ---------------------------------------------------------------------------
-// One group card: emoji tile, name, description, members, created date
-// ---------------------------------------------------------------------------
-
-class _RoomCard extends StatelessWidget {
-  const _RoomCard({required this.room, required this.onTap});
-  final RoomModel room;
+class _GroupCard extends StatelessWidget {
+  const _GroupCard({required this.group, required this.onTap});
+  final RoomModel group;
   final VoidCallback onTap;
-
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    final members = room.memberIds.length;
-
+    final theme = Theme.of(context);
+    final members = group.memberIds.length;
+    final formattedDate = DateFormat('dd MMM yyyy').format(group.createdAt);
     return Material(
-      color: scheme.surfaceContainerLow,
-      clipBehavior:
-          Clip.antiAlias, // keeps the tap ripple inside the rounded corners
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(22),
-        side: BorderSide(color: scheme.outlineVariant),
-      ),
+      color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.all(14),
+        borderRadius: BorderRadius.circular(22),
+        child: Ink(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: theme.colorScheme.surfaceContainerLow,
+            borderRadius: BorderRadius.circular(22),
+            border: Border.all(color: theme.colorScheme.outlineVariant),
+          ),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Group icon
               Container(
-                width: 60,
-                height: 60,
-                alignment: Alignment.center,
+                height: 56,
+                width: 56,
                 decoration: BoxDecoration(
-                  color: scheme.primaryContainer,
-                  borderRadius: BorderRadius.circular(18),
+                  color: theme.colorScheme.primaryContainer,
+                  borderRadius: BorderRadius.circular(17),
                 ),
-                child: Text(room.emoji, style: const TextStyle(fontSize: 30)),
+                alignment: Alignment.center,
+                child: Text(group.emoji, style: const TextStyle(fontSize: 26)),
               ),
               const SizedBox(width: 14),
+              // Details
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      room.name,
+                      group.name,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 16,
+                      style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w700,
                       ),
                     ),
-                    if (room.description.isNotEmpty) ...[
-                      const SizedBox(height: 3),
-                      Text(
-                        room.description,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: scheme.onSurfaceVariant,
-                        ),
+                    const SizedBox(height: 5),
+                    Text(
+                      group.description,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        height: 1.35,
+                        color: theme.colorScheme.onSurfaceVariant,
                       ),
-                    ],
-                    const SizedBox(height: 8),
+                    ),
+                    const SizedBox(height: 12),
                     Wrap(
                       spacing: 14,
-                      runSpacing: 4,
+                      runSpacing: 6,
                       children: [
-                        _Meta(
-                          icon: Icons.group_outlined,
+                        _InfoItem(
+                          icon: Icons.people_outline_rounded,
                           text:
                               '$members ${members == 1 ? 'member' : 'members'}',
                         ),
-                        _Meta(
+                        _InfoItem(
                           icon: Icons.calendar_today_outlined,
-                          text: 'Created ${_fmtDate(room.createdAt)}',
+                          text: 'Created $formattedDate',
                         ),
                       ],
                     ),
                   ],
                 ),
               ),
-              Icon(Icons.chevron_right, color: scheme.outline),
+              const SizedBox(width: 6),
+              // Arrow
+              Padding(
+                padding: const EdgeInsets.only(top: 16),
+                child: Icon(
+                  Icons.chevron_right_rounded,
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
             ],
           ),
         ),
@@ -300,64 +245,96 @@ class _RoomCard extends StatelessWidget {
   }
 }
 
-class _Meta extends StatelessWidget {
-  const _Meta({required this.icon, required this.text});
+class _InfoItem extends StatelessWidget {
+  const _InfoItem({required this.icon, required this.text});
   final IconData icon;
   final String text;
-
   @override
   Widget build(BuildContext context) {
-    final color = Theme.of(context).colorScheme.onSurfaceVariant;
+    final theme = Theme.of(context);
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 14, color: color),
-        const SizedBox(width: 4),
-        Text(text, style: TextStyle(fontSize: 12, color: color)),
+        Icon(icon, size: 14, color: theme.colorScheme.onSurfaceVariant),
+        const SizedBox(width: 5),
+        Text(
+          text,
+          style: theme.textTheme.labelSmall?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
       ],
     );
   }
 }
 
-// ---------------------------------------------------------------------------
-// Shown when the user is not in any group yet
-// ---------------------------------------------------------------------------
-
-class _EmptyState extends StatelessWidget {
-  const _EmptyState({required this.onCreate});
-  final VoidCallback onCreate;
-
+class _EmptyGroups extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-
+    final theme = Theme.of(context);
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(32),
+        padding: const EdgeInsets.all(40),
         child: Column(
-          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.groups_outlined, size: 56, color: scheme.outline),
-            const SizedBox(height: 14),
-            const Text(
-              'No groups yet',
-              style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
+            Container(
+              height: 82,
+              width: 82,
+              decoration: BoxDecoration(
+                color: theme.colorScheme.primaryContainer,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.groups_rounded,
+                size: 40,
+                color: theme.colorScheme.primary,
+              ),
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 20),
+            Text(
+              'No groups yet',
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(height: 8),
             Text(
               'Create a group to start splitting expenses with friends and family.',
               textAlign: TextAlign.center,
-              style: TextStyle(color: scheme.onSurfaceVariant),
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
             ),
-            const SizedBox(height: 18),
+            const SizedBox(height: 20),
             FilledButton.icon(
-              onPressed: onCreate,
-              icon: const Icon(Icons.group_add_outlined),
-              label: const Text('Create a group'),
+              onPressed: () {
+                Navigator.pushNamed(context, '/CreateRoom');
+              },
+              icon: const Icon(Icons.add_rounded),
+              label: const Text('Create Group'),
             ),
           ],
         ),
       ),
     );
   }
+}
+
+class GroupModel {
+  const GroupModel({
+    required this.id,
+    required this.name,
+    required this.description,
+    required this.emoji,
+    required this.members,
+    required this.createdAt,
+  });
+  final String id;
+  final String name;
+  final String description;
+  final String emoji;
+  final int members;
+  final String createdAt;
 }

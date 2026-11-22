@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../../models/user_expense.dart';
@@ -189,6 +190,7 @@ class _EditExpenseState extends State<EditExpense> {
               fontWeight: FontWeight.w800,
               color: colors.onSurface,
             ),
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             decoration: InputDecoration(
               prefixText: '₹ ',
               prefixStyle: theme.textTheme.headlineMedium?.copyWith(

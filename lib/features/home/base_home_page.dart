@@ -6,8 +6,8 @@ import '../../core/constants.dart';
 import '../../repositories/user_session.dart';
 import '../../services/auth_service.dart';
 import '../../theme/app_theme.dart';
+import '../../utils/coming_soon.dart';
 import '../../utils/common.dart';
-import '../friends/friends_page.dart';
 import '../groups/room_overview.dart';
 import '../profile/profile_page.dart';
 import 'dashboard_page.dart';
@@ -58,10 +58,11 @@ class _HomePageState extends State<HomePage> {
 
   final List<Widget> _pages = [
     DashboardPage(scaffoldKey: scaffoldKey),
-    const FriendsSplitPage(),
+    const ComingSoon(),
     const RoomsOverViewScreen(),
     const ProfilePage(),
   ];
+
   void _onBottomItemTap(int index) {
     if (index == homeViewModel.currentPageIndex) return;
     _pageController.animateToPage(
@@ -538,9 +539,9 @@ class _AnimatedBottomBar extends StatelessWidget {
       label: 'Home',
     ),
     _BottomItemData(
-      icon: Icons.people_outline_rounded,
-      activeIcon: Icons.people_rounded,
-      label: 'Friends',
+      icon: Icons.book_outlined,
+      activeIcon: Icons.book_rounded,
+      label: 'Self',
     ),
     _BottomItemData(
       icon: Icons.groups_outlined,
