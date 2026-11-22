@@ -1,83 +1,16 @@
 import 'dart:async';
 import 'package:android_package_installer/android_package_installer.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 
-class UpdateInfo {
-  UpdateInfo({
-    required this.latestVersion,
-    required this.currentVersion,
-    this.apkUrl = '',
-    this.mandatory = false,
-    this.loginVersion,
-  });
-  final String latestVersion;
-  final String currentVersion;
-  final String apkUrl;
-  final String? loginVersion;
-  final bool mandatory;
-}
-
 class UpdateService {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final Dio _dio = Dio(
-    BaseOptions(
-      connectTimeout: const Duration(seconds: 20),
-      receiveTimeout: const Duration(minutes: 10),
-      sendTimeout: const Duration(seconds: 20),
-      followRedirects: true,
-      maxRedirects: 5,
-    ),
-  );
-  CancelToken? _cancelToken;
+  UpdateService._();
+  static final UpdateService instance = UpdateService._();
 
-  /// Compares the installed app version against `app_config/version`.
-  /// Returns null if the app is already up to date.
-  Future<UpdateInfo?> checkForUpdate() async {
-    final packageInfo = await PackageInfo.fromPlatform();
-    final currentVersion = packageInfo.version;
-    final doc = await _firestore.collection('app_config').doc('version').get();
-    if (!doc.exists) {
-      return null;
-    }
-    final data = doc.data()!;
-    final latestVersion = data['latestVersion'] as String;
-    if (_isNewer(latestVersion, currentVersion)) {
-      return UpdateInfo(
-        currentVersion: currentVersion,
-        latestVersion: latestVersion,
-        apkUrl: data['apkUrl'] as String,
-        mandatory: data['mandatory'] as bool? ?? false,
-        loginVersion: data['loginVersion'] as String?,
-      );
-    }
-    return UpdateInfo(
-      currentVersion: currentVersion,
-      latestVersion: latestVersion,
-      loginVersion: data['loginVersion'] as String?,
-    );
-  }
-
-  /// Simple semantic version comparison: "1.3.0" > "1.2.9" etc.
-  bool _isNewer(String remote, String current) {
-    final r = remote.split('.').map(int.parse).toList();
-    final c = current.split('.').map(int.parse).toList();
-    for (var i = 0; i < r.length; i++) {
-      final cVal = i < c.length ? c[i] : 0;
-      if (r[i] > cVal) {
-        return true;
-      }
-      if (r[i] < cVal) {
-        return false;
-      }
-    }
-    return false;
-  }
+  final CancelToken _cancelToken = CancelToken();
 
   void cancel() {
-    _cancelToken?.cancel();
+    _cancelToken.cancel();
   }
 
   /// Downloads the APK to app-external storage, reporting progress via
@@ -89,7 +22,6 @@ class UpdateService {
     required void Function(String message) onError,
     void Function()? onCancelled,
   }) async {
-    _cancelToken = CancelToken();
     final stopwatch = Stopwatch()..start();
     int lastBytes = 0;
     DateTime lastTick = DateTime.now();
@@ -97,7 +29,15 @@ class UpdateService {
     final dir = await getTemporaryDirectory();
     final savePath = '${dir.path}/kanakku_update.apk';
     try {
-      await _dio.download(
+      await Dio(
+        BaseOptions(
+          connectTimeout: const Duration(seconds: 20),
+          receiveTimeout: const Duration(minutes: 10),
+          sendTimeout: const Duration(seconds: 20),
+          followRedirects: true,
+          maxRedirects: 5,
+        ),
+      ).download(
         url,
         savePath,
         cancelToken: _cancelToken,
@@ -135,7 +75,7 @@ class UpdateService {
         },
       );
       stopwatch.stop();
-      if (_cancelToken?.isCancelled == true) {
+      if (_cancelToken.isCancelled == true) {
         onCancelled?.call();
         return;
       }

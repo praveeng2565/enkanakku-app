@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../repositories/user_session.dart';
-import '../../services/login_auth.dart';
+import '../../services/auth_service.dart';
 import '../../services/progress_service.dart';
 import '../../services/snackbar_service.dart';
 import '../../theme/theme_view_model.dart';

@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import '../core/constants.dart';
 import '../models/user_profile.dart';
 import '../repositories/users_repository.dart';
-import '../services/login_auth.dart';
+import '../services/auth_service.dart';
 import '../services/progress_service.dart';
 
 String getNewID() {

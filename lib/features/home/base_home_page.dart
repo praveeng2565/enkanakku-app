@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/constants.dart';
-import '../../services/login_auth.dart';
+import '../../repositories/user_session.dart';
+import '../../services/auth_service.dart';
 import '../../theme/app_theme.dart';
 import '../../utils/common.dart';
-import '../auth/user_view_model.dart';
 import '../friends/friends_page.dart';
 import '../groups/group_page.dart';
 import '../profile/profile_page.dart';
@@ -41,9 +41,13 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> setLoginVerison() async {
-    final userViewModel = Provider.of<UserViewModel>(context, listen: false);
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setString(AppConstants.loginVersionKey, userViewModel.loginVersion);
+    if (UserSession.instance.loginVersion != null) {
+      final prefs = await SharedPreferences.getInstance();
+      prefs.setString(
+        AppConstants.loginVersionKey,
+        UserSession.instance.loginVersion!,
+      );
+    }
   }
 
   @override
@@ -193,7 +197,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                       const SizedBox(width: 5),
                       Text(
-                        '${AppConstants.appName}  •  v${context.read<UserViewModel>().appVersion}',
+                        '${AppConstants.appName}  •  v${UserSession.instance.appVersion}',
                         style: Theme.of(context).textTheme.labelSmall?.copyWith(
                           color: Theme.of(context).colorScheme.onSurfaceVariant
                               .withValues(alpha: 0.65),

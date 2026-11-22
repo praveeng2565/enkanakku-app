@@ -18,7 +18,7 @@ class _CreateGroupState extends State<CreateGroup> {
   @override
   void initState() {
     super.initState();
-    _room = Room(id: getNewID(), createdBy: UserSession.instance.id);
+    _room = Room(id: getNewID(), createdBy: UserSession.instance.uniqueId);
   }
 
   @override

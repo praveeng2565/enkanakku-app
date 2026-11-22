@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../models/user_profile.dart';
-import '../services/login_auth.dart';
+import '../services/auth_service.dart';
 
 /// Handles all Firestore reads/writes for the `users/{uid}` collection.
 /// No Flutter UI imports, no ChangeNotifier — pure data access, kept

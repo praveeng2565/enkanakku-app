@@ -9,7 +9,9 @@ class ProfileViewModel extends ChangeNotifier {
   final UsersRepository _userRepository;
   UserProfile? profile;
   Future<void> loadProfile() async {
-    final user = await _userRepository.getUserData(UserSession.instance.id);
+    final user = await _userRepository.getUserData(
+      UserSession.instance.uniqueId,
+    );
     profile = user;
     notifyListeners();
   }

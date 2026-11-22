@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../services/login_auth.dart';
+import '../services/auth_service.dart';
 import '../services/progress_service.dart';
 
 class BasePage extends StatefulWidget {

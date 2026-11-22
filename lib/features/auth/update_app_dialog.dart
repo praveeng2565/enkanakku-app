@@ -1,25 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../models/app_config_model.dart';
+import '../../repositories/user_session.dart';
 import '../../services/update_service.dart';
 import 'user_view_model.dart';
 
-Future<void> showUpdateDialog(BuildContext context, UpdateInfo info) async {
-  final updateService = UpdateService();
+Future<void> showUpdateDialog(BuildContext context, AppConfigModel info) async {
   await showDialog(
     context: context,
     barrierDismissible: false,
     builder: (context) => PopScope(
       canPop: false,
       onPopInvokedWithResult: (bool didPop, dynamic result) {},
-      child: _UpdateDialogContent(info: info, updateService: updateService),
+      child: _UpdateDialogContent(info: info),
     ),
   );
 }
 
 class _UpdateDialogContent extends StatefulWidget {
-  const _UpdateDialogContent({required this.info, required this.updateService});
-  final UpdateInfo info;
-  final UpdateService updateService;
+  const _UpdateDialogContent({required this.info});
+  final AppConfigModel info;
   @override
   State<_UpdateDialogContent> createState() => _UpdateDialogContentState();
 }
@@ -32,14 +32,14 @@ class _UpdateDialogContentState extends State<_UpdateDialogContent> {
     userViewModel.appVersionErrorMsg = '';
     setState(() => _downloading = true);
     try {
-      await widget.updateService.downloadApk(
+      await UpdateService.instance.downloadApk(
         widget.info.apkUrl,
         onProgress: (DownloadProgress progress) {
           setState(() => _progress = progress);
         },
         onCompleted: (String path) async {
           userViewModel.appVersionValidated = true;
-          await widget.updateService.installApk(path);
+          await UpdateService.instance.installApk(path);
           if (mounted) {
             Navigator.pop(context);
           }
@@ -136,7 +136,7 @@ class _UpdateDialogContentState extends State<_UpdateDialogContent> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Text('Current'),
-                    Text(widget.info.currentVersion),
+                    Text(UserSession.instance.appVersion),
                   ],
                 ),
                 const SizedBox(height: 8),
@@ -170,7 +170,7 @@ class _UpdateDialogContentState extends State<_UpdateDialogContent> {
           ? [
               TextButton(
                 onPressed: () {
-                  widget.updateService.cancel();
+                  UpdateService.instance.cancel();
                 },
                 child: const Text('Cancel'),
               ),
