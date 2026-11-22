@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class AppConfigModel {
   const AppConfigModel({
     required this.latestVersion,
@@ -13,7 +15,9 @@ class AppConfigModel {
     apkUrl: m['apkUrl'] as String,
     mandatory: m['mandatory'] as bool,
     loginVersion: m['loginVersion'] as String?,
-    releasedAt: DateTime.parse(m['releasedAt']),
+    releasedAt: m['releasedAt'] is Timestamp
+        ? (m['releasedAt'] as Timestamp).toDate()
+        : DateTime.parse(m['releasedAt']),
   );
   factory AppConfigModel.fromJson(Map<String, dynamic> j) =>
       AppConfigModel.fromMap(j);

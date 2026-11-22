@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 
 class FriendsSplitPage extends StatelessWidget {
   const FriendsSplitPage({super.key});
-  final List<FriendSplitModel> friends = const [
+  List<FriendSplitModel> get friends => const <FriendSplitModel>[
     FriendSplitModel(
       id: '1',
       name: 'Arun',

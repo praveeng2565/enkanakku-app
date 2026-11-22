@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 class GroupPage extends StatelessWidget {
   const GroupPage({super.key});
   // Replace this with your Firestore data later.
-  final List<GroupModel> groups = const [
+  List<GroupModel> get groups => const [
     GroupModel(
       id: '1',
       name: 'Goa Trip',
@@ -117,6 +117,7 @@ class GroupPage extends StatelessWidget {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           // Create group
+          Navigator.pushNamed(context, '/CreateGroup');
         },
         icon: const Icon(Icons.group_add_rounded),
         label: const Text('New Group'),

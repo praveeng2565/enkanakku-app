@@ -5,9 +5,12 @@ import 'features/auth/login_page.dart';
 import 'features/auth/user_view_model.dart';
 import 'features/expenses/add_expense.dart';
 import 'features/expenses/edit_expense.dart';
-import 'features/groups/create_group.dart';
+import 'features/groups/room_create_screen.dart';
+import 'features/groups/room_detail_screen.dart';
+import 'features/groups/room_view_model.dart';
 import 'features/home/base_home_page.dart';
 import 'features/home/home_view_model.dart';
+import 'repositories/room_repository.dart';
 import 'services/snackbar_service.dart';
 import 'theme/app_theme.dart';
 import 'theme/theme_view_model.dart';
@@ -25,6 +28,7 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(create: (_) => UserViewModel()),
         ChangeNotifierProvider(create: (_) => HomeViewModel()),
+        ChangeNotifierProvider(create: (_) => RoomViewModel(RoomRepository())),
       ],
       child: Consumer<ThemeViewModel>(
         builder: (context, themeVM, child) {
@@ -69,7 +73,13 @@ class MyApp extends StatelessWidget {
                 case '/CreateGroup':
                   return MaterialPageRoute(
                     settings: const RouteSettings(name: '/CreateGroup'),
-                    builder: (_) => const CreateGroup(),
+                    builder: (_) => const RoomCreateScreen(),
+                  );
+                case '/RoomDetailScreen':
+                  final args = settings.arguments! as Map<String, dynamic>;
+                  return MaterialPageRoute(
+                    settings: const RouteSettings(name: '/RoomDetailScreen'),
+                    builder: (_) => RoomDetailScreen(roomId: args['roomId']),
                   );
                 default:
                   return MaterialPageRoute(

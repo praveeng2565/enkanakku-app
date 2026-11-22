@@ -7,9 +7,8 @@ import '../services/auth_service.dart';
 /// No Flutter UI imports, no ChangeNotifier — pure data access, kept
 /// testable and reusable by any ViewModel that needs user data.
 class UsersRepository {
-  UsersRepository({FirebaseFirestore? firestore})
-    : _firestore = firestore ?? FirebaseFirestore.instance;
-  final FirebaseFirestore _firestore;
+  UsersRepository();
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   DocumentReference<Map<String, dynamic>> _usersRef(String id) =>
       _firestore.collection('AllUsersProfile').doc(id);
 
@@ -129,4 +128,22 @@ class UsersRepository {
   /// Used when a user looks up another member by uid — e.g. showing
   /// a payer's name on a room expense without a separate lookup screen.
   Future<UserProfile?> getUserOnce(String id) => getUserData(id);
+
+  /// Looks up a user by their shared player tag (e.g. "4X7K9QW2",
+  /// without the '#' prefix) and returns their profile for preview —
+  /// the caller confirms it's the right person before adding them
+  /// anywhere, rather than adding blind on a resolved uid.
+  Future<UserProfile?> searchUserByTag(String tag) async {
+    final normalizedTag = tag.trim().toUpperCase().replaceAll('#', '');
+    final tagDoc = await _firestore
+        .collection('AllUsersProfile')
+        .doc('#$normalizedTag')
+        .get();
+    if (!tagDoc.exists) return null;
+
+    final uid = tagDoc.data()?['id'] as String?;
+    if (uid == null) return null;
+
+    return getUserData(uid);
+  }
 }
